@@ -12,7 +12,7 @@ Authors:
     
 * Dennea MacCallum
 * Firstname Lastname
-* Firstname Lastname
+* Kourosh Kehtari
 * Firstname Lastname
 * Firstname Lastnmae
 
