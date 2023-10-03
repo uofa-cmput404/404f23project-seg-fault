@@ -10,7 +10,7 @@ Contributors / Licensing
 
 Authors:
     
-* Firstname Lastname
+* Dennea MacCallum
 * Firstname Lastname
 * Firstname Lastname
 * Firstname Lastname
