@@ -13,7 +13,7 @@ Authors:
 * Dennea MacCallum
 * Kingsley Okeke
 * Kourosh Kehtari
-* Firstname Lastname
+* Prabh Kooner
 * Firstname Lastnmae
 
 Generally everything is LICENSE'D under the ______________.
