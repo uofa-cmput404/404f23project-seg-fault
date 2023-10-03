@@ -11,7 +11,7 @@ Contributors / Licensing
 Authors:
     
 * Dennea MacCallum
-* Firstname Lastname
+* Kingsley Okeke
 * Kourosh Kehtari
 * Firstname Lastname
 * Firstname Lastnmae
