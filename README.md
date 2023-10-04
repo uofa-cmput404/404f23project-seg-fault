@@ -12,7 +12,7 @@ Authors:
     
 * Dennea MacCallum (dennea@ualberta.ca)
 * Kingsley Okeke (nkokeke@ualberta.ca)
-* Kourosh Kehtari
+* Kourosh Kehtari (kehtari@ualberta.ca)
 * Prabh Kooner
 * Julian Gallego Franco
 
