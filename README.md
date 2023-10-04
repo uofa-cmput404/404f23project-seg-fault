@@ -10,7 +10,7 @@ Contributors / Licensing
 
 Authors:
     
-* Dennea MacCallum
+* Dennea MacCallum (dennea@ualberta.ca)
 * Kingsley Okeke
 * Kourosh Kehtari
 * Prabh Kooner
