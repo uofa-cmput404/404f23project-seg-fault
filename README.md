@@ -14,6 +14,6 @@ Authors:
 * Kingsley Okeke
 * Kourosh Kehtari
 * Prabh Kooner
-* Firstname Lastnmae
+* Julian Gallego Franco
 
 Generally everything is LICENSE'D under the ______________.
