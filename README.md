@@ -11,7 +11,7 @@ Contributors / Licensing
 Authors:
     
 * Dennea MacCallum (dennea@ualberta.ca)
-* Kingsley Okeke
+* Kingsley Okeke (nkokeke@ualberta.ca)
 * Kourosh Kehtari
 * Prabh Kooner
 * Julian Gallego Franco
