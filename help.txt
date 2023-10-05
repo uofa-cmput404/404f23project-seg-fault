@@ -1,0 +1,30 @@
+help
+
+1. create virtual and start venv:
+virtualenv venv --python=python3
+source venv/bin/activate
+
+2. install django dependencies:
+pip install -r requirements.txt
+
+3. cd into frontend and install pacakges:
+npm install
+
+4. cd into backend run django server:
+python3 manage.py runserver
+
+5. cd into frontend and run server:
+npm start
+
+other stuff:
+django is running on localhost:8000
+react is running on localhost:3000
+
+admin credentials:
+name: admin
+email: admin@example.com
+password: admin
+
+try going to localhost:8000/api/authors/ and localhost:8000:/admin
+
+
