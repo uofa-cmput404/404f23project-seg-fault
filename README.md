@@ -14,6 +14,6 @@ Authors:
 * Kingsley Okeke (nkokeke@ualberta.ca)
 * Kourosh Kehtari (kehtari@ualberta.ca)
 * Prabh Kooner
-* Julian Gallego Franco
+* Julian Gallego Franco (gallegof@ualberta.ca)
 
-Generally everything is LICENSE'D under the ______________.
+Generally everything is LICENSE'D under the MIT License.
