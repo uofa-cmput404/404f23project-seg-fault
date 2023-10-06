@@ -26,7 +26,7 @@ function App() {
         <h1>Authors</h1>
         <ul>
           {authors.map((author) => (
-            <li key={author.id}>{author.display_name}</li>
+            <li key={author.id}>{author.displayName}</li>
           ))}
         </ul>
       </header>
