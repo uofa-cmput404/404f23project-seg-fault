@@ -26,8 +26,9 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
+const redOrangeStyle = {
+  backgroundColor: '#ff006e', // Red-orange color
+};
 const defaultTheme = createTheme();
 
 export default function SignUp() {
@@ -102,17 +103,12 @@ export default function SignUp() {
                   autoComplete="new-password"
                 />
               </Grid>
-              <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox value="allowExtraEmails" color="primary" />}
-                  label="I want to receive inspiration, marketing promotions and updates via email."
-                />
-              </Grid>
             </Grid>
             <Button
               type="submit"
               fullWidth
               variant="contained"
+              style={redOrangeStyle}
               sx={{ mt: 3, mb: 2 }}
             >
               Sign Up

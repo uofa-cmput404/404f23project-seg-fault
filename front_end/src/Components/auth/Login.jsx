@@ -26,9 +26,11 @@ function Copyright(props) {
   );
 }
 
-// TODO remove, this demo shouldn't need to reset the theme.
-
 const defaultTheme = createTheme();
+
+const redOrangeStyle = {
+  backgroundColor: '#ff006e', // Red-orange color
+};
 
 export default function SignIn() {
   const handleSubmit = (event) => {
@@ -85,6 +87,7 @@ export default function SignIn() {
             />
             <Button
               type="submit"
+              style={redOrangeStyle}
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
