@@ -11,7 +11,7 @@ function App() {
     // Make a GET request to the API endpoint
     axios.get('http://127.0.0.1:8000/api/authors/')
       .then((response) => {
-        // Set the authors state with the response data
+        // Set the authors state with the response data.
         setAuthors(response.data);
       })
       .catch((error) => {
