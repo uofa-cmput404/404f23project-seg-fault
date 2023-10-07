@@ -8,7 +8,9 @@ on:
 
 jobs:
   build:
-
+    defaults:
+       run:
+         working-directory: ./front_end/
     runs-on: ubuntu-latest
 
     strategy:
@@ -24,6 +26,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+        cache-dependency-path: './front_end/package-lock.json'
     - name: Install npm dependencies
       run: npm ci
     - name: Build frontend (if present)
