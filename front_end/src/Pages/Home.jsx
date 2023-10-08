@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Stack, Skeleton } from "@mui/material";
 import Post from '../Components/post/Post';
 import { useState } from "react";
+import { tempPosts } from './tempPosts';
 
 function Home() {
   const [loading, setLoading] = useState(true);
@@ -21,12 +22,16 @@ function Home() {
         </Stack>
       ) : (
         <>
-          <Post />
-          <Post />
-          <Post />
-          <Post />
-          <Post />
-          <Post />
+        {tempPosts.map((post, index) =>{
+          return (
+            <Post 
+              username={post.name} 
+              profilePic={post.profile}
+              photo={post.photo}
+              text={post.text}
+              visibility={post.visibility}/>
+          )
+        })}
         </>
       )}
     </Box>
