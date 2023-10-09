@@ -1,0 +1,32 @@
+.MuiCardHeader-title {
+    text-align: left;
+    font-weight: bold !important;
+}
+
+.postText {
+    text-align: left;
+    padding: 1rem;
+}
+
+.MuiCardActions-root {
+    display: flex;
+    justify-content: space-between;
+}
+
+.openCommentsButton{
+    color: grey !important;
+    margin-right: auto !important;
+    font-size: 11px !important;
+}
+
+.MuiChip-root{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+.MuiChip-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
