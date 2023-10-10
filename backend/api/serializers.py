@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Author
+from .models import Author, AuthorFollower
 
 root_url = 'http://127.0.0.1:8000'
 
@@ -25,3 +25,9 @@ class AuthorSerializer(serializers.ModelSerializer):
     def get_url(self, obj):
         author_id_hex = obj.id.hex
         return f"{root_url}/authors/{author_id_hex}"
+
+class FollowingSerializer(serializers.ModelSerializer):
+    user = AuthorSerializer()
+    class Meta:
+        model = AuthorFollower
+        fields = ('user')

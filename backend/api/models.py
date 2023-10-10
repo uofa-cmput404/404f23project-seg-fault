@@ -19,5 +19,10 @@ class Author(models.Model):
     def __str__(self):
         return self.user.username
 
+class AuthorFollower(models.Model):
+    user = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="followed_by")
+    follower = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="following")
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
 
