@@ -1,6 +1,29 @@
 .userBox {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.create-post-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.create-post-box::-webkit-scrollbar {
+    display: none;
+}
+
+.create-post-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30rem;
+    max-height: 40rem;
+    background-color: white;
+    box-shadow: 24;
+    padding: 2rem;
+    overflow-y: auto;
 }
