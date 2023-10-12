@@ -9,7 +9,9 @@ from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from django.shortcuts import get_object_or_404
 
+root_url = "http://127.0.0.1:8000"
 
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -25,11 +27,23 @@ class UserRegistrationView(generics.CreateAPIView):
             user = User.objects.create(username=username)
             user.set_password(password)
             user.save()
-            user_profile = Author.objects.create(
+            
+            author_serializer = AuthorSerializer()
+            # create the author
+            new_author = Author.objects.create(
                 user=user,
                 displayName=username
             )
-            user_profile.save()
+            new_author.save()
+            ## setup id, url, and host fields for this local author
+            author_id = author_serializer.get_hex(new_author) # hex id
+            author_url =  f"{root_url}/authors/{author_id}"
+            author_host = root_url
+            
+            new_author.url = author_url
+            new_author.host = author_host
+            new_author.save()
+
 
             return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -58,6 +72,20 @@ class AuthorListView(generics.ListAPIView): # use ListCreateApiView if you want 
     # permission_classes = [IsAuthenticated]
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+
+    # override get request
+    def list(self, request, *args, **kwargs):
+        # Get the list of authors and serialize them
+        authors = self.get_queryset()
+        author_serializer = self.get_serializer(authors, many=True)
+
+        # Create the response dictionary
+        response_data = {
+            "type": "authors",
+            "items": author_serializer.data
+        }
+
+        return Response(response_data, status=status.HTTP_200_OK)
 
 class FollowAuthorView(views.APIView):
     # authentication_classes = [TokenAuthentication]
