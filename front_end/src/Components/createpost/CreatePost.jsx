@@ -57,7 +57,7 @@ export default function CreatePost(props) {
         <Box className="create-post-box">
         <div className='create-post-container'>
           <Typography variant="h6" color="gray" textAlign="center">
-                  {props.action == "EDIT"? 'Edit Post' : 'Create Post'}
+                  {props.action === "EDIT"? 'Edit Post' : 'Create Post'}
           </Typography>
           <Box className="userBox">
               <Avatar
