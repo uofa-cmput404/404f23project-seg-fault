@@ -124,4 +124,14 @@ class AuthorDetailView(generics.ListCreateAPIView):
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+    def create(self, request, *args, **kwargs):
+        # This will override the default behavior of creating a new object
+        # Instead, it will act like a PATCH method and update the existing object
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     
