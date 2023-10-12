@@ -100,7 +100,7 @@ export default function PostMenu() {
           )}
         </Popper>
       </div>
-      <CreatePost open={isEditModalOpen} onClose={closeEditModal}/>
+      <CreatePost open={isEditModalOpen} onClose={closeEditModal}  action='EDIT'/>
     </>
   );
 }
