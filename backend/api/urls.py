@@ -8,7 +8,8 @@ from django.urls import path
 
 # from authors sub directory get the views
 from .authors.AuthorViews import UserLoginView, UserRegistrationView, AuthorListView, AuthorDetailView
-
+# from posts sub directory get the views
+from .posts.PostsViews import PostListView
 
 from .views import FollowAuthorView, UnfollowAuthorView
 
@@ -19,5 +20,6 @@ urlpatterns = [
     path('authors/follow/', FollowAuthorView.as_view(), name='follow-author'),
     path('authors/unfollow/', UnfollowAuthorView.as_view(), name='unfollow-author'),
     path('authors/<str:author_id>/', AuthorDetailView.as_view(), name='author-detail'),
-    # Add more URLs for other authentication-related actions if needed
+    ## urls for posts:
+    path('authors/<str:author_id>/posts/', PostListView.as_view(), name='post-list'),
 ]

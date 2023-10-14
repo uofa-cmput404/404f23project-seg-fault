@@ -15,6 +15,9 @@ import uuid
 
 root_url = "http://127.0.0.1:8000/api"
 
+#TODO: ensure unique usernames when registering
+#TODO: when post request to change author, 
+
 class UserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
