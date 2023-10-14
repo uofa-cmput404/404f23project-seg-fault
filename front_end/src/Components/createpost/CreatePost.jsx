@@ -32,7 +32,7 @@ const VisuallyHiddenInput = styled('input')({
 export default function CreatePost(props) {
   const [image, setImage] = React.useState(null);
   const [imageLink, setImageLink] = React.useState('');
-  const [selectedPostType, setSelectedPostType] = React.useState(null); // Initialize with a default value
+  const [selectedPostType, setSelectedPostType] = React.useState(null);
 
   const handlePostTypeChange = (event) => {
     const value = event.target.value;
@@ -74,11 +74,11 @@ export default function CreatePost(props) {
           </Typography>
           <Box className="userBox">
               <Avatar
-                  src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                  sx={{ width: 30, height: 30 }}
+                  src="https://i.imgur.com/ULC0KUq.jpeg"
+                  sx={{ width: 40, height: 40 }}
               />
               <Typography fontWeight={500} variant="span">
-                  Selena Gomez
+                  Harry Styles
               </Typography>
           </Box>
           <TextField
