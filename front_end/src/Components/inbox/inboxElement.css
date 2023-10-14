@@ -21,22 +21,3 @@
   font-size: 16px;
   color: white;
 }
-
-.actionButton {
-  padding: 4px 8px;
-  font-size: 14px;
-  text-transform: none;
-  border-radius: 12px;
-}
-
-.acceptButton {
-  background-color: #8ac926;
-}
-
-.declineButton {
-  background-color: #ff595e;
-}
-
-.viewButton {
-  background-color: #1982c4;
-}

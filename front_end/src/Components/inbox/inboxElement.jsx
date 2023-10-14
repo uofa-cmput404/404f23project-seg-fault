@@ -6,7 +6,8 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
-import Button from '@mui/material/Button';
+import ButtonBase from '@mui/material/ButtonBase';
+
 import './inboxElement.css'
 
 
@@ -31,20 +32,26 @@ function InboxElement(props) {
     if (props.visibility === 'friend_request') {
       return (
         <div className="actionButtons">
-          <Button
-            variant="contained"
-            onClick={handleAccept}
-            className="actionButton acceptButton"
-          >
-            Accept
-          </Button>
-          <Button
-            variant="contained"
-            onClick={handleDecline}
-            className="actionButton declineButton"
-          >
-            Decline
-          </Button>
+          <ButtonBase onClick={handleAccept}>
+            <Chip
+              label="Accept"
+              size="small"
+              className='postVisibility'
+              sx={{ paddingRight: 2, marginTop: 1.5 }}
+              color="primary"
+              style={{ backgroundColor: "#8ac926", color: '#fff' }}
+            />
+          </ButtonBase>
+          <ButtonBase onClick={handleDecline}>
+            <Chip
+              label="Decline"
+              size="small"
+              className='postVisibility'
+              sx={{ paddingRight: 2, marginTop: 1.5 }}
+              color="primary"
+              style={{ backgroundColor: "#ff595e", color: '#fff' }}
+            />
+          </ButtonBase>
         </div>
       );
     } 
@@ -52,14 +59,16 @@ function InboxElement(props) {
     if (props.visibility === 'like_notification' || props.visibility === 'comment_notification' || props.visibility === 'private') {
       return (
         <div className="actionButtons">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleView}
-            className="actionButton viewButton"
-          >
-            View
-          </Button>
+          <ButtonBase onClick={handleView}>
+            <Chip
+              label="View"
+              size="small"
+              className='postVisibility'
+              sx={{ paddingRight: 2, marginTop: 1.5 }}
+              color="primary"
+              style={{ backgroundColor: "#1982c4", color: '#fff' }}
+            />
+          </ButtonBase>
         </div>
       );
     }
