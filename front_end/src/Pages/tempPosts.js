@@ -1,4 +1,3 @@
-import Dog from '../Images/dog.png'
 import Profile from '../Images/profile.png'
 
 export const tempPosts = [
