@@ -18,13 +18,19 @@ import TextField from '@mui/material/TextField';
 import Comment from '../comment/Comment';
 import './Post.css'
 import PostMenu from '../postMenu/PostMenu';
+import Share from '../share/Share';
 
 export default function Post(props) {
   const [expandComments, setExpandedComments] = React.useState(false);
   const [liked, setLiked] = React.useState(false)
+  const [share, setShare] = React.useState(false)
 
   const handleLike = () => {
-      setLiked((prev) => !prev)
+    setLiked((prev) => !prev)
+  }
+
+  const handleShare = () => {
+    setShare((prev) => !prev)
   }
 
   const handleExpandClick = () => {
@@ -38,11 +44,12 @@ export default function Post(props) {
   };
 
   return (
-    <Card sx={{maxWidth: 600, padding: 1, margin: 3}}>
+    <>
+    <Card sx={{width: 600, padding: 1, margin: 3}}>
       <CardHeader
         avatar={
         <Avatar
-            src={props.profilePic}
+            src={props.profileImage}
             alt={""}
             sx={{
               width: 45,
@@ -52,16 +59,21 @@ export default function Post(props) {
         action={
           <PostMenu />
         }
-        title={props.username}
+        title={props.displayName}
       />
       <Stack direction="column" spacing={2}>
-        <Typography className="postText" variant="body2">
-               {props.text}
+        <Typography className="title" variant="body2">
+               {props.title}
         </Typography>
-        {props.photo && 
+        {props.contentType === 'text' &&
+        <Typography className="postText" variant="body2">
+               {props.content}
+        </Typography>
+        }
+        {props.contentType === 'image' && 
             <CardMedia
                 component="img"
-                image={props.photo}
+                image={props.content}
                 alt="postImage"
             />
         }
@@ -75,7 +87,7 @@ export default function Post(props) {
           <CommentIcon onClick={handleExpandClick} />
         </IconButton>
         <IconButton aria-label="share">
-          <SendIcon />
+          <SendIcon onClick = {handleShare}/>
         </IconButton>
         </div>
         <Chip 
@@ -87,7 +99,7 @@ export default function Post(props) {
       </CardActions>
       <CardActions >
         <Button onClick={handleExpandClick} className="openCommentsButton" size="small">
-          {expandComments ? 'Hide Comments' : 'View Comments'}
+          {expandComments ? 'Hide Comments' : `View ${props.count} Comments`}
         </Button>
       </CardActions>
       <Collapse in={expandComments} timeout="auto" unmountOnExit>
@@ -104,5 +116,7 @@ export default function Post(props) {
         </CardContent>
       </Collapse>
     </Card>
+    <Share open={share} onClose={handleShare}/>
+    </>
   );
 }

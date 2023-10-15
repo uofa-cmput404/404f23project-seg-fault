@@ -31,16 +31,29 @@ const VisuallyHiddenInput = styled('input')({
 
 export default function CreatePost(props) {
   const [image, setImage] = React.useState(null);
+  const [imageLink, setImageLink] = React.useState('');
+  const [selectedPostType, setSelectedPostType] = React.useState(null);
 
-  const onImageChange =(event)=>{
-    if (event.target.files && event.target.files[0]){
+  const handlePostTypeChange = (event) => {
+    const value = event.target.value;
+    setSelectedPostType(value);
+    if (value === "Text") {
+      setImage(null);
+    }
+  };
+
+  const onImageChange =(event, type)=>{
+    if (type === 'input' && event.target.files && event.target.files[0]){
         const img = event.target.files[0];
-        setImage(img);
+        setImage(URL.createObjectURL(img));
+    } else {
+        setImage(imageLink);
     }
   }
 
   const reset = () => {
     setImage(null);
+    setSelectedPostType(null);
   }
 
   return (
@@ -61,29 +74,74 @@ export default function CreatePost(props) {
           </Typography>
           <Box className="userBox">
               <Avatar
-                  src="https://images.pexels.com/photos/846741/pexels-photo-846741.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
-                  sx={{ width: 30, height: 30 }}
+                  src="https://i.imgur.com/ULC0KUq.jpeg"
+                  sx={{ width: 40, height: 40 }}
               />
               <Typography fontWeight={500} variant="span">
-                  Selena Gomez
+                  Harry Styles
               </Typography>
           </Box>
           <TextField
             sx={{ width: "100%" }}
             id="standard-multiline-static"
-            multiline
-            rows={1}
-            placeholder="What's on your mind?"
+            placeholder="Enter the title of your post here"
             variant="standard"
           />
-          <Button component="label" variant="contained" startIcon={<ImageIcon />}>
-            Upload Photo
-            <VisuallyHiddenInput type="file" onChange = {onImageChange}/>
-          </Button>
+          <FormControl className='postType'>
+            <Typography fontWeight={500} variant="span" style={{padding:'1rem'}}>
+              Post Type: 
+            </Typography>
+            <RadioGroup
+              row
+              aria-labelledby="demo-row-radio-buttons-group-label"
+              name="row-radio-buttons-group"
+              onChange={handlePostTypeChange}
+            >
+              <FormControlLabel value="Text" control={<Radio />} label="Text" />
+              <FormControlLabel value="Image" control={<Radio />} label="Image" />
+            </RadioGroup>
+          </FormControl>
+          {(selectedPostType === "Text" || !selectedPostType)&& 
+              <TextField
+              sx={{ width: "100%" }}
+              id="standard-multiline-static"
+              multiline
+              rows={1}
+              placeholder="What's on your mind?"
+              variant="standard"
+            />
+          }
+          {selectedPostType === "Image" &&
+          <div className='photoUpload'>
+            <Button 
+              component="label" 
+              variant="contained" 
+              startIcon={<ImageIcon />}>
+              Upload Photo
+            <VisuallyHiddenInput type="file" onChange = {(event)=>onImageChange(event,'input')}/>
+            </Button>
+            <Typography>or</Typography>
+            <div className='imageLink'>
+            <TextField
+            sx={{ width: "70%" }}
+            placeholder="Paste image link here"
+            variant="standard"
+            onChange={(event)=>setImageLink(event.target.value)}
+            />
+            <Button 
+              component="label" 
+              variant="contained" 
+              style={{width:'30%', fontSize:'11px'}}
+              onClick={(event)=>onImageChange(event,'link')}>
+              submit
+            </Button>
+            </div>
+          </div>      
+          }
           {image && (
             <Box p={2} style={{ display: 'flex', justifyContent: 'center' }}>
               <img
-                src={URL.createObjectURL(image)}
+                src={image}
                 alt="Selected"
                 style={{ maxWidth: '60%', maxHeight:'30%', margin: '0 auto' }}
               />
