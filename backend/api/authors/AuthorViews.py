@@ -67,7 +67,9 @@ class UserLoginView(generics.CreateAPIView):
         if user and user.check_password(password):
             # If the user exists and the password is correct, create or retrieve a token
             token, created = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_200_OK)
+            author = Author.objects.get(user=user)
+            author_serializer = AuthorSerializer(author)
+            return Response({'token': token.key, 'author': author_serializer.data}, status=status.HTTP_200_OK)
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
