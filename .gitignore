@@ -1,1 +1,59 @@
+# Byte-compiled / optimized Python files
+__pycache__/
+*.pyc
+
+# Django development settings
+*.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+
+# Database
+*.sqlite3
+
+# Static files (usually collected by Django's collectstatic)
+/static/
+
+# Media files (usually user-uploaded content)
+/media/
+
+# Secret key
+*.key
+
+# Environment variables (if using .env files for configuration)
+.env
+
+# Compiled Python files
+*.pyc
+
+# Debugging logs
+logs/
+*.log
+
+# Mac OS and Windows system files
+.DS_Store
+Thumbs.db
+
+# Editor-specific files
+.vscode/
+.idea/
+*.swp
+
+# Dependency directories
 venv/
+env/
+env36/
+env37/
+env38/
+env39/
+
+# Ignore pipenv or poetry lock files
+Pipfile
+Pipfile.lock
+pyproject.toml
+poetry.lock
+
+# Ignore node_modules directory
+node_modules/
+
