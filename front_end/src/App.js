@@ -4,7 +4,9 @@ import Sidebar from './Components/Sidebar';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './Pages/Home';
 import Friends from './Pages/Friends';
-import Profile from './Pages/Profile';
+import UserProfile from './Components/profile/user_profile/UserProfile';
+import AnotherUserProfile from './Components/profile/another_user_profile/AnotherUserProfile.jsx';
+
 import Inbox from './Pages/Inbox';
 
 function App() {
@@ -19,7 +21,8 @@ function App() {
             <Route path="/" exact element={<Home />} />
             <Route path="/inbox" element={<Inbox />} />
             <Route path="/friends" element={<Friends />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/my-profile" element={<UserProfile />} />
+            <Route path="/profile/1" element={<AnotherUserProfile />} />
           </Routes>
         </div>
       </Router>
