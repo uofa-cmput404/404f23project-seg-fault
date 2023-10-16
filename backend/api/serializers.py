@@ -8,8 +8,17 @@ from .authors.serializers import AuthorSerializer, UserSerializer
 
 
 
-class FollowingSerializer(serializers.ModelSerializer):
-    user = AuthorSerializer()
+class FollowerListSerializer(serializers.ModelSerializer):
+    follower = AuthorSerializer()
+    
     class Meta:
         model = AuthorFollower
-        fields = ('user')
+        fields = ('follower',)
+
+class FollowingListSerializer(serializers.ModelSerializer):
+    user = AuthorSerializer()
+    
+    class Meta:
+        model = AuthorFollower
+        fields = ('user',)
+

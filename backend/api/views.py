@@ -1,7 +1,8 @@
+from django.shortcuts import get_object_or_404
 ### models
 from .models import Author, AuthorFollower
 ### serializers
-from .serializers import UserSerializer, AuthorSerializer
+from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer
 from django.contrib.auth.models import User
 ##### user auth
 from rest_framework import generics, views, permissions, status
@@ -47,3 +48,20 @@ class UnfollowAuthorView(views.APIView):
 
         return Response({'message': 'Unfollowed successfully.'}, status=status.HTTP_200_OK)
 
+class FollowersListView(generics.ListAPIView):
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+    serializer_class = FollowerListSerializer
+    
+    def get_queryset(self):
+        author_id = self.kwargs['author_id']
+        return AuthorFollower.objects.filter(user__id=author_id)
+
+class FollowingListView(generics.ListAPIView):
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+    serializer_class = FollowingListSerializer
+    
+    def get_queryset(self):
+        author_id = self.kwargs['author_id']
+        return AuthorFollower.objects.filter(follower__id=author_id)
