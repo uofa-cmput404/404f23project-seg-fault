@@ -5,16 +5,23 @@
 # post_router = DefaultRouter()
 # post_router.register('posts', PostViewSet)
 from django.urls import path
-from . import views
-from .views import UserRegistrationView, UserLoginView, FollowAuthorView, UnfollowAuthorView
+
+# from authors sub directory get the views
+from .authors.AuthorViews import UserLoginView, UserRegistrationView, AuthorListView, AuthorDetailView
+# from posts sub directory get the views
+from .posts.PostsViews import PostListView
+
+from .views import FollowAuthorView, UnfollowAuthorView
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
     path('login/', UserLoginView.as_view(), name='user-login'),
-    path('authors/', views.AuthorListView.as_view(), name="author-list"),
+    path('authors/', AuthorListView.as_view(), name="author-list"),
     path('authors/follow/', FollowAuthorView.as_view(), name='follow-author'),
     path('authors/unfollow/', UnfollowAuthorView.as_view(), name='unfollow-author'),
     path('authors/<str:author_id>/followers/', views.FollowersListView.as_view(), name="author-followers-list"),
     path('authors/<str:author_id>/following/', views.FollowingListView.as_view(), name="author-following-list"),
-    # Add more URLs for other authentication-related actions if needed
+    path('authors/<str:author_id>/', AuthorDetailView.as_view(), name='author-detail'),
+    ## urls for posts:
+    path('authors/<str:author_id>/posts/', PostListView.as_view(), name='post-list'),
 ]
