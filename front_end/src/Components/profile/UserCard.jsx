@@ -6,8 +6,26 @@ import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
+import testImage from '../../Images/profile.png';
+import EditIcon from '@mui/icons-material/Edit';
 
-export default function UserCard({name}) {
+// Todo: remove testName afterwards
+export default function UserCard({name, imagePath=testImage, isOwner}) {
+    const testName = "Selena";
+    const menuTemplate = isOwner ? (
+        <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
+            <Button variant="outlined" color="neutral">
+                Post to {name || testName}
+            </Button>
+            <Button variant="solid" color="primary">
+                Follow
+            </Button>
+        </Box>) : (
+        <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
+            <Button variant='outlined' color='primary' startIcon={<EditIcon />}>
+              Edit
+            </Button>
+        </Box>);
   return (
     <Box
       sx={{
@@ -27,7 +45,6 @@ export default function UserCard({name}) {
           bottom: '-24px',
           '&::before': {
             top: '4px',
-            content: '"vertical"',
             display: 'block',
             position: 'absolute',
             right: '0.5rem',
@@ -37,7 +54,6 @@ export default function UserCard({name}) {
           },
           '&::after': {
             top: '4px',
-            content: '"horizontal"',
             display: 'block',
             position: 'absolute',
             left: '0.5rem',
@@ -57,15 +73,13 @@ export default function UserCard({name}) {
             minWidth:
               'clamp(0px, (calc(var(--stack-point) - 2 * var(--Card-padding) - 2 * var(--variant-borderWidth, 0px)) + 1px - 100%) * 999, 100%)',
           },
-          // make the card resizable for demo
           overflow: 'auto',
           resize: 'horizontal',
         }}
       >
         <AspectRatio flex ratio="1" maxHeight={182} sx={{ minWidth: 182 }}>
           <img
-            src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286"
-            srcSet="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286&dpr=2 2x"
+            src={imagePath}
             loading="lazy"
             alt=""
           />
@@ -77,6 +91,7 @@ export default function UserCard({name}) {
           <Typography level="body-sm" fontWeight="lg" textColor="text.tertiary">
             @selena
           </Typography>
+          {menuTemplate}
           <Sheet
             sx={{
               bgcolor: 'background.level1',
@@ -107,14 +122,6 @@ export default function UserCard({name}) {
               <Typography fontWeight="lg">12</Typography>
             </div>
           </Sheet>
-          <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
-            <Button variant="outlined" color="neutral">
-              Post to {name || "Selena"}
-            </Button>
-            <Button variant="solid" color="primary">
-              Follow
-            </Button>
-          </Box>
         </CardContent>
       </Card>
     </Box>
