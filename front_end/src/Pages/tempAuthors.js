@@ -16,4 +16,19 @@ export const tempAuthors = [
       profile: Profile,
       status: 'friends' 
     },
+    {
+      name: 'Selena Gomez',
+      profile: Profile,
+      status: 'followable'  
+    },
+    {
+      name: 'Selena Gomez',
+      profile: Profile,
+      status: 'pending'  
+    },
+    {
+      name: 'Selena Gomez',
+      profile: Profile,
+      status: 'friends' 
+    },
   ];

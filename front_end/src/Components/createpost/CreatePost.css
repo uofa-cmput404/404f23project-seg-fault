@@ -27,3 +27,21 @@
     padding: 2rem;
     overflow-y: auto;
 }
+
+.postType{
+    display: flex;
+    flex-direction: row !important;
+}
+
+.photoUpload{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.imageLink {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
