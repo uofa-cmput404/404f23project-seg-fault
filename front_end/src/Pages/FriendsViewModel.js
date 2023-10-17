@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
+import { StoreContext } from './../store';
 
 const useFriendsViewModel = () => {
-  const storedUser = JSON.parse(localStorage.getItem('user'));
-  const userId = storedUser.id;
+  const { state } = useContext(StoreContext);
+  const userId = state.user.id;
 
   const [authors, setAuthors] = useState([]);
 
@@ -35,9 +36,9 @@ const useFriendsViewModel = () => {
     const response = await axios.post('http://127.0.0.1:8000/api/authors/unfollow/', { user_id: userId, author_id_to_follow: authorId });
     
     if (response.status === 200) {
-      console.error('Followed');
+      console.error('Unfollowed');
     } else {
-      console.error('Error following author');
+      console.error('Error unfollowing author');
     }
   };
 

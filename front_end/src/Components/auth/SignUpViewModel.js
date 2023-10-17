@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useStore } from './../../store';
 
 const useSignUpViewModel = (navigate) => {
+  const { dispatch } = useStore();
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -14,14 +17,14 @@ const useSignUpViewModel = (navigate) => {
     const response = await axios.post('http://127.0.0.1:8000/api/register/', formData);
 
     if (response.status === 201) {
-      localStorage.setItem('token', response.data.token);
+      dispatch({ type: 'SET_TOKEN', payload: response.data.token });
 
       const user = {
         username: response.data.author.displayName,
         profileImage: response.data.author.profileImage,
         gitHub: response.data.author.gitHub,
       };
-      localStorage.setItem('user', JSON.stringify(user));
+      dispatch({ type: 'SET_USER', payload: user });
 
       setFormData({
         username: '',

@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useStore } from './../../store';
 
 const useSignInViewModel = (navigate) => {
+  const { dispatch } = useStore();
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -13,7 +16,7 @@ const useSignInViewModel = (navigate) => {
     const response = await axios.post('http://127.0.0.1:8000/api/login/', formData);
 
     if (response.status === 200) {
-      localStorage.setItem('token', response.data.token);
+      dispatch({ type: 'SET_TOKEN', payload: response.data.token });
 
       const user = {
         id: response.data.author.id,
@@ -21,8 +24,8 @@ const useSignInViewModel = (navigate) => {
         profileImage: response.data.author.profileImage,
         gitHub: response.data.author.gitHub,
       };
-      localStorage.setItem('user', JSON.stringify(user));
-
+      dispatch({ type: 'SET_USER', payload: user });
+      
       setFormData({
         username: '',
         password: '',
