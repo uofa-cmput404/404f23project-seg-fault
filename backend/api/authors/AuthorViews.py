@@ -49,8 +49,9 @@ class UserRegistrationView(generics.CreateAPIView):
             new_author.host = author_host
             new_author.save()
 
+            author_serializer = AuthorSerializer(new_author)
 
-            return Response({'message': 'User registered successfully.'}, status=status.HTTP_201_CREATED)
+            return Response({'message': 'User registered successfully.', 'author': author_serializer.data}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
