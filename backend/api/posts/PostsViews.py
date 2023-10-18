@@ -1,17 +1,20 @@
 ### models and serializers
 from .. models import Author, AuthorFollower, Post
 from ..authors.serializers import UserSerializer, AuthorSerializer, AuthorDetailSerializer
-from .serializers import PostSerializer, POST_PostSerializer
+from .serializers import PostSerializer, PostCreateSerializer, PostUpdateSerializer
 from django.contrib.auth.models import User
 ##### user auth
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
 ##### views
 from rest_framework import generics, views, permissions, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
+## from django
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
 import uuid
 
 root_url = "http://127.0.0.1:8000/api"
@@ -30,7 +33,7 @@ class PostListView(generics.ListCreateAPIView):
 
     def get_serializer_class(self):
         if self.request.method == 'POST':
-            return POST_PostSerializer
+            return PostCreateSerializer
         return PostSerializer
 
     def get_author(self):
@@ -56,21 +59,52 @@ class PostListView(generics.ListCreateAPIView):
         if serializer.is_valid():
             instance = serializer.save()
             ## add the additional fields to the object
-            ## need to set author, id, source, origin
+            ## need to set author, source, origin
             author = self.get_author()
             instance.author = author
             instance.save()
 
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"data": serializer.data, "id": serializer.get_id(instance)}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def head(self, request, *args, **kwargs):
+        return HttpResponse(status=status.HTTP_200_OK, allow="GET, POST, HEAD, OPTIONS")
 
-# class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializer
-#     permission_classes = [permissions.IsAuthenticated]
+class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    lookup_field = 'post_id'
+    # permission_classes = [permissions.IsAuthenticated]
 
-#     def get_object(self):
-#         post_id = self.kwargs['POST_ID']
-#         author_id = self.kwargs['AUTHOR_ID']
-#         return get_object_or_404(Post, id=f'http://service/authors/{author_id}/posts/{post_id}')
+    def get_object(self):
+        post_id_hex = self.kwargs['post_id']
+        try:
+            post_id = uuid.UUID(post_id_hex)
+            return get_object_or_404(Post, id=post_id)
+        except ValueError:
+            raise ValueError("Invalid hexadecimal post_id")
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return PostCreateSerializer
+        elif self.request.method == 'PUT':
+            return PostUpdateSerializer
+        return super().get_serializer_class()
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, *args, **kwargs):
+        instance = self.get_object()
+        # Check if the request user is the author of the post (authentication check)
+        # if instance.author != self.request.user:
+        #     raise PermissionDenied("You don't have permission to delete this post.")
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
