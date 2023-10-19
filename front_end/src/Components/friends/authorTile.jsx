@@ -22,8 +22,8 @@ function AuthorTile(props) {
   const chipColor = chipColors[props.status] || '#000';
 
   const handleClick = () => {
+    props.authorAction(props.id);
   };
-
   return (
     <Card className="card">
       <CardHeader

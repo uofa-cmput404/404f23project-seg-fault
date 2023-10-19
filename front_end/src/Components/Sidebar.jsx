@@ -4,8 +4,16 @@ import * as AiIcons from 'react-icons/ai';
 import { SidebarItems } from './SidebarItems';
 import './Sidebar.css';
 import { IconContext } from 'react-icons';
+import { useStore } from './../store';
+
 
 function Sidebar() {
+  const { dispatch } = useStore();
+
+  const handleLogout = () => {
+    dispatch({ type: 'RESET_APPSTATE' });
+  }
+
   return (
     <div>
       <IconContext.Provider value={{ color: '#ffffff' }}>
@@ -25,6 +33,12 @@ function Sidebar() {
                 </li>
               );
             })}
+            <li className='side-bar-text'>
+                  <Link to='/signin' onClick={handleLogout}>
+                    {<AiIcons.AiOutlineDoubleLeft />}
+                    <span>Logout</span>
+                  </Link>
+                </li>
           </ul>
         </nav>
       </IconContext.Provider>
