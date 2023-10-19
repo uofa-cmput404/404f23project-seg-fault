@@ -4,7 +4,7 @@ import * as AiIcons from 'react-icons/ai';
 export const SidebarItems = [
   {
     title: 'Home',
-    path: '/',
+    path: '/home',
     icon: <AiIcons.AiOutlineHome />,
     cName: 'side-bar-text'
   },
