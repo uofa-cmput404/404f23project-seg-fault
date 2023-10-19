@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext } from 'react';
+import React, { createContext, useReducer, useContext, useEffect } from 'react';
 
 const initialState = {
   user: null,
@@ -7,30 +7,36 @@ const initialState = {
 
 export const StoreContext = createContext();
 
-// Reducer function to handle state updates
 const storeReducer = (state, action) => {
   switch (action.type) {
     case 'SET_USER':
       return { ...state, user: action.payload };
     case 'SET_TOKEN':
       return { ...state, token: action.payload };
+    case 'RESET_APPSTATE':
+      localStorage.removeItem('appState')
+      return initialState;
     default:
       return state;
   }
 };
 
 const StoreProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(storeReducer, initialState);
+  const storedState = JSON.parse(localStorage.getItem('appState')) || initialState;
+  
+  const [state, dispatch] = useReducer(storeReducer, storedState);
+
+  useEffect(() => {
+    localStorage.setItem('appState', JSON.stringify(state));
+  }, [state]);
 
   return (
-    // Provides the state and dispatchs functions through the StoreContext, wraps the entire app
     <StoreContext.Provider value={{ state, dispatch }}>
       {children}
     </StoreContext.Provider>
   );
 };
 
-// Hook for accessing the store's state and dispatch functions
 const useStore = () => {
   const context = useContext(StoreContext);
   if (context === undefined) {
