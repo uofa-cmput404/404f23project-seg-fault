@@ -20,6 +20,40 @@ import './Post.css'
 import PostMenu from '../postMenu/PostMenu';
 import Share from '../share/Share';
 
+function isImageUrl(url) {
+  return /\.(jpeg|jpg|gif|png|bmp)$/.test(url);
+}
+
+function PostDisplay({ content, contentType }) {
+  if (contentType === 'text/plain') {
+    if (isImageUrl(content)) {
+      return (            
+        <CardMedia
+          component="img"
+          image={content}
+          alt="postImage"
+        />);
+    } else {
+      return (        
+        <Typography className="postText" variant="body2">
+        {content}
+        </Typography>);
+    }
+
+  }  else if (contentType.startsWith('image/')) {
+      //possibly need to decode images when we connect with other teams add the content type before the image
+      return (            
+        <CardMedia
+          component="img"
+          image={content}
+          alt="postImage"
+        />);
+
+  } else {
+    return <p>Unsupported content type: {contentType}</p>;
+  }
+}
+
 export default function Post(props) {
   const [expandComments, setExpandedComments] = React.useState(false);
   const [liked, setLiked] = React.useState(false)
@@ -65,18 +99,7 @@ export default function Post(props) {
         <Typography className="title" variant="body2">
                {props.title}
         </Typography>
-        {props.contentType === 'text' &&
-        <Typography className="postText" variant="body2">
-               {props.content}
-        </Typography>
-        }
-        {props.contentType === 'image' && 
-            <CardMedia
-                component="img"
-                image={props.content}
-                alt="postImage"
-            />
-        }
+        <PostDisplay content={props.content} contentType={props.contentType}/>
       </Stack>
       <CardActions disableSpacing>
         <div>
