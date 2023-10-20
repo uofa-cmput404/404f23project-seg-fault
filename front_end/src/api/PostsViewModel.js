@@ -13,14 +13,18 @@ const usePostsViewModel = () => {
     },);
   
     const fetchPosts = async () => {
-      const response = await axios.get(`${userId}/posts/`);
+    try {
+        const response = await axios.get(`${userId}/posts/`);
   
-      if (response.status === 200) {
-        const data = response.data.reverse()
-        setPosts(data);
-      } else {
-        console.error('Error fetching authors');
-      }
+        if (response.status === 200) {
+          const data = response.data.reverse()
+          setPosts(data);
+        } else {
+          console.error('Error fetching authors');
+        }
+    } catch {
+        console.log('cant fetch posts')
+    }
     };
   
     const createPost = async (title, description, contentType, content, visibility) => {

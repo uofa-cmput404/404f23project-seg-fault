@@ -40,7 +40,7 @@ function PostDisplay({ content, contentType }) {
         </Typography>);
     }
 
-  }  else if (contentType.startsWith('image/')) {
+  }  else if (contentType.startsWith('image')) {
       //possibly need to decode images when we connect with other teams add the content type before the image
       return (            
         <CardMedia
