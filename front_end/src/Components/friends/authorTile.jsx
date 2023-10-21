@@ -7,19 +7,21 @@ import ButtonBase from '@mui/material/ButtonBase';
 
 function AuthorTile(props) {
 
-  const chipLabels = {
-    friends: 'Friends',
-    followable: 'Follow',
-    pending: 'Following',
-  };
+    const chipLabels = {
+        follow: 'Follow',
+        unfollow: 'Unfollow',
+        follower: 'Following you!',
+        friend: 'Friends',
+    };
 
-  const chipColors = {
-    friends: '#8338ec',
-    followable: '#3a86ff',
-    pending: '#ff006e',
-  };
+    const chipColors = {
+        follow: '#3a86ff',
+        unfollow: '#3a86ff',
+        follower: '#3a86ff',
+        friend: '#8338ec',
+    };
 
-  const chipColor = chipColors[props.status] || '#000';
+    const chipColor = chipColors[props.status] || '#000';
 
   const handleClick = () => {
     props.authorAction(props.id);

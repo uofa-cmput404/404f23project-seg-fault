@@ -18,10 +18,14 @@ root_url = "http://127.0.0.1:8000"
 class FollowAuthorView(views.APIView):
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
-    
+
     def post(self, request):
         user_id = request.data.get('user_id')
         author_id_to_follow = request.data.get('author_id_to_follow')
+
+        # Extracting the GUID from the user IDs
+        user_id = user_id.rsplit('/', 1)[-1]
+        author_id_to_follow = author_id_to_follow.rsplit('/', 1)[-1]
 
         user = get_object_or_404(Author, id=user_id)
         user_to_follow = get_object_or_404(Author, id=author_id_to_follow)
@@ -35,10 +39,14 @@ class FollowAuthorView(views.APIView):
 class UnfollowAuthorView(views.APIView):
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
-    
+
     def post(self, request):
         user_id = request.data.get('user_id')
         author_id_to_unfollow = request.data.get('author_id_to_unfollow')
+
+        # Extracting the GUID from the user IDs
+        user_id = user_id.rsplit('/', 1)[-1]
+        author_id_to_unfollow = author_id_to_unfollow.rsplit('/', 1)[-1]
 
         user = get_object_or_404(Author, id=user_id)
         user_to_unfollow = get_object_or_404(Author, id=author_id_to_unfollow)
@@ -52,7 +60,7 @@ class FollowersListView(generics.ListAPIView):
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
     serializer_class = FollowerListSerializer
-    
+
     def get_queryset(self):
         author_id = self.kwargs['author_id']
         return AuthorFollower.objects.filter(user__id=author_id)
@@ -61,7 +69,7 @@ class FollowingListView(generics.ListAPIView):
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
     serializer_class = FollowingListSerializer
-    
+
     def get_queryset(self):
         author_id = self.kwargs['author_id']
         return AuthorFollower.objects.filter(follower__id=author_id)

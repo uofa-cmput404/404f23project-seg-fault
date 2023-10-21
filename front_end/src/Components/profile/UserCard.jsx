@@ -26,6 +26,7 @@ export default function UserCard({name, imagePath=testImage, isOwner}) {
               Edit
             </Button>
         </Box>);
+
   return (
     <Box
       sx={{
