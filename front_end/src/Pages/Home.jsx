@@ -2,7 +2,6 @@ import React from 'react';
 import { Box, Stack, Skeleton } from "@mui/material";
 import Post from '../Components/post/Post';
 import { useState } from "react";
-import { tempPosts } from './tempPosts';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -10,10 +9,12 @@ import Container from '@mui/material/Container';
 import CreatePost from '../Components/createpost/CreatePost';
 import HomeIcon from '@mui/icons-material/Home';
 import Button from '@mui/material/Button';
+import usePostsViewModel from '../api/PostsViewModel'
 
 function Home() {
   const [loading, setLoading] = useState(true);
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+  const {posts} = usePostsViewModel();
 
   const openCreateModal = () => {
     setIsCreateModalOpen(true);
@@ -67,11 +68,11 @@ function Home() {
         </Stack>
       ) : (
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        {tempPosts.map((post, index) =>{
+        {posts.map((post, index) =>{
           return (
             <Post 
-              displayName={post.displayName} 
-              profileImage={post.profileImage}
+              displayName={post.author.displayName} 
+              profileImage={post.author.profileImage}
               title={post.title}
               contentType={post.contentType}
               content={post.content}
