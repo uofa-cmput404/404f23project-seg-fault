@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useCallback } from 'react';
 import axios from 'axios';
 import { StoreContext } from './../store';
 
@@ -8,13 +8,9 @@ const useProfileViewModel = () => {
   
     const [profileData, setProfile] = useState([]);
     const [posts, setPosts] = useState([]);
+
   
-    useEffect(() => {
-      fetchUserData();
-      fetchPosts();
-    },);
-  
-    const fetchPosts = async () => {
+    const fetchPosts = useCallback(async () => {
     try {
         const response = await axios.get(`${userId}/posts/`);
   
@@ -27,9 +23,9 @@ const useProfileViewModel = () => {
     } catch {
         console.log('cant fetch posts')
     }
-    };
+    }, [userId]);
 
-    const fetchUserData = async () => {
+    const fetchUserData = useCallback(async () => {
         try {
             const response = await axios.get(userId);
       
@@ -41,7 +37,7 @@ const useProfileViewModel = () => {
         } catch {
             console.log('cant fetch posts')
         }
-    };
+    }, [userId]);
   
     const createPost = async (title, description, contentType, content, visibility) => {
       const body = {
@@ -65,6 +61,11 @@ const useProfileViewModel = () => {
     const updateProfile = async() => {
 
     }
+
+    useEffect(() => {
+      fetchUserData();
+      fetchPosts();
+    }, [fetchPosts, fetchUserData]);
 
   
     return {
