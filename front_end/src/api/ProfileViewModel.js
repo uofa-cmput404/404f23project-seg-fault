@@ -72,7 +72,6 @@ const useProfileViewModel = () => {
       followers,
       fetchFollowers,
       fetchPosts,
-      createPost,
       fetchUserData,
       updateProfile,
     };
