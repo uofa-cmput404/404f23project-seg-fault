@@ -54,25 +54,6 @@ const useProfileViewModel = () => {
             console.log('cant fetch data')
         }
     }, [userId]);
-  
-    const createPost = async (title, description, contentType, content, visibility) => {
-      const body = {
-        "title": title,
-        "description": description,
-        "contentType": contentType,
-        "content": content,
-        "published": null,
-        "visibility": visibility,
-        "unlisted": false
-      }
-      const response = await axios.post(`${userId}/posts/`, body);
-      
-      if (response.status === 200) {
-        console.error('Followed');
-      } else {
-        console.error('Error following author');
-      }
-    };
 
     const updateProfile = async() => {
 
