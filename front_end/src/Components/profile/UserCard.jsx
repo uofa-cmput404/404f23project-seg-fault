@@ -6,9 +6,8 @@ import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
-import EditIcon from '@mui/icons-material/Edit';
 
-export default function UserCard({name, username, imagePath, isOwner}) {
+export default function UserCard({name, username, imagePath, isOwner, followersCount, postsCount}) {
     const menuTemplate = !isOwner ? (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
             <Button variant="outlined" color="neutral">
@@ -19,7 +18,7 @@ export default function UserCard({name, username, imagePath, isOwner}) {
             </Button>
         </Box>) : (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
-            <Button variant='outlined' color='primary' startIcon={<EditIcon />}>
+            <Button variant='outlined' color='primary'>
               Edit
             </Button>
         </Box>);
@@ -110,13 +109,13 @@ export default function UserCard({name, username, imagePath, isOwner}) {
               <Typography level="body-xs" fontWeight="lg">
                 Followers
               </Typography>
-              <Typography fontWeight="lg">980</Typography>
+              <Typography fontWeight="lg">{followersCount}</Typography>
             </div>
             <div>
               <Typography level="body-xs" fontWeight="lg">
                 Posts
               </Typography>
-              <Typography fontWeight="lg">12</Typography>
+              <Typography fontWeight="lg">{postsCount}</Typography>
             </div>
           </Sheet>
         </CardContent>

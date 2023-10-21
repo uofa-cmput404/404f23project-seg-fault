@@ -8,7 +8,7 @@ import useProfileViewModel from "../../api/ProfileViewModel";
 
 function ProfilePage({ isOwner = true }) {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const {posts, profileData} = useProfileViewModel();
+    const {posts, profileData, followers} = useProfileViewModel();
 
     const openCreateModal = () => {
         setIsCreateModalOpen(true);
@@ -20,7 +20,9 @@ function ProfilePage({ isOwner = true }) {
 
     return (
         <>
-            <UserCard isOwner={isOwner} 
+            <UserCard isOwner={isOwner}
+                      followersCount={followers.length}
+                      postsCount={posts.length} 
                       name={profileData.displayName} 
                       username={profileData.displayName} 
                       imagePath={profileData.profileImage} />
