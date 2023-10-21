@@ -9,7 +9,7 @@ import Sheet from '@mui/joy/Sheet';
 import EditIcon from '@mui/icons-material/Edit';
 
 export default function UserCard({name, username, imagePath, isOwner}) {
-    const menuTemplate = isOwner ? (
+    const menuTemplate = !isOwner ? (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
             <Button variant="outlined" color="neutral">
                 Post to {name}
