@@ -15,6 +15,7 @@ import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import ReactMarkdown from 'react-markdown';
 import Comment from '../comment/Comment';
 import './Post.css'
 import PostMenu from '../postMenu/PostMenu';
@@ -49,6 +50,12 @@ function PostDisplay({ content, contentType }) {
           alt="postImage"
         />);
 
+  } else if (contentType === 'text/markdown'){
+    return (
+    <ReactMarkdown 
+    className="postMarkdown">
+        {content}
+    </ReactMarkdown>)
   } else {
     return <p>Unsupported content type: {contentType}</p>;
   }

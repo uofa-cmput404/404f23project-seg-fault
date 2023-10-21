@@ -47,6 +47,9 @@ export default function CreatePost(props) {
     if (value === "Text") {
       setImage(null);
       setContentType('text/plain');
+    } else if (value === "Markdown"){
+      setImage(null);
+      setContentType('text/markdown');
     }
   };
 
@@ -132,6 +135,7 @@ export default function CreatePost(props) {
               onChange={handlePostTypeChange}
             >
               <FormControlLabel value="Text" control={<Radio />} label="Text" />
+              <FormControlLabel value="Markdown" control={<Radio />} label="Markdown" />
               <FormControlLabel value="Image" control={<Radio />} label="Image" />
             </RadioGroup>
           </FormControl>
@@ -142,6 +146,17 @@ export default function CreatePost(props) {
               multiline
               rows={1}
               placeholder="What's on your mind?"
+              variant="standard"
+              onChange={(event)=>setContent(event.target.value)}
+            />
+          }
+          {(selectedPostType === "Markdown")&& 
+              <TextField
+              sx={{ width: "100%" }}
+              id="standard-multiline-static"
+              multiline
+              rows={5}
+              placeholder="Enter markdown here"
               variant="standard"
               onChange={(event)=>setContent(event.target.value)}
             />
@@ -178,7 +193,7 @@ export default function CreatePost(props) {
               <img
                 src={image}
                 alt="Selected"
-                style={{ maxWidth: '60%', maxHeight:'30%', margin: '0 auto' }}
+                style={{ maxWidth: '80%', maxHeight:'50%', margin: '0 auto' }}
               />
             </Box>
           )}

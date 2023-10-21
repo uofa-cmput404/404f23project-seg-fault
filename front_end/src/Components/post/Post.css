@@ -11,6 +11,11 @@
     font-size: 16px !important; 
 }
 
+.postMarkdown {
+    text-align: left;
+    padding: 1rem;
+}
+
 .postText {
     text-align: left;
     padding-left: 1rem;

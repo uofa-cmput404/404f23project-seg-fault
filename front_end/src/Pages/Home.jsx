@@ -12,9 +12,8 @@ import Button from '@mui/material/Button';
 import usePostsViewModel from '../api/PostsViewModel'
 
 function Home() {
-  const [loading, setLoading] = useState(true);
-  const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
-  const {posts} = usePostsViewModel();
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const {loading, posts} = usePostsViewModel();
 
   const openCreateModal = () => {
     setIsCreateModalOpen(true);
@@ -24,9 +23,6 @@ function Home() {
     setIsCreateModalOpen(false);
   };
 
-  setTimeout(() => {
-    setLoading(false);
-  }, [200]);
 
   return (
     <Box px={{ md: 22 }} sx={{paddingTop: "10px"}}>
