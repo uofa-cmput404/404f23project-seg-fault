@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import UserCard from "./UserCard";
+import { tempPosts } from "../../Pages/tempPosts";
 import Post from "../post/Post";
 import { Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
@@ -27,16 +28,16 @@ function ProfilePage({ isOwner = true }) {
                       username={profileData.displayName} 
                       imagePath={profileData.profileImage} />
             <div>
-                {posts.map((post, index) => (
+                {tempPosts.map((post, index) => (
                     <Post
-                        displayName={post.displayName} 
-                        profileImage={post.profileImage}
-                        title={post.title}
-                        contentType={post.contentType}
-                        content={post.content}
-                        visibility={post.visibility}
-                        categories={post.categories}
-                        count={post.count} 
+                    displayName={post.displayName} 
+                    profileImage={post.profileImage}
+                    title={post.title}
+                    contentType={post.contentType}
+                    content={post.content}
+                    visibility={post.visibility}
+                    categories={post.categories}
+                    count={post.count} 
                     />
                 ))}
             </div>

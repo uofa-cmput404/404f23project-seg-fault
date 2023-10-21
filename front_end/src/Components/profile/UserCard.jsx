@@ -7,7 +7,7 @@ import CardContent from '@mui/joy/CardContent';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 
-export default function UserCard({name, username, imagePath, isOwner, followersCount, postsCount}) {
+export default function UserCard({name, imagePath, isOwner, followersCount, postsCount}) {
     const menuTemplate = !isOwner ? (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
             <Button variant="outlined" color="neutral">
@@ -82,10 +82,10 @@ export default function UserCard({name, username, imagePath, isOwner, followersC
         </AspectRatio>
         <CardContent>
           <Typography fontSize="xl" fontWeight="lg">
-            {name}
+            {name || "Selena Gomez"}
           </Typography>
           <Typography level="body-sm" fontWeight="lg" textColor="text.tertiary">
-            @{username}
+            @selena
           </Typography>
           {menuTemplate}
           <Sheet
