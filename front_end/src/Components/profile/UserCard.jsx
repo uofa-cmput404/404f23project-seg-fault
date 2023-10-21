@@ -6,13 +6,16 @@ import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
+import testImage from '../../Images/profile.png';
 import EditIcon from '@mui/icons-material/Edit';
 
-export default function UserCard({name, username, imagePath, isOwner}) {
+// Todo: remove testName afterwards
+export default function UserCard({name, imagePath=testImage, isOwner}) {
+    const testName = "Selena";
     const menuTemplate = isOwner ? (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
             <Button variant="outlined" color="neutral">
-                Post to {name}
+                Post to {name || testName}
             </Button>
             <Button variant="solid" color="primary">
                 Follow
@@ -83,10 +86,10 @@ export default function UserCard({name, username, imagePath, isOwner}) {
         </AspectRatio>
         <CardContent>
           <Typography fontSize="xl" fontWeight="lg">
-            {name}
+            {name || "Selena Gomez"}
           </Typography>
           <Typography level="body-sm" fontWeight="lg" textColor="text.tertiary">
-            @{username}
+            @selena
           </Typography>
           {menuTemplate}
           <Sheet
