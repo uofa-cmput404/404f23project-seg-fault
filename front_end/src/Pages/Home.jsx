@@ -66,16 +66,7 @@ function Home() {
         <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         {posts.map((post, index) =>{
           return (
-            <Post 
-              displayName={post.author.displayName} 
-              profileImage={post.author.profileImage}
-              title={post.title}
-              contentType={post.contentType}
-              content={post.content}
-              visibility={post.visibility}
-              categories={post.categories}
-              count={post.count} 
-              />
+            <Post post={post}/>
           )
         })}
         </Box>

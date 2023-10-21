@@ -68,10 +68,20 @@ const usePostsViewModel = () => {
       const response = await axios.post(`${userId}/posts/`, body);
       
       if (response.status === 200) {
-        console.error('Followed');
+        console.error('post created');
       } else {
-        console.error('Error following author');
+        console.error('Error creating post');
       }
+    };
+
+    const deletePost = async (postId) => {
+        const response = await axios.delete(postId);
+        
+        if (response.status === 200) {
+          console.error('Deleted');
+        } else {
+          console.error('Error deleting post');
+        }
     };
 
     useEffect(() => {
@@ -83,7 +93,8 @@ const usePostsViewModel = () => {
       loading,
       posts,
       fetchPosts,
-      createPost
+      createPost,
+      deletePost
     };
   };
   

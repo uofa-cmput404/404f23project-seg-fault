@@ -90,6 +90,7 @@ export default function CreatePost(props) {
     createPost(title, 'description', contentType, content, visibility) // TODO: add description
     reset()
     props.onClose()
+    window.location.reload();
   }
 
   return (

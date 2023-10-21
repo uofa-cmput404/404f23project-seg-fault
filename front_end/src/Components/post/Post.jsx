@@ -20,6 +20,7 @@ import Comment from '../comment/Comment';
 import './Post.css'
 import PostMenu from '../postMenu/PostMenu';
 import Share from '../share/Share';
+import { StoreContext } from '../../store';
 
 function isImageUrl(url) {
   return /\.(jpeg|jpg|gif|png|bmp)$/.test(url);
@@ -65,8 +66,12 @@ export default function Post(props) {
   const [expandComments, setExpandedComments] = React.useState(false);
   const [liked, setLiked] = React.useState(false)
   const [share, setShare] = React.useState(false)
+  const { state } = React.useContext(StoreContext);
+  const userId = state.user.id;
 
   const handleLike = () => {
+    console.log(userId)
+    console.log(props.authorId)
     setLiked((prev) => !prev)
   }
 
@@ -90,23 +95,21 @@ export default function Post(props) {
       <CardHeader
         avatar={
         <Avatar
-            src={props.profileImage}
+            src={props.post.author.profileImage}
             alt={""}
             sx={{
               width: 45,
               height: 45
             }}
         />}
-        action={
-          <PostMenu />
-        }
-        title={props.displayName}
+        action={(userId === props.post.author.id) ? <PostMenu post={props.post}/> : null}
+        title={props.post.author.displayName}
       />
       <Stack direction="column" spacing={2}>
         <Typography className="title" variant="body2">
-               {props.title}
+               {props.post.title}
         </Typography>
-        <PostDisplay content={props.content} contentType={props.contentType}/>
+        <PostDisplay content={props.post.content} contentType={props.post.contentType}/>
       </Stack>
       <CardActions disableSpacing>
         <div>
@@ -121,15 +124,15 @@ export default function Post(props) {
         </IconButton>
         </div>
         <Chip 
-            label={props.visibility} 
+            label={props.post.visibility} 
             size="small" 
-            color={visibilityColors[props.visibility]} 
+            color={visibilityColors[props.post.visibility]} 
             className='postVisibility'
             sx={{ paddingRight: 2 }}/> 
       </CardActions>
       <CardActions >
         <Button onClick={handleExpandClick} className="openCommentsButton" size="small">
-          {expandComments ? 'Hide Comments' : `View ${props.count} Comments`}
+          {expandComments ? 'Hide Comments' : `View ${props.post.count} Comments`}
         </Button>
       </CardActions>
       <Collapse in={expandComments} timeout="auto" unmountOnExit>
