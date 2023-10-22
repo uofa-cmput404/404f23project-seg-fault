@@ -41,11 +41,16 @@ class Post(models.Model):
         return self.title
 
 
-
 class AuthorFollower(models.Model):
     user = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="followed_by")
     follower = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="following")
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-
+class Comment(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment')
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='authored_comments')
+    content = models.TextField()
+    contentType = models.CharField(max_length=100, default='text/markdown')
+    published = models.DateTimeField(auto_now_add=True)

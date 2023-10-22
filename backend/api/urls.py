@@ -11,7 +11,7 @@ from .authors.AuthorViews import UserLoginView, UserRegistrationView, AuthorList
 # from posts sub directory get the views
 from .posts.PostsViews import PostListView, PostDetailView, get_image_post
 
-from .views import FollowAuthorView, UnfollowAuthorView, FollowersListView, FollowingListView
+from .views import FollowAuthorView, UnfollowAuthorView, FollowersListView, FollowingListView, CommentListView
 
 urlpatterns = [
     path('register/', UserRegistrationView.as_view(), name='user-registration'),
@@ -26,4 +26,6 @@ urlpatterns = [
     path('authors/<str:author_id>/posts/', PostListView.as_view(), name='post-list'),
     path('authors/<str:author_id>/posts/<str:post_id>', PostDetailView.as_view(), name='post-detail'),
     path('authors/<str:author_id>/posts/<str:post_id>/image/', get_image_post, name='get_image_post'),
+    ## comments for posts:
+    path('authors/<str:author_id>/posts/<str:post_id>/comments/', CommentListView.as_view(), name='post-comments'),
 ]
