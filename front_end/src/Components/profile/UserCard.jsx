@@ -82,10 +82,10 @@ export default function UserCard({name, imagePath, isOwner, followersCount, post
         </AspectRatio>
         <CardContent>
           <Typography fontSize="xl" fontWeight="lg">
-            {name || "Selena Gomez"}
+            {name}
           </Typography>
           <Typography level="body-sm" fontWeight="lg" textColor="text.tertiary">
-            @selena
+            @{name}
           </Typography>
           {menuTemplate}
           <Sheet
