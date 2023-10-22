@@ -11,54 +11,51 @@ const useProfileViewModel = () => {
     const [posts, setPosts] = useState([]);
 
     useEffect(() => {
+      const fetchPosts = async () => {
+        try {
+          const response = await axios.get(`${userId}/posts/`);
+  
+          if (response.status === 200) {
+            const data = response.data.reverse();
+            setPosts(data);
+          } else {
+            console.error('Error fetching posts');
+          }
+        } catch {
+          console.log('cant fetch posts')
+        }
+      };
+      const fetchFollowers = async () => {
+        try {
+          const response = await axios.get(`${userId}/followers/`);
+  
+          if (response.status === 200) {
+            const data = response.data;
+            setFollowers(data);
+          } else {
+            console.error('Error fetching authors');
+          }
+        } catch {
+          console.log('cant fetch posts')
+        }
+      };
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(userId);
+          
+          if (response.status === 200) {
+            setProfile(response.data);
+          } else {
+            console.error('Error fetching user data');
+          }
+        } catch {
+          console.log('cant fetch data')
+        }
+      };
       fetchUserData();
       fetchFollowers();
       fetchPosts();
     }, []);
-  
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(`${userId}/posts/`);
-
-        if (response.status === 200) {
-          const data = response.data.reverse();
-          setPosts(data);
-        } else {
-          console.error('Error fetching posts');
-        }
-      } catch {
-        console.log('cant fetch posts')
-      }
-    };
-
-    const fetchFollowers = async () => {
-      try {
-        const response = await axios.get(`${userId}/followers/`);
-
-        if (response.status === 200) {
-          const data = response.data;
-          setFollowers(data);
-        } else {
-          console.error('Error fetching authors');
-        }
-      } catch {
-        console.log('cant fetch posts')
-      }
-    };
-
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(userId);
-        
-        if (response.status === 200) {
-          setProfile(response.data);
-        } else {
-          console.error('Error fetching user data');
-        }
-      } catch {
-        console.log('cant fetch data')
-      }
-    };
 
     const updateProfile = async() => {
 
