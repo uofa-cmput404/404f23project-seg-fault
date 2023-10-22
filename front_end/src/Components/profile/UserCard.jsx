@@ -35,7 +35,6 @@ export default function UserCard({name, imagePath, isOwner, followersCount, post
           position: 'absolute',
           display: 'block',
           width: '1px',
-          bgcolor: 'warning.300',
           left: '500px',
           top: '-24px',
           bottom: '-24px',
