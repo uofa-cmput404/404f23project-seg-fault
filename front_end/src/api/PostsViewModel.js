@@ -10,17 +10,17 @@ const usePostsViewModel = () => {
   
     useEffect(() => {
       fetchPosts();
-    },);
+    }, []);
   
     const fetchPosts = async () => {
     try {
         const response = await axios.get(`${userId}/posts/`);
   
         if (response.status === 200) {
-          const data = response.data.reverse()
+          const data = response.data.reverse();
           setPosts(data);
         } else {
-          console.error('Error fetching authors');
+          console.error('Error fetching posts');
         }
     } catch {
         console.log('cant fetch posts')
