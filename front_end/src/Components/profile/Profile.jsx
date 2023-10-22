@@ -23,12 +23,14 @@ function ProfilePage({ isOwner = true }) {
             <div>
                 {tempPosts.map((post, index) => (
                     <Post
-                        key={index}
-                        username={post.name}
-                        profilePic={post.profile}
-                        photo={post.photo}
-                        text={post.text}
-                        visibility={post.visibility}
+                    displayName={post.displayName} 
+                    profileImage={post.profileImage}
+                    title={post.title}
+                    contentType={post.contentType}
+                    content={post.content}
+                    visibility={post.visibility}
+                    categories={post.categories}
+                    count={post.count} 
                     />
                 ))}
             </div>

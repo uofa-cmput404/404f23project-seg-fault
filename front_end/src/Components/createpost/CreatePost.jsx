@@ -14,7 +14,7 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { styled } from '@mui/material/styles';
 import './CreatePost.css'
-
+import usePostsViewModel from '../../api/PostsViewModel'
 //TODO: Figure out private posts
 
 const VisuallyHiddenInput = styled('input')({
@@ -33,27 +33,60 @@ export default function CreatePost(props) {
   const [image, setImage] = React.useState(null);
   const [imageLink, setImageLink] = React.useState('');
   const [selectedPostType, setSelectedPostType] = React.useState(null);
+  const [title, setTitle] = React.useState(null);
+  //const [description, setDescription] = React.useState(''); // TODO: add description
+  const [contentType, setContentType] = React.useState('text/plain');
+  const [content, setContent] = React.useState(null);
+  const [visibility, setVisibility] = React.useState(null);
+
+  const {createPost} = usePostsViewModel();
 
   const handlePostTypeChange = (event) => {
     const value = event.target.value;
     setSelectedPostType(value);
     if (value === "Text") {
       setImage(null);
+      setContentType('text/plain');
     }
   };
 
   const onImageChange =(event, type)=>{
     if (type === 'input' && event.target.files && event.target.files[0]){
         const img = event.target.files[0];
+
         setImage(URL.createObjectURL(img));
+        const reader = new FileReader();
+
+        reader.onload = (e) => {
+          const dataUrl = e.target.result;
+          setContent(dataUrl);
+        };
+        reader.readAsDataURL(img);
+
+        const fileType = img.type;
+
+        if (fileType === 'image/png') {
+          setContentType('image/png;base64');
+        } else if (fileType === 'image/jpeg') {
+          setContentType('image/jpeg;base64');
+        }
+        
     } else {
         setImage(imageLink);
+        setContent(imageLink);
+        setContentType('text/plain')
     }
   }
 
   const reset = () => {
     setImage(null);
     setSelectedPostType(null);
+  }
+
+  const onCreatePost = () =>{
+    createPost(title, 'description', contentType, content, visibility) // TODO: add description
+    reset()
+    props.onClose()
   }
 
   return (
@@ -86,6 +119,7 @@ export default function CreatePost(props) {
             id="standard-multiline-static"
             placeholder="Enter the title of your post here"
             variant="standard"
+            onChange={(event)=>setTitle(event.target.value)}
           />
           <FormControl className='postType'>
             <Typography fontWeight={500} variant="span" style={{padding:'1rem'}}>
@@ -109,6 +143,7 @@ export default function CreatePost(props) {
               rows={1}
               placeholder="What's on your mind?"
               variant="standard"
+              onChange={(event)=>setContent(event.target.value)}
             />
           }
           {selectedPostType === "Image" &&
@@ -153,10 +188,11 @@ export default function CreatePost(props) {
               row
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
+              onChange={(event)=>setVisibility(event.target.value)}
             >
-              <FormControlLabel value="female" control={<Radio />} label="Public" />
-              <FormControlLabel value="male" control={<Radio />} label="Friends Only" />
-              {/* <FormControlLabel value="other" control={<Radio />} label="Private" /> */}
+              <FormControlLabel value="public" control={<Radio />} label="Public" />
+              <FormControlLabel value="friends" control={<Radio />} label="Friends Only" />
+              <FormControlLabel value="private" control={<Radio />} label="Private" />
             </RadioGroup>
           </FormControl>
           <ButtonGroup
@@ -164,7 +200,7 @@ export default function CreatePost(props) {
             variant="contained"
             aria-label="outlined primary button group"
           >
-            <Button>Post</Button>
+            <Button onClick={onCreatePost}>Post</Button>
           </ButtonGroup>
         </div>
         </Box>

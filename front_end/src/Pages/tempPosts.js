@@ -12,7 +12,7 @@ export const tempPosts = [
         count: 67
     },
     {
-        contentType: "text",
+        contentType: "text/plain",
         displayName: 'Drake',
         profileImage: 'https://i.imgur.com/FlTdToH.jpeg', 
         content: 'Hey everyone! 👋🎃 Im so excited for Halloween! Can you help me decide on a costume? 🤔💭 Drop your suggestions below!🦇 #HalloweenCostumeIdeas',
