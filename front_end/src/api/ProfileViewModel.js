@@ -21,7 +21,7 @@ const useProfileViewModel = () => {
         const response = await axios.get(`${userId}/posts/`);
 
         if (response.status === 200) {
-          const data = response.data;
+          const data = response.data.reverse();
           setPosts(data);
         } else {
           console.error('Error fetching posts');
