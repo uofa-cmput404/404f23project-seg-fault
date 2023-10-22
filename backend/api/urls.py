@@ -9,7 +9,7 @@ from django.urls import path
 # from authors sub directory get the views
 from .authors.AuthorViews import UserLoginView, UserRegistrationView, AuthorListView, AuthorDetailView
 # from posts sub directory get the views
-from .posts.PostsViews import PostListView, PostDetailView
+from .posts.PostsViews import PostListView, PostDetailView, get_image_post
 
 from .views import FollowAuthorView, UnfollowAuthorView, FollowersListView, FollowingListView
 
@@ -25,4 +25,5 @@ urlpatterns = [
     ## urls for posts:
     path('authors/<str:author_id>/posts/', PostListView.as_view(), name='post-list'),
     path('authors/<str:author_id>/posts/<str:post_id>', PostDetailView.as_view(), name='post-detail'),
+    path('authors/<str:author_id>/posts/<str:post_id>/image/', get_image_post, name='get_image_post'),
 ]
