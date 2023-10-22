@@ -25,6 +25,7 @@ const useProfileViewModel = () => {
           console.log('cant fetch posts')
         }
       };
+
       const fetchFollowers = async () => {
         try {
           const response = await axios.get(`${userId}/followers/`);
@@ -39,6 +40,7 @@ const useProfileViewModel = () => {
           console.log('cant fetch posts')
         }
       };
+
       const fetchUserData = async () => {
         try {
           const response = await axios.get(userId);
@@ -52,10 +54,11 @@ const useProfileViewModel = () => {
           console.log('cant fetch data')
         }
       };
+
       fetchUserData();
       fetchFollowers();
       fetchPosts();
-    }, []);
+    }, [userId]);
 
     const updateProfile = async() => {
 
