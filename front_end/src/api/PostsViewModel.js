@@ -9,23 +9,22 @@ const usePostsViewModel = () => {
     const [posts, setPosts] = useState([]);
   
     useEffect(() => {
-      fetchPosts();
-    }, []);
-  
-    const fetchPosts = async () => {
-    try {
-        const response = await axios.get(`${userId}/posts/`);
-  
-        if (response.status === 200) {
-          const data = response.data.reverse();
-          setPosts(data);
-        } else {
-          console.error('Error fetching posts');
+      const fetchPosts = async () => {
+        try {
+            const response = await axios.get(`${userId}/posts/`);
+      
+            if (response.status === 200) {
+              const data = response.data.reverse();
+              setPosts(data);
+            } else {
+              console.error('Error fetching posts');
+            }
+        } catch {
+            console.log('cant fetch posts')
         }
-    } catch {
-        console.log('cant fetch posts')
-    }
-    };
+      };
+      fetchPosts();
+    }, [userId]);
   
     const createPost = async (title, description, contentType, content, visibility) => {
       const body = {
@@ -49,7 +48,6 @@ const usePostsViewModel = () => {
   
     return {
       posts,
-      fetchPosts,
       createPost
     };
   };

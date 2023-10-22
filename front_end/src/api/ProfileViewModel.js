@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import { StoreContext } from './../store';
 
@@ -59,10 +59,6 @@ const useProfileViewModel = () => {
       fetchFollowers();
       fetchPosts();
     }, [userId]);
-
-    const updateProfile = async() => {
-
-    }
 
     return {
       posts,
