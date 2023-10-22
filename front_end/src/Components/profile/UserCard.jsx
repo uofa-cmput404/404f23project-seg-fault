@@ -6,23 +6,19 @@ import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
-import testImage from '../../Images/profile.png';
-import EditIcon from '@mui/icons-material/Edit';
 
-// Todo: remove testName afterwards
-export default function UserCard({name, imagePath=testImage, isOwner}) {
-    const testName = "Selena";
-    const menuTemplate = isOwner ? (
+export default function UserCard({name, imagePath, isOwner, followersCount, postsCount}) {
+    const menuTemplate = !isOwner ? (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
             <Button variant="outlined" color="neutral">
-                Post to {name || testName}
+                Post to {name}
             </Button>
             <Button variant="solid" color="primary">
                 Follow
             </Button>
         </Box>) : (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
-            <Button variant='outlined' color='primary' startIcon={<EditIcon />}>
+            <Button variant='outlined' color='primary'>
               Edit
             </Button>
         </Box>);
@@ -39,7 +35,6 @@ export default function UserCard({name, imagePath=testImage, isOwner}) {
           position: 'absolute',
           display: 'block',
           width: '1px',
-          bgcolor: 'warning.300',
           left: '500px',
           top: '-24px',
           bottom: '-24px',
@@ -86,10 +81,10 @@ export default function UserCard({name, imagePath=testImage, isOwner}) {
         </AspectRatio>
         <CardContent>
           <Typography fontSize="xl" fontWeight="lg">
-            {name || "Selena Gomez"}
+            {name}
           </Typography>
           <Typography level="body-sm" fontWeight="lg" textColor="text.tertiary">
-            @selena
+            @{name}
           </Typography>
           {menuTemplate}
           <Sheet
@@ -113,13 +108,13 @@ export default function UserCard({name, imagePath=testImage, isOwner}) {
               <Typography level="body-xs" fontWeight="lg">
                 Followers
               </Typography>
-              <Typography fontWeight="lg">980</Typography>
+              <Typography fontWeight="lg">{followersCount}</Typography>
             </div>
             <div>
               <Typography level="body-xs" fontWeight="lg">
                 Posts
               </Typography>
-              <Typography fontWeight="lg">12</Typography>
+              <Typography fontWeight="lg">{postsCount}</Typography>
             </div>
           </Sheet>
         </CardContent>
