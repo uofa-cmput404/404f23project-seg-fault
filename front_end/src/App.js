@@ -36,7 +36,7 @@ function App() {
               <Route path="/" element={<Navigate to="/signin" />} />
               <Route path="/home" element={<Home />} />
               <Route path="/inbox" element={<Inbox />} />
-              <Route path="/friends" element={<Friends />} />
+              <Route path="/social_hub" element={<Friends />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />

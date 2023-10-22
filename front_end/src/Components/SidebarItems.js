@@ -15,8 +15,8 @@ export const SidebarItems = [
     cName: 'side-bar-text'
   },
   {
-    title: 'Friends',
-    path: '/friends',
+    title: 'Social Hub',
+    path: '/social_hub',
     icon: <AiIcons.AiOutlineTeam />,
     cName: 'side-bar-text'
   },
