@@ -1,34 +1,27 @@
-import Profile from '../Images/profile.png'
-
 export const tempPosts = [
     {
-        contentType: "image",
-        displayName: 'Selena Gomez',
-        profileImage: Profile, 
-        content: 'https://i.imgur.com/evIcJu4.jpeg',
-        title: 'My new Puppy! 🐶',
-        categories: ["pets"],
-        visibility: 'public', 
-        count: 67
-    },
-    {
-        contentType: "text/plain",
-        displayName: 'Drake',
-        profileImage: 'https://i.imgur.com/FlTdToH.jpeg', 
-        content: 'Hey everyone! 👋🎃 Im so excited for Halloween! Can you help me decide on a costume? 🤔💭 Drop your suggestions below!🦇 #HalloweenCostumeIdeas',
-        title: 'Halloween!',
-        categories: ["halloween","spooky"],
-        visibility: 'friends',
-        count: 12
-    },
-    {
-        contentType: "image",
-        displayName: 'Harry Styles',
-        profileImage: 'https://i.imgur.com/ULC0KUq.jpeg', 
-        content: 'https://i.imgur.com/TrwuNH2.jpeg',
-        title: 'The Rock',
-        categories: ["hi"],
-        visibility: 'private',
-        count: 14
-    },
-  ];
+        "id": "http://127.0.0.1:8000/api/authors/c84fe0d086c746c8badd82f6b313ac3e/posts/0f98c9c366114685af9bf28bf5584bcd",
+        "author": {
+            "type": "author",
+            "id": "http://127.0.0.1:8000/api/authors/c84fe0d086c746c8badd82f6b313ac3e",
+            "host": "http://127.0.0.1:8000/api",
+            "displayName": "test_author",
+            "url": "http://127.0.0.1:8000/api/authors/c84fe0d086c746c8badd82f6b313ac3e",
+            "github": "",
+            "profileImage": ""
+        },
+        "type": "post",
+        "title": "The Rock",
+        "source": "",
+        "origin": "",
+        "description": "test",
+        "contentType": "text/plain",
+        "content": "https://i.imgur.com/TrwuNH2.jpeg",
+        "categories": "",
+        "count": 0,
+        "comments": "",
+        "published": null,
+        "visibility": "friends",
+        "unlisted": false
+    }
+]

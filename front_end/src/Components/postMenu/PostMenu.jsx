@@ -8,10 +8,13 @@ import MenuList from '@mui/material/MenuList';
 import IconButton from '@mui/material/IconButton';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import CreatePost from '../createpost/CreatePost';
+import usePostsViewModel from '../../api/PostsViewModel'
 
-export default function PostMenu() {
+
+export default function PostMenu(props) {
   const [open, setOpen] = React.useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  const { deletePost } = usePostsViewModel()
 
   const openEditModal = () => {
     setIsEditModalOpen(true);
@@ -26,6 +29,11 @@ export default function PostMenu() {
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+
+  const handleDelete = () => {
+    deletePost(props.post.id);
+    window.location.reload();
+  }
 
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -92,7 +100,7 @@ export default function PostMenu() {
                     onKeyDown={handleListKeyDown}
                   >
                     <MenuItem onClick={openEditModal}>Edit</MenuItem>
-                    <MenuItem onClick={handleClose}>Delete</MenuItem>
+                    <MenuItem onClick={handleDelete}>Delete</MenuItem>
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

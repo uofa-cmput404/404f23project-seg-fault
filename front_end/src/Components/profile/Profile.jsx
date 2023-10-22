@@ -32,14 +32,7 @@ function ProfilePage({ isOwner = true }) {
             <div>
                 {posts.map((post, index) => (
                     <Post
-                    displayName={post.username} 
-                    profileImage={post.profileImage}
-                    title={post.title}
-                    contentType={post.contentType}
-                    content={post.content}
-                    visibility={post.visibility}
-                    categories={post.categories}
-                    count={post.count} 
+                    post={post}
                     />
                 ))}
             </div>
