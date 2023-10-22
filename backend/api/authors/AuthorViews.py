@@ -10,6 +10,7 @@ from rest_framework import generics, views, permissions, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
+from rest_framework import pagination
 from django.shortcuts import get_object_or_404
 import uuid
 
@@ -75,35 +76,47 @@ class UserLoginView(generics.CreateAPIView):
         else:
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-# get authors
-class AuthorListView(generics.ListAPIView): # use ListCreateApiView if you want postings
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+
+class CustomPagination(pagination.PageNumberPagination):
+    page_size = 5  # Number of items per page
+    page_size_query_param = 'size'  # Allow clients to set the page size using a query parameter
+    max_page_size = 100  # Set a maximum page size
+    def paginate_queryset(self, queryset, request, view=None):
+        # Check if pagination query parameters are provided
+        page_param = request.query_params.get('page', None)
+        size_param = request.query_params.get('size', None)
+        # If pagination parameters are not provided, disable pagination
+        if not page_param and not size_param:
+            return None
+        
+        return super().paginate_queryset(queryset, request, view)
+    
+    def get_paginated_response(self, data):
+        return Response({
+            'type': 'authors',
+            'items': data,
+            'page': int(self.request.query_params.get('page', 1)),
+            'size': int(self.request.query_params.get('size', self.page_size)),
+        })
+
+class AuthorListView(generics.ListAPIView):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
+    pagination_class = CustomPagination  # Use the custom pagination class
 
-    # override get request
     def list(self, request, *args, **kwargs):
-        # Get the list of authors and serialize them
+        page = self.paginate_queryset(self.get_queryset())
+        if page is not None:
+            author_serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(author_serializer.data)
+        
         authors = self.get_queryset()
         author_serializer = self.get_serializer(authors, many=True)
-
-        # Create the response dictionary
-        response_data = {
+        return Response({
             "type": "authors",
             "items": author_serializer.data
-        }
-
-        return Response(response_data, status=status.HTTP_200_OK)
+        }, status=status.HTTP_200_OK)
     
-
-
-
-
-# class AuthorDetailView(APIView):
-#     def get(self, request, author_id):
-#         # Use the author_id captured from the URL
-#         return Response({"message": f"Author ID: {author_id}"}, status=status.HTTP_200_OK)
 
 
 class AuthorDetailView(generics.ListCreateAPIView):

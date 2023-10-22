@@ -1,8 +1,8 @@
 from django.shortcuts import get_object_or_404
 ### models
-from .models import Author, AuthorFollower
+from .models import Author, AuthorFollower, Comment, Post
 ### serializers
-from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer
+from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer
 from django.contrib.auth.models import User
 ##### user auth
 from rest_framework import generics, views, permissions, status
@@ -65,3 +65,21 @@ class FollowingListView(generics.ListAPIView):
     def get_queryset(self):
         author_id = self.kwargs['author_id']
         return AuthorFollower.objects.filter(follower__id=author_id)
+
+class CommentListView(generics.ListCreateAPIView):
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        post_id = self.kwargs['post_id']
+        return Comment.objects.filter(post__id=post_id)
+
+    def perform_create(self, serializer):
+        post_id = self.kwargs['post_id']
+        post = get_object_or_404(Post, id=post_id)
+
+        author_id = self.kwargs['author_id']
+        author = get_object_or_404(Author, id=author_id)
+        
+        serializer.save(post=post, author=author)
