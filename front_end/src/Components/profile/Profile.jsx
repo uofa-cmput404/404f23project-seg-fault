@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import UserCard from "./UserCard";
-import { tempPosts } from "../../Pages/tempPosts";
 import Post from "../post/Post";
 import { Fab } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import CreatePost from "../createpost/CreatePost";
+import useProfileViewModel from "../../api/ProfileViewModel";
+import { StoreContext } from './../../store';
+
 
 function ProfilePage({ isOwner = true }) {
+    const { state } = useContext(StoreContext);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const {posts, followers} = useProfileViewModel();
 
     const openCreateModal = () => {
         setIsCreateModalOpen(true);
@@ -19,18 +23,16 @@ function ProfilePage({ isOwner = true }) {
 
     return (
         <>
-            <UserCard isOwner={isOwner} />
+            <UserCard isOwner={isOwner}
+                      followersCount={followers.length}
+                      postsCount={posts.length} 
+                      name={state.user.username} 
+                      username={state.user.username} 
+                      imagePath={state.user.profileImage} />
             <div>
-                {tempPosts.map((post, index) => (
+                {posts.map((post, index) => (
                     <Post
-                    displayName={post.displayName} 
-                    profileImage={post.profileImage}
-                    title={post.title}
-                    contentType={post.contentType}
-                    content={post.content}
-                    visibility={post.visibility}
-                    categories={post.categories}
-                    count={post.count} 
+                    post={post}
                     />
                 ))}
             </div>
