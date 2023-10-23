@@ -4,6 +4,8 @@ from .models import Author, AuthorFollower, Comment, Post
 ### serializers
 from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer
 from django.contrib.auth.models import User
+import uuid
+from rest_framework.pagination import PageNumberPagination
 ##### user auth
 from rest_framework import generics, views, permissions, status
 from rest_framework.response import Response
@@ -14,6 +16,36 @@ from rest_framework.views import APIView
 from django.shortcuts import get_object_or_404
 
 root_url = "http://127.0.0.1:8000/api"
+
+
+class FollowerView(views.APIView):
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+
+    def get(self, request, author_id, foreign_author_id):
+        try:
+            relationship = AuthorFollower.objects.get(user__id=author_id, follower__id=foreign_author_id)
+            return Response({"message": f"{foreign_author_id} is a follower of {author_id}."}, status=status.HTTP_200_OK)
+        except AuthorFollower.DoesNotExist:
+            return Response({"message": f"{foreign_author_id} is not a follower of {author_id}."}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, author_id, foreign_author_id):
+        author = get_object_or_404(Author, id=author_id)
+        follower = get_object_or_404(Author, id=foreign_author_id)
+        
+        if author != follower:
+            AuthorFollower.objects.get_or_create(user=author, follower=follower)
+            return Response({'message': f'{foreign_author_id} is now following {author_id}.'}, status=status.HTTP_200_OK)
+        return Response({'error': 'An author cannot follow themselves.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, author_id, foreign_author_id):
+        try:
+            relationship = AuthorFollower.objects.get(user__id=author_id, follower__id=foreign_author_id)
+            relationship.delete()
+            return Response({'message': f'{foreign_author_id} has been removed from the followers of {author_id}.'}, status=status.HTTP_200_OK)
+        except AuthorFollower.DoesNotExist:
+            return Response({'error': 'Relationship does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+
 
 class FollowAuthorView(views.APIView):
     # authentication_classes = [TokenAuthentication]
@@ -56,14 +88,6 @@ class UnfollowAuthorView(views.APIView):
 
         return Response({'message': 'Unfollowed successfully.'}, status=status.HTTP_200_OK)
 
-class FollowersListView(generics.ListAPIView):
-    # authentication_classes = [TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
-    serializer_class = FollowerListSerializer
-    
-    def get_queryset(self):
-        author_id = self.kwargs['author_id']
-        return AuthorFollower.objects.filter(user__id=author_id)
 
 class FollowingListView(generics.ListAPIView):
     # authentication_classes = [TokenAuthentication]
@@ -73,12 +97,30 @@ class FollowingListView(generics.ListAPIView):
     def get_queryset(self):
         author_id = self.kwargs['author_id']
         return AuthorFollower.objects.filter(follower__id=author_id)
+    
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return Response({
+            "type": "following",
+            "items": response.data
+        })
 
+class FollowersListView(generics.ListAPIView):
+    # authentication_classes = [TokenAuthentication]
+    # permission_classes = [IsAuthenticated]
+    serializer_class = FollowerListSerializer
+    
+    def get_queryset(self):
+        author_id = self.kwargs['author_id']
+        return AuthorFollower.objects.filter(user__id=author_id)
 
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, *args, **kwargs)
+        return Response({
+            "type": "followers",
+            "items": response.data
+        })
 
-
-import uuid
-from rest_framework.pagination import PageNumberPagination
 class CustomPageNumberPagination(PageNumberPagination):
     page_size = 5  # Or whatever number you want for this specific view
     def get_paginated_response(self, data):
