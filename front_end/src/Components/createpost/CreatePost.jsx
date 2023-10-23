@@ -15,6 +15,8 @@ import FormLabel from '@mui/material/FormLabel';
 import { styled } from '@mui/material/styles';
 import './CreatePost.css'
 import usePostsViewModel from '../../api/PostsViewModel'
+import { StoreContext } from './../../store';
+
 //TODO: Figure out private posts
 
 const VisuallyHiddenInput = styled('input')({
@@ -30,25 +32,24 @@ const VisuallyHiddenInput = styled('input')({
 });
 
 export default function CreatePost(props) {
-  const [image, setImage] = React.useState(null);
+  const { state } = React.useContext(StoreContext);
   const [imageLink, setImageLink] = React.useState('');
-  const [selectedPostType, setSelectedPostType] = React.useState(null);
-  const [title, setTitle] = React.useState(null);
+  const [selectedPostType, setSelectedPostType] = React.useState("");
+  const [title, setTitle] = React.useState(props.post && props.post.title ? props.post.title : null);
   //const [description, setDescription] = React.useState(''); // TODO: add description
-  const [contentType, setContentType] = React.useState('text/plain');
-  const [content, setContent] = React.useState(null);
-  const [visibility, setVisibility] = React.useState(null);
+  const [contentType, setContentType] = React.useState(props.post && props.post.contentType ? props.post.contentType : null);
+  const [content, setContent] = React.useState(props.post && props.post.content ? props.post.content : null);
+  const [visibility, setVisibility] = React.useState(props.post && props.post.visibility ? props.post.visibility : null);
 
-  const {createPost} = usePostsViewModel();
+  const {createPost, editPost} = usePostsViewModel();
 
   const handlePostTypeChange = (event) => {
     const value = event.target.value;
     setSelectedPostType(value);
-    if (value === "Text") {
-      setImage(null);
+    setContent("");
+    if (value === "text/plain") {
       setContentType('text/plain');
-    } else if (value === "Markdown"){
-      setImage(null);
+    } else if (value === "text/markdown"){
       setContentType('text/markdown');
     }
   };
@@ -57,7 +58,6 @@ export default function CreatePost(props) {
     if (type === 'input' && event.target.files && event.target.files[0]){
         const img = event.target.files[0];
 
-        setImage(URL.createObjectURL(img));
         const reader = new FileReader();
 
         reader.onload = (e) => {
@@ -75,23 +75,35 @@ export default function CreatePost(props) {
         }
         
     } else {
-        setImage(imageLink);
         setContent(imageLink);
         setContentType('text/plain')
     }
   }
 
   const reset = () => {
-    setImage(null);
     setSelectedPostType(null);
   }
 
   const onCreatePost = () =>{
-    createPost(title, 'description', contentType, content, visibility) // TODO: add description
+    if (props.action === "EDIT"){
+      editPost(title, 'description', contentType, content, visibility, props.post.id)
+    } else {
+      createPost(title, 'description', contentType, content, visibility) // TODO: add description
+    }
     reset()
     props.onClose()
     window.location.reload();
   }
+  
+  React.useEffect(() => {
+    if (props.post && props.post.contentType){
+      if (props.post.contentType.startsWith("image")){
+        setSelectedPostType('image')
+      } else {
+        setSelectedPostType(props.post.contentType)
+      }
+    }
+  }, [props.post]);
 
   return (
     <div>
@@ -111,11 +123,11 @@ export default function CreatePost(props) {
           </Typography>
           <Box className="userBox">
               <Avatar
-                  src="https://i.imgur.com/ULC0KUq.jpeg"
+                  src={state.user.profileImage}
                   sx={{ width: 40, height: 40 }}
               />
               <Typography fontWeight={500} variant="span">
-                  Harry Styles
+                {state.user.username}
               </Typography>
           </Box>
           <TextField
@@ -123,6 +135,7 @@ export default function CreatePost(props) {
             id="standard-multiline-static"
             placeholder="Enter the title of your post here"
             variant="standard"
+            value={title}
             onChange={(event)=>setTitle(event.target.value)}
           />
           <FormControl className='postType'>
@@ -134,13 +147,14 @@ export default function CreatePost(props) {
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
               onChange={handlePostTypeChange}
+              value={selectedPostType}
             >
-              <FormControlLabel value="Text" control={<Radio />} label="Text" />
-              <FormControlLabel value="Markdown" control={<Radio />} label="Markdown" />
-              <FormControlLabel value="Image" control={<Radio />} label="Image" />
+              <FormControlLabel value="text/plain" control={<Radio />} label="Text" />
+              <FormControlLabel value="text/markdown" control={<Radio />} label="Markdown" />
+              <FormControlLabel value="image" control={<Radio />} label="Image" />
             </RadioGroup>
           </FormControl>
-          {(selectedPostType === "Text" || !selectedPostType)&& 
+          {(selectedPostType === "text/plain" || !selectedPostType)&& 
               <TextField
               sx={{ width: "100%" }}
               id="standard-multiline-static"
@@ -148,10 +162,11 @@ export default function CreatePost(props) {
               rows={1}
               placeholder="What's on your mind?"
               variant="standard"
+              value={content}
               onChange={(event)=>setContent(event.target.value)}
             />
           }
-          {(selectedPostType === "Markdown")&& 
+          {(selectedPostType === "text/markdown")&& 
               <TextField
               sx={{ width: "100%" }}
               id="standard-multiline-static"
@@ -159,10 +174,11 @@ export default function CreatePost(props) {
               rows={5}
               placeholder="Enter markdown here"
               variant="standard"
+              value={content}
               onChange={(event)=>setContent(event.target.value)}
             />
           }
-          {selectedPostType === "Image" &&
+          {selectedPostType === "image" &&
           <div className='photoUpload'>
             <Button 
               component="label" 
@@ -189,10 +205,10 @@ export default function CreatePost(props) {
             </div>
           </div>      
           }
-          {image && (
+          {(content && contentType.startsWith('image'))&& (
             <Box p={2} style={{ display: 'flex', justifyContent: 'center' }}>
               <img
-                src={image}
+                src={content}
                 alt="Selected"
                 style={{ maxWidth: '80%', maxHeight:'50%', margin: '0 auto' }}
               />
@@ -205,6 +221,7 @@ export default function CreatePost(props) {
               aria-labelledby="demo-row-radio-buttons-group-label"
               name="row-radio-buttons-group"
               onChange={(event)=>setVisibility(event.target.value)}
+              value={visibility}
             >
               <FormControlLabel value="public" control={<Radio />} label="Public" />
               <FormControlLabel value="friends" control={<Radio />} label="Friends Only" />
@@ -216,7 +233,7 @@ export default function CreatePost(props) {
             variant="contained"
             aria-label="outlined primary button group"
           >
-            <Button onClick={onCreatePost}>Post</Button>
+            <Button onClick={onCreatePost}>{props.action === "EDIT" ? "Update" : "Post"}</Button>
           </ButtonGroup>
         </div>
         </Box>
