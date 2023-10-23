@@ -7,7 +7,6 @@ from .authors.serializers import AuthorSerializer, UserSerializer
 
 
 
-
 class FollowerListSerializer(serializers.ModelSerializer):
     follower = AuthorSerializer()
     
@@ -25,8 +24,7 @@ class FollowingListSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
     type = serializers.SerializerMethodField()
-    comment = serializers.CharField(source='content')
-    published = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S%z")
+    published = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S%z", read_only=True)
     id = serializers.SerializerMethodField()
 
     class Meta:
@@ -37,5 +35,5 @@ class CommentSerializer(serializers.ModelSerializer):
         return "comment"
 
     def get_id(self, obj):
-        root_url = "http://127.0.0.1:8000"
-        return f"{root_url}/authors/{obj.author.id}/posts/{obj.post.id}/comments/{obj.id}"
+        root_url = "http://127.0.0.1:8000/api"
+        return f"{root_url}/authors/{obj.author.id.hex}/posts/{obj.post.id.hex}/comments/{obj.id.hex}"

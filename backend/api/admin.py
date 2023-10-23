@@ -1,8 +1,9 @@
 from django.contrib import admin
-from .models import Author, Post
+from .models import Author, Post, Comment
 
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ('displayName', 'type', 'url', 'user', 'id', 'host', 'github', 'profileImage')
 
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Post)
+admin.site.register(Comment)
