@@ -13,31 +13,13 @@ function Friends() {
   const {
     selectedView,
     changeView,
-    authors,
     followers,
     following,
+    filteredFriends,
+    filteredAuthors,
     followAuthor,
     unfollowAuthor,
   } = useFriendsViewModel();
-
-  const filteredFriends = authors.filter((author) => {
-    const isFollower = followers.find(
-      (follower) => follower.follower.id === author.id
-    );
-    const isFollowing = following.find(
-      (follow) => follow.user.id === author.id
-    );
-
-    return isFollower && isFollowing;
-  });
-
-  const filteredAuthors = authors.filter((author) => {
-    const isFollowing = following.find(
-      (follow) => follow.user.id === author.id
-    );
-
-    return !isFollowing;
-  });
 
   return (
     <Box px={{ md: 22 }} sx={{ paddingTop: "10px" }}>
@@ -162,21 +144,6 @@ function Friends() {
               authorAction={unfollowAuthor}
             />
           ))}
-      </Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "16px",
-        }}
-      >
-        <Button variant="outlined" color="primary">
-          Previous
-        </Button>
-        <Button variant="outlined" color="primary">
-          Next
-        </Button>
       </Box>
     </Box>
   );

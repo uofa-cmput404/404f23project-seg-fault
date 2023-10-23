@@ -29,16 +29,16 @@ function AuthorTile(props) {
   return (
     <Card className="card">
       <CardHeader
-        avatar={<Avatar src={props.profilePic} alt="" className="avatar" />}
+        avatar={
+          <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />
+        }
         title={props.username}
         action={
           <ButtonBase onClick={handleClick}>
             <Chip
               label={chipLabels[props.status]}
               size="small"
-              className="postVisibility"
               sx={{ paddingRight: 2, marginTop: 1.5 }}
-              color="primary"
               style={{ backgroundColor: chipColor, color: "#fff" }}
             />
           </ButtonBase>
