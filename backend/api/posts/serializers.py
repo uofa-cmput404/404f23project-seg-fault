@@ -27,6 +27,7 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class PostCreateSerializer(serializers.ModelSerializer):
+    categories = serializers.CharField(required=False)
     class Meta:
         model = Post
         fields = ('title', 'description', 'contentType', 'content', 'categories', 'visibility', 'unlisted')
