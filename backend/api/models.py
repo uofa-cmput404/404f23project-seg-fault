@@ -32,13 +32,23 @@ class Post(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     categories = models.CharField(max_length=100)
     count = models.PositiveIntegerField(default=0) # number of comments
-    comments = models.URLField() # first page of comments
+    comments = models.URLField(null=True)
     published = models.DateTimeField(null=True)
     visibility = models.CharField(max_length=10)
     unlisted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.title
+
+class Comment(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    comment = models.TextField()
+    contentType = models.CharField(max_length=100, default='text/markdown')
+    published = models.DateTimeField(auto_now_add=True)
+
+
 
 
 class AuthorFollower(models.Model):
@@ -47,10 +57,4 @@ class AuthorFollower(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-class Comment(models.Model):
-    id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comment')
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='authored_comments')
-    content = models.TextField()
-    contentType = models.CharField(max_length=100, default='text/markdown')
-    published = models.DateTimeField(auto_now_add=True)
+
