@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useContext, useEffect } from 'react';
+import React, { createContext, useReducer, useContext, useEffect } from "react";
 
 const initialState = {
   user: null,
@@ -9,12 +9,12 @@ export const StoreContext = createContext();
 
 const storeReducer = (state, action) => {
   switch (action.type) {
-    case 'SET_USER':
+    case "SET_USER":
       return { ...state, user: action.payload };
-    case 'SET_TOKEN':
+    case "SET_TOKEN":
       return { ...state, token: action.payload };
-    case 'RESET_APPSTATE':
-      localStorage.removeItem('appState')
+    case "RESET_APPSTATE":
+      localStorage.removeItem("appState");
       return initialState;
     default:
       return state;
@@ -22,12 +22,13 @@ const storeReducer = (state, action) => {
 };
 
 const StoreProvider = ({ children }) => {
-  const storedState = JSON.parse(localStorage.getItem('appState')) || initialState;
-  
+  const storedState =
+    JSON.parse(localStorage.getItem("appState")) || initialState;
+
   const [state, dispatch] = useReducer(storeReducer, storedState);
 
   useEffect(() => {
-    localStorage.setItem('appState', JSON.stringify(state));
+    localStorage.setItem("appState", JSON.stringify(state));
   }, [state]);
 
   return (
@@ -40,7 +41,7 @@ const StoreProvider = ({ children }) => {
 const useStore = () => {
   const context = useContext(StoreContext);
   if (context === undefined) {
-    throw new Error('useStore must be used within a StoreProvider');
+    throw new Error("useStore must be used within a StoreProvider");
   }
   return context;
 };

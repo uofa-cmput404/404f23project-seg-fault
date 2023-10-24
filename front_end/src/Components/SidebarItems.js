@@ -1,29 +1,29 @@
-import React from 'react';
-import * as AiIcons from 'react-icons/ai';
+import React from "react";
+import * as AiIcons from "react-icons/ai";
 
 export const SidebarItems = [
   {
-    title: 'Home',
-    path: '/home',
+    title: "Home",
+    path: "/home",
     icon: <AiIcons.AiOutlineHome />,
-    cName: 'side-bar-text'
+    class: "side-bar-text",
   },
   {
-    title: 'Inbox',
-    path: '/inbox',
+    title: "Inbox",
+    path: "/inbox",
     icon: <AiIcons.AiOutlinePaperClip />,
-    cName: 'side-bar-text'
+    class: "side-bar-text",
   },
   {
-    title: 'Social Hub',
-    path: '/social_hub',
+    title: "Social Hub",
+    path: "/social_hub",
     icon: <AiIcons.AiOutlineTeam />,
-    cName: 'side-bar-text'
+    class: "side-bar-text",
   },
   {
-    title: 'Profile',
-    path: '/profile',
+    title: "Profile",
+    path: "/profile",
     icon: <AiIcons.AiOutlineUser />,
-    cName: 'side-bar-text'
+    class: "side-bar-text",
   },
 ];

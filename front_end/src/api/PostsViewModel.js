@@ -23,7 +23,7 @@ const usePostsViewModel = () => {
                 const posts_response = await axios.get(`${author.url}/posts/`);
 
                 if (posts_response.status === 200){
-                    data = data.concat(posts_response.data)
+                    data = data.concat(posts_response.data.items)
                 } else {
                     console.error(`cant fetch posts. status code: ${posts_response.status}`);
                 }
@@ -43,7 +43,7 @@ const usePostsViewModel = () => {
 
             //TODO: sort by published date
 
-            setPosts(data.reverse());
+            setPosts(data);
             setLoading(false)
         } else {
             console.error(`cant fetch authors. status code: ${users_response.status}`);
@@ -63,7 +63,8 @@ const usePostsViewModel = () => {
         "content": content,
         "published": null,
         "visibility": visibility,
-        "unlisted": false
+        "unlisted": false,
+        "categories": "none"
       }
       const response = await axios.post(`${userId}/posts/`, body);
       
@@ -84,6 +85,27 @@ const usePostsViewModel = () => {
         }
     };
 
+    const editPost = async (title, description, contentType, content, visibility, postId) => {
+      const body = {
+        "title": title,
+        "description": description,
+        "contentType": contentType,
+        "content": content,
+        "published": null,
+        "visibility": visibility,
+        "unlisted": false,
+        "categories": "none"
+      }
+      const response = await axios.put(postId, body);
+      
+      if (response.status === 200) {
+        console.error('post updated');
+      } else {
+        console.error('Error updating post');
+      }
+    };
+
+
     useEffect(() => {
         fetchPosts();
     }, [fetchPosts]);
@@ -94,7 +116,8 @@ const usePostsViewModel = () => {
       posts,
       fetchPosts,
       createPost,
-      deletePost
+      deletePost,
+      editPost
     };
   };
   
