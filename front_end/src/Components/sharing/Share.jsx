@@ -2,8 +2,6 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
 import "./Share.css";
-import { tempAuthors } from "../../Pages/tempAuthors";
-import AuthorTile from "../friends/authorTile";
 import { Typography } from "@mui/material";
 
 export default function Share(props) {
@@ -29,8 +27,14 @@ export default function Share(props) {
               justifyContent: "center",
               alignItems: "center",
             }}
-          >
-            {tempAuthors.map((post, index) => {
+          ></Box>
+        </Box>
+      </Modal>
+    </div>
+  );
+}
+/*
+{tempAuthors.map((post, index) => {
               return (
                 <AuthorTile
                   key={index}
@@ -40,9 +44,4 @@ export default function Share(props) {
                 />
               );
             })}
-          </Box>
-        </Box>
-      </Modal>
-    </div>
-  );
-}
+*/

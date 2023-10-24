@@ -30,7 +30,7 @@ const usePostsViewModel = () => {
       // Helper method to fetch the Ids of all the users you are following
       const following_response = await axios.get(`${userId}/following/`);
       if (following_response.status === 200) {
-        return following_response.data.map((item) => item.user.id);
+        return following_response.data.items.map((item) => item.user.id);
       } else {
         console.error(
           `Couldn't fetch following users. Status code: ${following_response.status}`
@@ -137,7 +137,7 @@ const usePostsViewModel = () => {
       categories: "none",
     };
 
-    const response = await axios.put(postId, body);
+    const response = await axios.post(postId, body);
     if (response.status === 200) {
       console.log("Post updated");
     } else {
