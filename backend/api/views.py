@@ -142,7 +142,7 @@ class CommentListView(generics.ListCreateAPIView):
     def get_queryset(self):
         post_id_hex = self.kwargs['post_id'] # hex value for post_id
         post_id_uuid = uuid.UUID(post_id_hex) # Convert hex to UUID
-        return Comment.objects.filter(post__id=post_id_uuid)
+        return Comment.objects.filter(post__id=post_id_uuid).order_by('-published')
 
     def perform_create(self, serializer):
         post_id_hex = self.kwargs['post_id']
