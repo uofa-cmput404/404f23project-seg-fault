@@ -27,7 +27,7 @@ const useFriendsViewModel = () => {
       `http://127.0.0.1:8000/api/authors/${userGuid}/followers/`
     );
     if (response.status === 200) {
-      setFollowers([...response.data]);
+      setFollowers(response.data.items);
     } else {
       console.error("Error fetching followers");
     }
@@ -40,7 +40,7 @@ const useFriendsViewModel = () => {
       `http://127.0.0.1:8000/api/authors/${userGuid}/following/`
     );
     if (response.status === 200) {
-      setFollowing([...response.data]);
+      setFollowing(response.data.items);
     } else {
       console.error("Error fetching following");
     }
