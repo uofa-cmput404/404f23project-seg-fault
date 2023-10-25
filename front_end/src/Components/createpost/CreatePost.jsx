@@ -37,7 +37,7 @@ export default function CreatePost(props) {
   const [selectedPostType, setSelectedPostType] = React.useState("");
   const [title, setTitle] = React.useState(props.post && props.post.title ? props.post.title : null);
   //const [description, setDescription] = React.useState(''); // TODO: add description
-  const [contentType, setContentType] = React.useState(props.post && props.post.contentType ? props.post.contentType : null);
+  const [contentType, setContentType] = React.useState(props.post && props.post.contentType ? props.post.contentType : 'text/plain');
   const [content, setContent] = React.useState(props.post && props.post.content ? props.post.content : null);
   const [visibility, setVisibility] = React.useState(props.post && props.post.visibility ? props.post.visibility : null);
 
