@@ -18,6 +18,11 @@ class Author(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class AuthorFollower(models.Model):
+    user = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="followed_by")
+    follower = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="following")
+    created_at = models.DateTimeField(auto_now_add=True)
     
 
 class Post(models.Model):
@@ -49,12 +54,38 @@ class Comment(models.Model):
     published = models.DateTimeField(auto_now_add=True)
 
 
+class Like(models.Model):
+    context = models.URLField()
+    summary = models.CharField(max_length=255)
+    type = models.CharField(max_length=50, default="Like")
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    # like a comment or a post
+    liked_post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True, blank=True)
+    liked_comment = models.ForeignKey('Comment', on_delete=models.CASCADE, null=True, blank=True)
+    object = models.URLField()
+
+    def __str__(self):
+        return self.summary
 
 
-class AuthorFollower(models.Model):
-    user = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="followed_by")
-    follower = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="following")
-    created_at = models.DateTimeField(auto_now_add=True)
+# every author has 1 inbox
+# their inbox can have multipole messages
+# class Inbox(models.Model):
+#     author = models.OneToOneField('Author', on_delete=models.CASCADE)
+#     messages = models.ManyToManyField('Message', related_name='inbox_messages')
 
 
+# class Inbox(models.Model):
+#     TYPE_CHOICES = [
+#         ('post', 'Post'),
+#         ('like', 'Like'),
+#         ('follow', 'Follow'),
+#         ('comment', 'Comment'),
+#     ]
+#     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+#     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+#     contentType = models.CharField(max_length=100)
+#     object_id = models.PositiveIntegerField()
+#     content_object = GenericForeignKey('content_type', 'object_id')
+    
 

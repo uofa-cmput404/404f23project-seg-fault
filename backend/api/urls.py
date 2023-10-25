@@ -1,15 +1,11 @@
-# from django.urls import path
-# from rest_framework.routers import DefaultRouter
-# from .views import PostViewSet
-
-# post_router = DefaultRouter()
-# post_router.register('posts', PostViewSet)
 from django.urls import path
 
 # from authors sub directory get the views
 from .authors.AuthorViews import UserLoginView, UserRegistrationView, AuthorListView, AuthorDetailView
 # from posts sub directory get the views
 from .posts.PostsViews import PostListView, PostDetailView, get_image_post
+# fron inbox sub directory
+from .inbox.inboxViews import InboxView
 
 from .views import FollowAuthorView, UnfollowAuthorView, FollowersListView, FollowingListView, FollowerView, CommentListView
 
@@ -29,4 +25,6 @@ urlpatterns = [
     path('authors/<str:author_id>/posts/<str:post_id>/image/', get_image_post, name='get_image_post'),
     ## comments for posts:
     path('authors/<str:author_id>/posts/<str:post_id>/comments/', CommentListView.as_view(), name='post-comments'),
+    ## Inbox
+    path('authors/<str:author_id>/inbox/', InboxView.as_view(), name='inbox_create'),
 ]

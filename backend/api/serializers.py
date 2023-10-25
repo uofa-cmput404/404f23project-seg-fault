@@ -37,3 +37,4 @@ class CommentSerializer(serializers.ModelSerializer):
     def get_id(self, obj):
         root_url = "http://127.0.0.1:8000/api"
         return f"{root_url}/authors/{obj.author.id.hex}/posts/{obj.post.id.hex}/comments/{obj.id.hex}"
+    
