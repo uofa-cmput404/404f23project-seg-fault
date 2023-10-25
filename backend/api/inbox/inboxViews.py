@@ -23,7 +23,8 @@ import uuid
 import base64
 
 
-
+#TODO: get the author from the user instead of the serializer
+#TODO: ensures the autho id field is populated when creating a like instance
 class InboxView(generics.CreateAPIView):
     serializer_class = LikeSerializer
 
