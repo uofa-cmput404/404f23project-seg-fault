@@ -16,8 +16,14 @@ import { styled } from '@mui/material/styles';
 import './CreatePost.css'
 import usePostsViewModel from '../../api/PostsViewModel'
 import { StoreContext } from './../../store';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 //TODO: Figure out private posts
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -40,8 +46,17 @@ export default function CreatePost(props) {
   const [contentType, setContentType] = React.useState(props.post && props.post.contentType ? props.post.contentType : 'text/plain');
   const [content, setContent] = React.useState(props.post && props.post.content ? props.post.content : null);
   const [visibility, setVisibility] = React.useState(props.post && props.post.visibility ? props.post.visibility : null);
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
 
   const {createPost, editPost} = usePostsViewModel();
+
+  const handleSnackBarClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
 
   const handlePostTypeChange = (event) => {
     const value = event.target.value;
@@ -84,15 +99,20 @@ export default function CreatePost(props) {
     setSelectedPostType(null);
   }
 
-  const onCreatePost = () =>{
-    if (props.action === "EDIT"){
-      editPost(title, 'description', contentType, content, visibility, props.post.id)
-    } else {
-      createPost(title, 'description', contentType, content, visibility) // TODO: add description
+  const onCreatePost = async () =>{
+    try {
+      if (props.action === "EDIT"){
+        await editPost(title, 'description', contentType, content, visibility, props.post.id)
+      } else {
+        await createPost(title, 'description', contentType, content, visibility) // TODO: add description
+      }
+      reset()
+      props.onClose()
+      window.location.reload();
+    } catch (error) {
+      setOpenSnackBar(true);
+      console.error('Incomplete Fields', error);
     }
-    reset()
-    props.onClose()
-    window.location.reload();
   }
   
   React.useEffect(() => {
@@ -236,6 +256,16 @@ export default function CreatePost(props) {
             <Button onClick={onCreatePost}>{props.action === "EDIT" ? "Update" : "Post"}</Button>
           </ButtonGroup>
         </div>
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+          open={openSnackBar}
+          onClose={handleSnackBarClose}
+          autoHideDuration={2000}
+        >
+          <Alert severity="error" sx={{ width: '100%' }}>
+            Incomplete
+          </Alert>
+        </Snackbar>
         </Box>
       </Modal>
     </div>

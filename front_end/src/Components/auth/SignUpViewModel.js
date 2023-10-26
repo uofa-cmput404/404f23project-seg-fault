@@ -11,9 +11,7 @@ const useSignUpViewModel = (navigate) => {
     password: '',
   });
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     const response = await axios.post('http://127.0.0.1:8000/api/register/', formData);
 
     if (response.status === 201) {
