@@ -10,6 +10,7 @@ import { StoreContext } from './../../store';
 
 function ProfilePage({ isOwner = true }) {
     const { state } = useContext(StoreContext);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const {posts, followers} = useProfileViewModel();
 
@@ -21,6 +22,14 @@ function ProfilePage({ isOwner = true }) {
         setIsCreateModalOpen(false);
     };
 
+    const openEditModal = () => {
+        setIsEditModalOpen(true);
+    };
+
+    const closeEditModal = () => {
+        setIsEditModalOpen(false);
+    };
+
     return (
         <>
             <UserCard isOwner={isOwner}
@@ -28,6 +37,7 @@ function ProfilePage({ isOwner = true }) {
                       postsCount={posts.length} 
                       name={state.user.username} 
                       username={state.user.username} 
+                      github={state.user.github}
                       imagePath={state.user.profileImage} />
             <div>
                 {posts.map((post, index) => (

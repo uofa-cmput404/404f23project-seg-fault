@@ -1,8 +1,9 @@
 import { useState, useEffect, useContext} from 'react';
 import axios from 'axios';
-import { StoreContext } from './../store';
+import { StoreContext, useStore } from './../store';
 
 const useProfileViewModel = () => {
+    const { dispatch } = useStore();
     const { state } = useContext(StoreContext);
     const userId = state.user.id;
   
@@ -16,7 +17,7 @@ const useProfileViewModel = () => {
           const response = await axios.get(`${userId}/posts/`);
   
           if (response.status === 200) {
-            const data = response.data.reverse();
+            const data = response.data.items.reverse();
             setPosts(data);
           } else {
             console.error('Error fetching posts');
@@ -31,7 +32,7 @@ const useProfileViewModel = () => {
           const response = await axios.get(`${userId}/followers/`);
   
           if (response.status === 200) {
-            const data = response.data;
+            const data = response.data.items;
             setFollowers(data);
           } else {
             console.error('Error fetching authors');
@@ -60,10 +61,39 @@ const useProfileViewModel = () => {
       fetchPosts();
     }, [userId]);
 
+    const updateProfile = async (
+      {username,
+      github,
+      image,
+      }) => {
+      // Updates the profile.
+      const body = {
+          displayName: username,
+          github,
+          profileImage: image
+      };
+
+      const response = await axios.post(`${userId}/`, body);
+      if (response.status === 200) {
+        const user = {
+          id: userId,
+          username: response.data.displayName,
+          profileImage: response.data.profileImage,
+          github: response.data.github,
+        };
+        dispatch({ type: 'SET_USER', payload: user });
+        setProfile(response.data);
+        console.log("Profile updated");
+      } else {
+          console.error("Error creating profile");
+      }
+  };
+
     return {
       posts,
       profileData,
-      followers
+      followers,
+      updateProfile
     };
   };
   

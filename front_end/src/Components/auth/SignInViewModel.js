@@ -20,7 +20,7 @@ const useSignInViewModel = (navigate) => {
         id: response.data.author.id,
         username: response.data.author.displayName,
         profileImage: response.data.author.profileImage,
-        gitHub: response.data.author.gitHub,
+        github: response.data.author.github,
       };
       dispatch({ type: 'SET_USER', payload: user });
       
