@@ -90,13 +90,16 @@ export default function CreatePost(props) {
         }
         
     } else {
-        setContent(imageLink);
+        console.log(imageLink)
+        setContent(imageLink)
+        console.log(content)
         setContentType('text/plain')
     }
   }
 
   const reset = () => {
     setSelectedPostType(null);
+    setContent(null);
   }
 
   const onCreatePost = async () =>{
@@ -199,6 +202,7 @@ export default function CreatePost(props) {
             />
           }
           {selectedPostType === "image" &&
+          <>
           <div className='photoUpload'>
             <Button 
               component="label" 
@@ -223,9 +227,8 @@ export default function CreatePost(props) {
               submit
             </Button>
             </div>
-          </div>      
-          }
-          {(content && contentType.startsWith('image'))&& (
+          </div>
+          {content && (
             <Box p={2} style={{ display: 'flex', justifyContent: 'center' }}>
               <img
                 src={content}
@@ -234,6 +237,8 @@ export default function CreatePost(props) {
               />
             </Box>
           )}
+          </>    
+          }
           <FormControl>
             <FormLabel id="demo-row-radio-buttons-group-label">Visibility</FormLabel>
             <RadioGroup
@@ -245,7 +250,7 @@ export default function CreatePost(props) {
             >
               <FormControlLabel value="public" control={<Radio />} label="Public" />
               <FormControlLabel value="friends" control={<Radio />} label="Friends Only" />
-              <FormControlLabel value="private" control={<Radio />} label="Private" />
+              {/* <FormControlLabel value="private" control={<Radio />} label="Private" /> */}
             </RadioGroup>
           </FormControl>
           <ButtonGroup

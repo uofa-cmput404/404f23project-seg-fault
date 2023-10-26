@@ -26,17 +26,33 @@ const usePostsViewModel = () => {
             }
         };
 
-        const fetchFollowingUsersIds = async () => {
-            // Helper method to fetch the Ids of all the users you are following
-            const following_response = await axios.get(`${userId}/following/`);
-            if (following_response.status === 200) {
-                return following_response.data.items.map((item) => item.user.id);
+        const isFollowing = async (author) => {
+            // Helper method to fetch the posts of an specific author
+            const followers_response = await axios.get(`${author.url}/followers/`);
+            if (followers_response.status === 200) {
+                for (let follower of followers_response.data.items) {
+                    if (follower.follower.id === userId) {
+                        console.log('i shouldnt be ablt to see this')
+                        return true
+                    }
+                }
             } else {
                 console.error(
-                    `Couldn't fetch following users. Status code: ${following_response.status}`
+                    `Couldn't fetch followers. Status code: ${followers_response.status}`
                 );
-                return [];
             }
+            return false;
+        };
+
+        const fetchFollowingUsersIds = async (authors) => {
+            const following = []
+            for (let author of authors) {
+                const isUserFollowing = await isFollowing(author);
+                if ( isUserFollowing ) {
+                    following.push(author.id)
+                }
+            }
+            return following;
         };
 
         const fetchPostsByAuthor = async (author) => {
@@ -54,18 +70,26 @@ const usePostsViewModel = () => {
 
         const filterPosts = (allPosts, followingUsersIds) => {
             // Helper method to filter posts based on visibility, friends posts or your own posts
-            return allPosts.filter(
+            allPosts = allPosts.filter(
                 (item) =>
                     item.visibility === "public" ||
                     item.author.id === userId ||
                     (followingUsersIds.includes(item.author.id) &&
-                        item.visibility === "friends")
+                        (item.visibility === "friends"))
             );
+
+
+            return allPosts.sort((a, b) => {
+                const dateA = new Date(a.published);
+                const dateB = new Date(b.published);
+              
+                return dateB - dateA;
+              });
         };
 
         try {
             const authors = await fetchAuthors();
-            const followingUsersIds = await fetchFollowingUsersIds();
+            const followingUsersIds = await fetchFollowingUsersIds(authors);
 
             const allPosts = (
                 await Promise.all(authors.map((author) => fetchPostsByAuthor(author)))
