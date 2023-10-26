@@ -10,7 +10,6 @@ import { StoreContext } from './../../store';
 
 function ProfilePage({ isOwner = true }) {
     const { state } = useContext(StoreContext);
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const {posts, followers} = useProfileViewModel();
 
@@ -20,14 +19,6 @@ function ProfilePage({ isOwner = true }) {
 
     const closeCreateModal = () => {
         setIsCreateModalOpen(false);
-    };
-
-    const openEditModal = () => {
-        setIsEditModalOpen(true);
-    };
-
-    const closeEditModal = () => {
-        setIsEditModalOpen(false);
     };
 
     return (
