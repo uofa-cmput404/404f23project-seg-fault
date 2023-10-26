@@ -163,4 +163,6 @@ class CommentListView(generics.ListCreateAPIView):
         post.comments = comments_url
         post.save()
         
-        serializer.save(post=post, author=author)
+        comment = serializer.save(post=post, author=author)
+        comment.url = serializer.get_id(comment)
+        comment.save()

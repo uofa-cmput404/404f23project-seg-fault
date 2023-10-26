@@ -29,6 +29,7 @@ class Post(models.Model):
     type = models.CharField(max_length=100, default="post")
     title = models.CharField(max_length=100)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+    url = models.URLField(null=True)
     source = models.URLField()
     origin = models.URLField()
     description = models.CharField(max_length=255)
@@ -52,20 +53,20 @@ class Comment(models.Model):
     comment = models.TextField()
     contentType = models.CharField(max_length=100, default='text/markdown')
     published = models.DateTimeField(auto_now_add=True)
+    url = models.URLField(null=True)
 
 
 class Like(models.Model):
-    context = models.URLField()
-    summary = models.CharField(max_length=255)
-    type = models.CharField(max_length=50, default="Like")
-    author = models.ForeignKey(Author, on_delete=models.CASCADE)
-    # like a comment or a post
     liked_post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True, blank=True)
-    liked_comment = models.ForeignKey('Comment', on_delete=models.CASCADE, null=True, blank=True)
-    object = models.URLField()
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
+    object = models.URLField(blank=True)
 
-    def __str__(self):
-        return self.summary
+class Inbox(models.Model):
+    author  = models.OneToOneField(Author, on_delete=models.CASCADE, related_name='author_inbox')
+    posts = models.ManyToManyField(Post, related_name='inbox_posts')
+    comments = models.ManyToManyField(Comment)
+    likes = models.ManyToManyField(Like)
+
 
 
 # every author has 1 inbox

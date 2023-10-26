@@ -1,8 +1,8 @@
 ### models and serializers
-from ..models import Author, AuthorFollower, Post, Like
+from ..models import Author, AuthorFollower, Post, Like, Comment, Inbox
 from ..authors.serializers import UserSerializer, AuthorSerializer, AuthorDetailSerializer
 from ..posts.serializers import PostSerializer
-from .serializers import LikeSerializer
+from .serializers import LikeSerializer, InboxSerializer
 from django.contrib.auth.models import User
 ##### user auth
 from rest_framework.authentication import TokenAuthentication
@@ -21,13 +21,22 @@ from django.utils import timezone
 from rest_framework import pagination
 import uuid
 import base64
-
+from django.urls import resolve
 
 #TODO: get the author from the user instead of the serializer
 #TODO: ensures the autho id field is populated when creating a like instance
-class InboxView(generics.CreateAPIView):
-    serializer_class = LikeSerializer
 
+
+
+class InboxView(generics.CreateAPIView):
+    def get_serializer_class(self):
+        # Get the "type" from the request data
+        type = self.request.data.get('type', None)
+        # Choose the serializer class based on the "type" field
+        if type == 'Like':
+            return LikeSerializer
+    
+    ## get the owner of the inbox
     def get_author(self):
         author_id_hex = self.kwargs['author_id']
         try:
@@ -36,20 +45,68 @@ class InboxView(generics.CreateAPIView):
         except ValueError:
             raise ValueError("Invalid hexadecimal author_id")
 
+    
+    def perform_create(self, serializer):
+        validated_data = serializer.validated_data
+        type = validated_data['type']
+        if type == 'Like':
+            author_url = validated_data['author']
+            object_url = validated_data['object']
+            if "post" in object_url:
+                object_type = "post"
+            # the author that is doing the liking
+            author = Author.objects.get(url=author_url)
+            if object_type == 'post':
+                post = Post.objects.get(url=object_url)
+                like = Like.objects.create(liked_post=post, author=author, object=object_url)
+                like.save()
 
-    def create(self, request, *args, **kwargs):
-        item_type = request.data.get('type', None)
-        if item_type == 'Like':
-            serializer = LikeSerializer(data=request.data)
-            if serializer.is_valid():
-                like: Like = serializer.save()
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                inbox, created = Inbox.objects.get_or_create(author=self.get_author())
+                inbox.likes.add(like)
+    
+    def get(self, request, *args, **kwargs):
+        # Retrieve the author's inbox
+        author = self.get_author()
+        inbox, _ = Inbox.objects.get_or_create(author=author)
+
+        # Serialize the inbox contents
+        serializer = InboxSerializer(inbox)
+
+        return Response(serializer.data)
+
+# def get_author(self):
+#         author_id_hex = self.kwargs['author_id']
+#         try:
+#             author_id = uuid.UUID(hex=author_id_hex)
+#             return get_object_or_404(Author, id=author_id)
+#         except ValueError:
+#             raise ValueError("Invalid hexadecimal author_id")
+# class InboxView(generics.CreateAPIView):
+#     serializer_class = LikeSerializer
+
+#     def get_author(self):
+#         author_id_hex = self.kwargs['author_id']
+#         try:
+#             author_id = uuid.UUID(hex=author_id_hex)
+#             return get_object_or_404(Author, id=author_id)
+#         except ValueError:
+#             raise ValueError("Invalid hexadecimal author_id")
+    
+
+
+#     def create(self, request, *args, **kwargs):
+#         item_type = request.data.get('type', None)
+#         if item_type == 'Like':
+#             serializer = LikeSerializer(data=request.data)
+#             if serializer.is_valid():
+#                 like: Like = serializer.save()
+#                 return Response(serializer.data, status=status.HTTP_201_CREATED)
                 
 
-        else:
-            return Response({'detail': 'Invalid type'}, status=status.HTTP_400_BAD_REQUEST)
+#         else:
+#             return Response({'detail': 'Invalid type'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
