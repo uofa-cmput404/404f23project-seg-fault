@@ -6,7 +6,7 @@ import Modal from '@mui/material/Modal';
 import Avatar from '@mui/material/Avatar';
 import TextField from '@mui/material/TextField';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import './EditProfile.css'
+import '../createpost/CreatePost.css'
 import useProfileViewModel from '../../api/ProfileViewModel'
 import { StoreContext } from './../../store';
 import Snackbar from '@mui/material/Snackbar';
