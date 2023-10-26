@@ -28,6 +28,7 @@ function ProfilePage({ isOwner = true }) {
                       postsCount={posts.length} 
                       name={state.user.username} 
                       username={state.user.username} 
+                      github={state.user.github}
                       imagePath={state.user.profileImage} />
             <div>
                 {posts.map((post, index) => (

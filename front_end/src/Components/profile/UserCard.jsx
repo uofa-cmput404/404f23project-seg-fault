@@ -6,8 +6,20 @@ import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
+import EditProfile from './EditProfile';
 
-export default function UserCard({name, imagePath, isOwner, followersCount, postsCount}) {
+export default function UserCard({name, imagePath, github, isOwner, followersCount, postsCount}) {
+  
+  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
+  
+  const openEditModal = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
     const menuTemplate = !isOwner ? (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
             <Button variant="outlined" color="neutral">
@@ -18,7 +30,7 @@ export default function UserCard({name, imagePath, isOwner, followersCount, post
             </Button>
         </Box>) : (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
-            <Button variant='outlined' color='primary'>
+            <Button variant='outlined' color='primary' onClick={openEditModal}>
               Edit
             </Button>
         </Box>);
@@ -119,6 +131,7 @@ export default function UserCard({name, imagePath, isOwner, followersCount, post
           </Sheet>
         </CardContent>
       </Card>
+      <EditProfile username = {name} github={github}  image = {imagePath} open={isEditModalOpen} onClose={closeEditModal} action='EDIT'/>
     </Box>
   );
 }
