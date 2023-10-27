@@ -9,6 +9,7 @@ class PostSerializer(serializers.ModelSerializer):
     categories = serializers.SerializerMethodField('get_categories')
     published = serializers.DateTimeField(format='%Y-%m-%dT%H:%M:%S%z')
     author = AuthorSerializer()
+
     class Meta:
         model = Post
         fields = ('type', 'title', 'id', 'source', 'origin', 'description', 'contentType', 'content', 'author', 'categories', 'count', 'comments', 'published', 'visibility', 'unlisted')
@@ -25,19 +26,24 @@ class PostSerializer(serializers.ModelSerializer):
             return categories_string.split(',')
         return []
 
+
 # for put request need to change entire resource
 class PostCreateSerializer(serializers.ModelSerializer):
     categories = serializers.CharField(required=False, allow_blank=True)
     description = serializers.CharField(required=False, allow_blank=True)
+    url = serializers.SerializerMethodField('get_id')
+    
 
     class Meta:
         model = Post
-        fields = ('title', 'description', 'contentType', 'content', 'categories', 'visibility', 'unlisted')
+        fields = ('title', 'description', 'contentType', 'content', 'categories', 'visibility', 'unlisted', 'url')
     def get_id(self, obj):
         # Convert the UUID to its hexadecimal representation
         post_id_hex = obj.id.hex
         author_url = obj.author.url
         return author_url + "/posts" + "/" + post_id_hex
+    
+    
     
 
 # dont need to require everything for updating    

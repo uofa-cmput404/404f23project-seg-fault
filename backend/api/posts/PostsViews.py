@@ -105,6 +105,7 @@ class PostListView(generics.ListCreateAPIView):
             # true origin is our node for local posts
             instance.origin = serializer.get_id(instance)
             instance.source = serializer.get_id(instance)
+            instance.url = serializer.get_id(instance)
             instance.published = timezone.now()
 
 

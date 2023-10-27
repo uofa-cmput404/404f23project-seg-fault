@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django_light',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,8 +52,8 @@ REST_FRAMEWORK = {
 }
 
 
-
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000'] # react front end server location
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = ['http://localhost:3000'] # react front end server location
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

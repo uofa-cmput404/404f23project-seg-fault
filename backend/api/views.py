@@ -1,19 +1,25 @@
-from django.shortcuts import get_object_or_404
-### models
+### models and serializers
 from .models import Author, AuthorFollower, Comment, Post
-### serializers
 from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer
 from django.contrib.auth.models import User
-import uuid
-from rest_framework.pagination import PageNumberPagination
-##### user auth
-from rest_framework import generics, views, permissions, status
-from rest_framework.response import Response
+### user auth
 from rest_framework.authtoken.models import Token
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
+### views
+from rest_framework import generics, views, permissions, status
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
+### from django
 from django.shortcuts import get_object_or_404
+from django.http import HttpResponse, HttpResponseNotFound
+from datetime import datetime
+from django.utils import timezone
+from rest_framework import pagination
+import uuid
+import base64
 
 root_url = "http://127.0.0.1:8000/api"
 
@@ -121,7 +127,7 @@ class FollowersListView(generics.ListAPIView):
             "items": response.data
         })
 
-class CustomPageNumberPagination(PageNumberPagination):
+class CustomPageNumberPagination(pagination.PageNumberPagination):
     page_size = 5  # Or whatever number you want for this specific view
     def get_paginated_response(self, data):
         return Response({
@@ -157,4 +163,6 @@ class CommentListView(generics.ListCreateAPIView):
         post.comments = comments_url
         post.save()
         
-        serializer.save(post=post, author=author)
+        comment = serializer.save(post=post, author=author)
+        comment.url = serializer.get_id(comment)
+        comment.save()

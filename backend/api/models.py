@@ -18,12 +18,18 @@ class Author(models.Model):
 
     def __str__(self):
         return self.user.username
+
+class AuthorFollower(models.Model):
+    user = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="followed_by")
+    follower = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="following")
+    created_at = models.DateTimeField(auto_now_add=True)
     
 
 class Post(models.Model):
     type = models.CharField(max_length=100, default="post")
     title = models.CharField(max_length=100)
     id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)
+    url = models.URLField(null=True)
     source = models.URLField()
     origin = models.URLField()
     description = models.CharField(max_length=255)
@@ -47,14 +53,40 @@ class Comment(models.Model):
     comment = models.TextField()
     contentType = models.CharField(max_length=100, default='text/markdown')
     published = models.DateTimeField(auto_now_add=True)
+    url = models.URLField(null=True)
+
+
+class Like(models.Model):
+    liked_post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True, blank=True)
+    author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
+    object = models.URLField()
+
+class Inbox(models.Model):
+    author  = models.OneToOneField(Author, on_delete=models.CASCADE, related_name='author_inbox')
+    # posts = models.ManyToManyField(Post, related_name='inbox_posts')
+    # comments = models.ManyToManyField(Comment)
+    likes = models.ManyToManyField(Like)
 
 
 
+# every author has 1 inbox
+# their inbox can have multipole messages
+# class Inbox(models.Model):
+#     author = models.OneToOneField('Author', on_delete=models.CASCADE)
+#     messages = models.ManyToManyField('Message', related_name='inbox_messages')
 
-class AuthorFollower(models.Model):
-    user = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="followed_by")
-    follower = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="following")
-    created_at = models.DateTimeField(auto_now_add=True)
 
-
+# class Inbox(models.Model):
+#     TYPE_CHOICES = [
+#         ('post', 'Post'),
+#         ('like', 'Like'),
+#         ('follow', 'Follow'),
+#         ('comment', 'Comment'),
+#     ]
+#     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
+#     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+#     contentType = models.CharField(max_length=100)
+#     object_id = models.PositiveIntegerField()
+#     content_object = GenericForeignKey('content_type', 'object_id')
+    
 
