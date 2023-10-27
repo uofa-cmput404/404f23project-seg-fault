@@ -5,7 +5,7 @@ from .authors.AuthorViews import UserLoginView, UserRegistrationView, AuthorList
 # from posts sub directory get the views
 from .posts.PostsViews import PostListView, PostDetailView, get_image_post
 # fron inbox sub directory
-from .inbox.inboxViews import InboxView
+from .inbox.inboxViews import InboxView, PostLikesListView
 
 from .views import FollowAuthorView, UnfollowAuthorView, FollowersListView, FollowingListView, FollowerView, CommentListView
 
@@ -27,4 +27,6 @@ urlpatterns = [
     path('authors/<str:author_id>/posts/<str:post_id>/comments/', CommentListView.as_view(), name='post-comments'),
     ## Inbox
     path('authors/<str:author_id>/inbox/', InboxView.as_view(), name='inbox_create'),
+    ## Likes
+    path('authors/<str:author_id>/posts/<str:post_id>/likes/', PostLikesListView.as_view(), name='post-likes'),
 ]

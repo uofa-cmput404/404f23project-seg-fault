@@ -2,7 +2,7 @@
 from ..models import Author, AuthorFollower, Post, Like, Comment, Inbox
 from ..authors.serializers import UserSerializer, AuthorSerializer, AuthorDetailSerializer
 from ..posts.serializers import PostSerializer
-from .serializers import LikeSerializer, InboxSerializer
+from .serializers import LikeSerializer, InboxSerializer, PostLikeSerializer
 from django.contrib.auth.models import User
 ##### user auth
 from rest_framework.authentication import TokenAuthentication
@@ -23,19 +23,35 @@ import uuid
 import base64
 from django.urls import resolve
 
-#TODO: get the author from the user instead of the serializer
-#TODO: ensures the autho id field is populated when creating a like instance
 
 
+class PostLikesListView(generics.ListAPIView):
+    serializer_class = PostLikeSerializer
+
+    def get_queryset(self):
+        author_id_hex = self.kwargs['author_id']
+        post_id_hex = self.kwargs['post_id']
+        try:
+            post_id = uuid.UUID(hex=post_id_hex)
+        except ValueError:
+            # Handle invalid UUIDs here, such as returning an error response
+            return []
+
+        return Like.objects.filter(liked_post_id=post_id)
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        likes_data = serializer.data
+        
+        # Create a custom response dictionary with "items" as the key
+        response_data = {"type": "likes", "items": likes_data}
+        
+        return Response(response_data)
 
 class InboxView(generics.CreateAPIView):
     def get_serializer_class(self):
-        # Get the "type" from the request data
-        type = self.request.data.get('type', None)
-        # Choose the serializer class based on the "type" field
-        if type == 'Like':
-            return LikeSerializer
-    
+        return LikeSerializer    
     ## get the owner of the inbox
     def get_author(self):
         author_id_hex = self.kwargs['author_id']
@@ -44,12 +60,20 @@ class InboxView(generics.CreateAPIView):
             return get_object_or_404(Author, id=author_id)
         except ValueError:
             raise ValueError("Invalid hexadecimal author_id")
+    ## get the author's inbox    
+    def get_inbox(self):
+        try:
+            author = self.get_author()
+            return(get_object_or_404(Inbox, author=author))
+        except ValueError:
+            raise ValueError("Invalid hexadecimal author_id")
 
     
     def perform_create(self, serializer):
         validated_data = serializer.validated_data
         type = validated_data['type']
-        if type == 'Like':
+        type = type.lower()
+        if type == 'like':
             author_url = validated_data['author']
             object_url = validated_data['object']
             if "post" in object_url:
@@ -64,15 +88,20 @@ class InboxView(generics.CreateAPIView):
                 inbox, created = Inbox.objects.get_or_create(author=self.get_author())
                 inbox.likes.add(like)
     
-    def get(self, request, *args, **kwargs):
-        # Retrieve the author's inbox
-        author = self.get_author()
-        inbox, _ = Inbox.objects.get_or_create(author=author)
+    # def list(self, request, *args, **kwargs):
+    #     instance = self.get_inbox()
+    #     serializer = InboxSerializer(instance)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
 
-        # Serialize the inbox contents
-        serializer = InboxSerializer(inbox)
+    # def get(self, request, *args, **kwargs):
+    #     # Retrieve the author's inbox
+    #     author = self.get_author()
+    #     inbox, _ = Inbox.objects.get_or_create(author=author)
 
-        return Response(serializer.data)
+    #     # Serialize the inbox contents
+    #     serializer = InboxSerializer(inbox)
+
+    #     return Response(serializer.data)
 
 # def get_author(self):
 #         author_id_hex = self.kwargs['author_id']

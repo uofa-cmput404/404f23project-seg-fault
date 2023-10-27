@@ -1,19 +1,44 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from ..models import Author, User, AuthorFollower, Post, Inbox
+from ..models import Author, User, AuthorFollower, Post, Inbox, Like
 from ..authors.serializers import AuthorSerializer
 
+root_url = "http://127.0.0.1:8000/api" 
+
+class GetLikeSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer(read_only=True)
+    class Meta:
+        model = Like
+        fields = ('liked_post', 'author')
+
+class PostLikeSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer(read_only=True)
+    summary = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
+    context = serializers.SerializerMethodField()
+    class Meta:
+        model = Like
+        fields = ('context', 'summary', 'type', 'author', 'object') #don't need 'liked_post'
+    def get_summary(self, obj):
+        author_display_name = obj.author.displayName
+        summary = f"{author_display_name} likes your post"
+        return summary
+    def get_type(self, obj):
+        return "like"
+    def get_context(self, obj):
+        return root_url
 
 class LikeSerializer(serializers.Serializer):
     type = serializers.CharField()
     author = serializers.URLField()
     object = serializers.URLField()
-    object_type = serializers.CharField()
 
 class InboxSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer(read_only=True)
+    likes = GetLikeSerializer(read_only=True)
     class Meta:
         model = Inbox
-        fields = ('author', 'posts', 'comments', 'likes')
+        fields = ('likes', 'author')
 
 # class LikeSerializer(serializers.ModelSerializer):
 #     author = AuthorObjectSerializer

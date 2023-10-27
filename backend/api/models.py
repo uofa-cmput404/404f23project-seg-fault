@@ -59,12 +59,12 @@ class Comment(models.Model):
 class Like(models.Model):
     liked_post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True, blank=True)
     author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
-    object = models.URLField(blank=True)
+    object = models.URLField()
 
 class Inbox(models.Model):
     author  = models.OneToOneField(Author, on_delete=models.CASCADE, related_name='author_inbox')
-    posts = models.ManyToManyField(Post, related_name='inbox_posts')
-    comments = models.ManyToManyField(Comment)
+    # posts = models.ManyToManyField(Post, related_name='inbox_posts')
+    # comments = models.ManyToManyField(Comment)
     likes = models.ManyToManyField(Like)
 
 
