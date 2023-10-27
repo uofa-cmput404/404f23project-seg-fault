@@ -14,7 +14,7 @@ import CommentIcon from "@mui/icons-material/Comment";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import ReactMarkdown from "react-markdown";
+import { useRemark } from 'react-remark';
 import Comment from "../comment/Comment";
 import "./Post.css";
 import PostMenu from "../postMenu/PostMenu";
@@ -40,13 +40,14 @@ function PostDisplay({ content, contentType }) {
     //possibly need to decode images when we connect with other teams add the content type before the image
     return <CardMedia component="img" image={content} alt="postImage" />;
   } else if (contentType === "text/markdown") {
-    return <ReactMarkdown className="postMarkdown">{content}</ReactMarkdown>;
+    return content;
   } else {
     return <p>Unsupported content type: {contentType}</p>;
   }
 }
 
 export default function Post(props) {
+  const [markdownContent, setMarkdownContent] = useRemark();
   const [expandComments, setExpandedComments] = React.useState(false);
   const [liked, setLiked] = React.useState(false);
   const [share, setShare] = React.useState(false);
@@ -72,6 +73,11 @@ export default function Post(props) {
     private: "warning",
     friends: "success",
   };
+
+  React.useEffect(() => {
+    setMarkdownContent(props.post.content);
+  }, []);
+
 
   return (
     <>
@@ -99,7 +105,7 @@ export default function Post(props) {
             {props.post.title}
           </Typography>
           <PostDisplay
-            content={props.post.content}
+            content={props.post.contentType === "text/markdown" ? markdownContent : props.post.content}
             contentType={props.post.contentType}
           />
         </Stack>
