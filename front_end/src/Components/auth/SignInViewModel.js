@@ -10,9 +10,7 @@ const useSignInViewModel = (navigate) => {
     password: '',
   });
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     const response = await axios.post('http://127.0.0.1:8000/api/login/', formData);
 
     if (response.status === 200) {
@@ -22,7 +20,7 @@ const useSignInViewModel = (navigate) => {
         id: response.data.author.id,
         username: response.data.author.displayName,
         profileImage: response.data.author.profileImage,
-        gitHub: response.data.author.gitHub,
+        github: response.data.author.github,
       };
       dispatch({ type: 'SET_USER', payload: user });
       

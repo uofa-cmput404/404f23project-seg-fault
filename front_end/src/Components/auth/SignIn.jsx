@@ -11,13 +11,40 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useSignInViewModel from './SignInViewModel';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 import { useNavigate } from 'react-router-dom';
 
 const defaultTheme = createTheme();
 
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
+
 function SignIn() {
   const navigate = useNavigate();
   const { formData, handleSubmit, handleChange } = useSignInViewModel(navigate); 
+
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+
+  const handleOnSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await handleSubmit()
+    } catch (error) {
+      setOpenSnackBar(true);
+      console.error('Error in handleSubmit:', error);
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -37,7 +64,7 @@ function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={handleOnSubmit} sx={{ mt: 3 }}>
             <TextField
               margin="normal"
               required
@@ -81,6 +108,16 @@ function SignIn() {
           </Box>
         </Box>
       </Container>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={openSnackBar}
+        onClose={handleClose}
+        autoHideDuration={2000}
+      >
+        <Alert severity="error" sx={{ width: '100%' }}>
+          Username and/or Password Incorrect
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }

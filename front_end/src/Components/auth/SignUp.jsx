@@ -12,13 +12,40 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import useSignUpViewModel from './SignUpViewModel';
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 const defaultTheme = createTheme();
+
+const Alert = React.forwardRef(function Alert(props, ref) {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
 function SignUp() {
   const navigate = useNavigate();
   const { formData, handleSubmit, handleChange } = useSignUpViewModel(navigate);
 
+  const [openSnackBar, setOpenSnackBar] = React.useState(false);
+
+  const handleOnSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await handleSubmit()
+    } catch (error) {
+      setOpenSnackBar(true);
+      console.error('Error in handleSubmit:', error);
+    }
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+
+    setOpenSnackBar(false);
+  };
+
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -37,7 +64,7 @@ function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+          <Box component="form" noValidate onSubmit={handleOnSubmit} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <TextField
@@ -97,6 +124,16 @@ function SignUp() {
           </Box>
         </Box>
       </Container>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        open={openSnackBar}
+        onClose={handleClose}
+        autoHideDuration={2000}
+      >
+        <Alert severity="error" sx={{ width: '100%' }}>
+          Invalid feilds or user already exists
+        </Alert>
+      </Snackbar>
     </ThemeProvider>
   );
 }
