@@ -14,11 +14,12 @@ import CommentIcon from "@mui/icons-material/Comment";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import { useRemark } from 'react-remark';
+import { useRemark } from "react-remark";
 import Comment from "../comment/Comment";
 import "./Post.css";
 import PostMenu from "../postMenu/PostMenu";
 import Share from "../share/Share";
+import usePostViewModel from "./PostViewModel";
 import { StoreContext } from "../../store";
 
 function isImageUrl(url) {
@@ -48,25 +49,18 @@ function PostDisplay({ content, contentType }) {
 
 export default function Post(props) {
   const [markdownContent, setMarkdownContent] = useRemark();
-  const [expandComments, setExpandedComments] = React.useState(false);
-  const [liked, setLiked] = React.useState(false);
-  const [share, setShare] = React.useState(false);
   const { state } = React.useContext(StoreContext);
   const userId = state.user.id;
 
-  const handleLike = () => {
-    console.log(userId);
-    console.log(props.authorId);
-    setLiked((prev) => !prev);
-  };
-
-  const handleShare = () => {
-    setShare((prev) => !prev);
-  };
-
-  const handleExpandClick = () => {
-    setExpandedComments(!expandComments);
-  };
+  const {
+    expandComments,
+    liked,
+    share,
+    likes,
+    handleLike,
+    handleShare,
+    handleExpandClick,
+  } = usePostViewModel(props, userId, markdownContent, setMarkdownContent);
 
   const visibilityColors = {
     public: "info",
@@ -76,8 +70,7 @@ export default function Post(props) {
 
   React.useEffect(() => {
     setMarkdownContent(props.post.content);
-  }, []);
-
+  }, [props.post.content, setMarkdownContent]);
 
   return (
     <>
@@ -105,12 +98,17 @@ export default function Post(props) {
             {props.post.title}
           </Typography>
           <PostDisplay
-            content={props.post.contentType === "text/markdown" ? markdownContent : props.post.content}
+            content={
+              props.post.contentType === "text/markdown"
+                ? markdownContent
+                : props.post.content
+            }
             contentType={props.post.contentType}
           />
         </Stack>
         <CardActions disableSpacing>
           <div>
+            <span>{likes.length}</span>
             <IconButton
               aria-label="like"
               style={{ color: liked ? "red" : "gray" }}
