@@ -21,6 +21,9 @@ function ProfilePage({ isOwner = true }) {
         setIsCreateModalOpen(false);
     };
 
+    let likes = 0;
+    posts.forEach((post) => likes+=(post.count))
+
     return (
         <>
             <UserCard isOwner={isOwner}
@@ -29,12 +32,11 @@ function ProfilePage({ isOwner = true }) {
                       name={state.user.username} 
                       username={state.user.username} 
                       github={state.user.github}
+                      likesCount={likes}
                       imagePath={state.user.profileImage} />
             <div>
                 {posts.map((post, index) => (
-                    <Post
-                    post={post}
-                    />
+                    <Post post={post} />
                 ))}
             </div>
             {isOwner ? (
