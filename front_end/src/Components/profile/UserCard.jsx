@@ -8,7 +8,7 @@ import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import EditProfile from './EditProfile';
 
-export default function UserCard({name, imagePath, github, isOwner, followersCount, postsCount}) {
+export default function UserCard({name, imagePath, github, isOwner, followersCount, postsCount, likesCount}) {
   
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
   
@@ -114,7 +114,7 @@ export default function UserCard({name, imagePath, github, isOwner, followersCou
               <Typography level="body-xs" fontWeight="lg">
                 Likes
               </Typography>
-              <Typography fontWeight="lg">34</Typography>
+              <Typography fontWeight="lg">{likesCount}</Typography>
             </div>
             <div>
               <Typography level="body-xs" fontWeight="lg">
