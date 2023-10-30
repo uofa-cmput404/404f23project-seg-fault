@@ -14,7 +14,7 @@ const usePostsViewModel = () => {
         const fetchAuthors = async () => {
             // Helper method to fetch all authors (including yourself)
             const users_response = await axios.get(
-                "http://127.0.0.1:8000/api/authors"
+                "http://127.0.0.1:8000/api/authors/"
             );
             if (users_response.status === 200) {
                 return users_response.data.items;
