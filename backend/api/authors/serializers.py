@@ -6,7 +6,7 @@ from ..models import Author
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password')  # Include any additional fields you need
+        fields = ('id', 'username', 'email', 'password')
 
 class AuthorSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_id')
@@ -14,7 +14,6 @@ class AuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = ('type', 'id', 'host', 'displayName', 'url', 'github', 'profileImage')
     def get_hex(self, obj):
-        # Convert the UUID to its hexadecimal representation
         author_id_hex = obj.id.hex
         return author_id_hex
     
@@ -30,3 +29,7 @@ class AuthorDetailSerializer(serializers.ModelSerializer):
     github = serializers.URLField(required=False, allow_blank=True)
     profileImage = serializers.URLField(required=False, allow_blank=True)
 
+class RemoteAuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Author
+        fields = ('type', 'id', 'host', 'displayName', 'url', 'github', 'profileImage')

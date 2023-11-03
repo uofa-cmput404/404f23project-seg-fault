@@ -61,11 +61,16 @@ class Like(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     object = models.URLField()
 
+from django.contrib.postgres.fields import JSONField
+
 class Inbox(models.Model):
-    author  = models.OneToOneField(Author, on_delete=models.CASCADE, related_name='author_inbox')
-    # posts = models.ManyToManyField(Post, related_name='inbox_posts')
-    # comments = models.ManyToManyField(Comment)
-    likes = models.ManyToManyField(Like)
+    author = models.OneToOneField(Author, on_delete=models.CASCADE, related_name='author_inbox')
+    items = JSONField(default=list)
+
+    def add_item(self, item_data):
+        self.items.append(item_data)
+        self.save()
+
 
 
 
