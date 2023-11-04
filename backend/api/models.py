@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+import json
 import uuid
+from django.utils import timezone
 # Create your models here.
 
 
@@ -61,37 +63,18 @@ class Like(models.Model):
     author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
     object = models.URLField()
 
-from django.contrib.postgres.fields import JSONField
+
 
 class Inbox(models.Model):
     author = models.OneToOneField(Author, on_delete=models.CASCADE, related_name='author_inbox')
-    items = JSONField(default=list)
+    items = models.JSONField(default=list)
 
     def add_item(self, item_data):
-        self.items.append(item_data)
+        # item_data['timestamp'] = timezone.now().isoformat()
+        self.items.insert(0, item_data)
         self.save()
-
-
-
-
-# every author has 1 inbox
-# their inbox can have multipole messages
-# class Inbox(models.Model):
-#     author = models.OneToOneField('Author', on_delete=models.CASCADE)
-#     messages = models.ManyToManyField('Message', related_name='inbox_messages')
-
-
-# class Inbox(models.Model):
-#     TYPE_CHOICES = [
-#         ('post', 'Post'),
-#         ('like', 'Like'),
-#         ('follow', 'Follow'),
-#         ('comment', 'Comment'),
-#     ]
-#     type = models.CharField(max_length=20, choices=TYPE_CHOICES)
-#     author = models.ForeignKey(Author, on_delete=models.CASCADE)
-#     contentType = models.CharField(max_length=100)
-#     object_id = models.PositiveIntegerField()
-#     content_object = GenericForeignKey('content_type', 'object_id')
     
+    def clear_items(self):
+        self.items = []
+        self.save()
 
