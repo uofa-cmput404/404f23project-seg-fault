@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 import json
 import uuid
 from django.utils import timezone
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 # Create your models here.
 
 
@@ -59,9 +61,12 @@ class Comment(models.Model):
 
 
 class Like(models.Model):
-    liked_post = models.ForeignKey('Post', on_delete=models.CASCADE, null=True, blank=True)
-    author = models.ForeignKey(Author, on_delete=models.CASCADE, null=True)
+    context = models.URLField()
+    summary = models.TextField()
+    type = models.CharField(max_length=100, default="Like")
+    author = models.JSONField()
     object = models.URLField()
+
 
 
 

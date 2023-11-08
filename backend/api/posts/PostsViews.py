@@ -1,5 +1,5 @@
 ### models and serializers
-from .. models import Author, AuthorFollower, Post
+from .. models import Author, AuthorFollower, Post, Like
 from ..authors.serializers import UserSerializer, AuthorSerializer, AuthorDetailSerializer
 from .serializers import PostSerializer, PostCreateSerializer, PostUpdateSerializer
 from django.contrib.auth.models import User
@@ -175,10 +175,13 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
         # Check if the request user is the author of the post (authentication check)
         # if instance.author != self.request.user:
         #     raise PermissionDenied("You don't have permission to delete this post.")
+
+        # we also need to delete the associated like object
+        Like.objects.filter(object=instance.url).delete()
+
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     
-
 
 
 
