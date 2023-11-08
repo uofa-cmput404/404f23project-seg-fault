@@ -5,7 +5,7 @@ from .authors.AuthorViews import UserLoginView, UserRegistrationView, AuthorList
 # from posts sub directory get the views
 from .posts.PostsViews import PostListView, PostDetailView, get_image_post
 # fron inbox sub directory
-from .inbox.inboxViews import inbox_view
+from .inbox.inboxViews import inbox_view, PostLikesListView, CommentLikesListView, LikedListView
 
 from .views import FollowAuthorView, UnfollowAuthorView, FollowersListView, FollowingListView, FollowerView, CommentListView
 
@@ -47,7 +47,9 @@ urlpatterns = [
     ## Inbox
     path('authors/<str:author_id>/inbox/', inbox_view, name='inbox_view'),
     ## Likes
-    # path('authors/<str:author_id>/posts/<str:post_id>/likes/', PostLikesListView.as_view(), name='post-likes'),
+    path('authors/<str:author_id>/posts/<str:post_id>/likes/', PostLikesListView.as_view(), name='post-likes'),
+    path('authors/<str:author_id>/posts/<str:post_id>/comments/<str:comment_id>/likes', CommentLikesListView.as_view(), name='post-likes'),
+    path('authors/<str:author_id>/liked/', LikedListView.as_view(), name='post-likes'),
     ##docs
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
