@@ -148,7 +148,7 @@ export default function Post(props) {
           </CardContent>
         </Collapse>
       </Card>
-      <Share open={share} onClose={handleShare} />
+      <Share open={share} onClose={handleShare} post={props.post}/>
     </>
   );
 }

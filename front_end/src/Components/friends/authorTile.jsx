@@ -11,6 +11,7 @@ function AuthorTile(props) {
     unfollow: "Unfollow",
     follower: "Following you",
     friend: "Remove friend",
+    share: "Share",
   };
 
   const chipColors = {
@@ -18,6 +19,7 @@ function AuthorTile(props) {
     unfollow: "#e63946",
     follower: "#8338ec",
     friend: "#e63946",
+    share: "#3a86ff",
   };
 
   const chipColor = chipColors[props.status] || "#000";
