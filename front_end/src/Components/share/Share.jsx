@@ -2,11 +2,20 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import './Share.css'
-import { tempAuthors } from '../../Pages/tempAuthors';
 import AuthorTile from '../friends/authorTile';
 import { Typography } from '@mui/material';
+import useShareViewModel from "./ShareViewModel";
 
 export default function Share(props) {
+  const {
+    friends,
+    sharePost
+  } = useShareViewModel();
+
+  const handleShare = (authorId) => {
+    sharePost(props.post, authorId)
+    props.onClose()
+  }
 
   return (
     <div>
@@ -20,7 +29,7 @@ export default function Share(props) {
       >
         <Box className="share-box">
             <Typography variant="h6" color="gray">
-                Share this post with a freind:
+                Share this post with a friend:
             </Typography>
             <Box 
             sx={{ 
@@ -29,15 +38,16 @@ export default function Share(props) {
                 justifyContent: 'center', 
                 alignItems: 'center'}}
             >
-            {tempAuthors.map((post, index) =>{
-                return (
-                    <AuthorTile 
-                    username={post.name} 
-                    profilePic={post.profile}
-                    status={post.status}
-                    />
-                )
-            })}
+            {friends.map((author, index) => (
+              <AuthorTile
+                key={index}
+                id={author.id}
+                username={author.displayName}
+                profilePic={author.profileImage}
+                status="share"
+                authorAction={handleShare}
+              />
+            ))}
             </Box>
         </Box>
       </Modal>
