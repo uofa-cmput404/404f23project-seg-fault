@@ -5,10 +5,12 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import * as bootIcons from "react-icons/bs";
-import { tempElements } from "./tempInboxElements";
 import InboxElement from "../Components/inbox/inboxElement";
+import useInboxViewModel from "./InboxViewModel";
 
 function Inbox() {
+  const { inbox } = useInboxViewModel();
+
   return (
     <Box px={{ md: 22 }} sx={{ paddingTop: "10px" }}>
       <AppBar position="static" sx={{ backgroundColor: "#3a86ff" }}>
@@ -43,16 +45,31 @@ function Inbox() {
           alignItems: "center",
         }}
       >
-        {tempElements.map((post, index) => {
-          return (
-            <InboxElement
-              key={index}
-              username={post.name}
-              profilePic={post.profile}
-              text={post.text}
-              visibility={post.visibility}
-            />
-          );
+        {inbox.map((element, index) => {
+          if (element.type === "post") {
+            return (
+              <InboxElement
+                key={index}
+                username={element.author.displayName}
+                profilePic={element.author.profileImage}
+                text={element.content}
+                visibility={element.type}
+              />
+            );
+          }
+          if (element.type === "comment") {
+            return (
+              <InboxElement
+                key={index}
+                username=""
+                profilePic=""
+                text={element.comment}
+                visibility={element.type}
+              />
+            );
+          }
+
+          return null;
         })}
       </Box>
     </Box>
