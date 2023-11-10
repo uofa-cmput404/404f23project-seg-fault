@@ -1,5 +1,5 @@
 ### models and serializers
-from .. models import Author, AuthorFollower, Post, Like
+from .. models import Author, AuthorFollower, Post, Like, Comment
 from ..authors.serializers import UserSerializer, AuthorSerializer, AuthorDetailSerializer
 from .serializers import PostSerializer, PostCreateSerializer, PostUpdateSerializer
 from django.contrib.auth.models import User
@@ -178,6 +178,7 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 
         # we also need to delete the associated like object
         Like.objects.filter(object=instance.url).delete()
+        # we also need to delete all comments
 
         instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

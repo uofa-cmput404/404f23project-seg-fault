@@ -48,7 +48,7 @@ urlpatterns = [
     path('authors/<str:author_id>/inbox/', inbox_view, name='inbox_view'),
     ## Likes
     path('authors/<str:author_id>/posts/<str:post_id>/likes/', PostLikesListView.as_view(), name='post-likes'),
-    path('authors/<str:author_id>/posts/<str:post_id>/comments/<str:comment_id>/likes', CommentLikesListView.as_view(), name='post-likes'),
+    path('authors/<str:author_id>/posts/<str:post_id>/comments/<str:comment_id>/likes/', CommentLikesListView.as_view(), name='post-likes'),
     path('authors/<str:author_id>/liked/', LikedListView.as_view(), name='post-likes'),
     ##docs
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
