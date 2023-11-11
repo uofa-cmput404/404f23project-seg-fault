@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
-export function useCommentsViewModel(postId, userId) {
+export function useCommentsViewModel(postId, userId, displayName) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
@@ -19,6 +19,7 @@ export function useCommentsViewModel(postId, userId) {
     const response = await axios.post(`${userId}/inbox/`, {
       type: "comment",
       comment: newComment,
+      displayName: displayName,
     });
 
     if (response.status === 201) {
@@ -26,7 +27,7 @@ export function useCommentsViewModel(postId, userId) {
     } else {
       console.log("Error dispatching comment notification");
     }
-  }, [userId, newComment]);
+  }, [userId, displayName, newComment]);
 
   const createComment = useCallback(async () => {
     const response = await axios.post(`${postId}/comments/`, {

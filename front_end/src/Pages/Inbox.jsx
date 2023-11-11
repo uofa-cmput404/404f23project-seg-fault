@@ -7,9 +7,11 @@ import Container from "@mui/material/Container";
 import * as bootIcons from "react-icons/bs";
 import InboxElement from "../Components/inbox/inboxElement";
 import useInboxViewModel from "./InboxViewModel";
+import Post from "../Components/post/Post";
+import { Button } from "@mui/material";
 
 function Inbox() {
-  const { inbox } = useInboxViewModel();
+  const { inbox, clearInbox } = useInboxViewModel();
 
   return (
     <Box px={{ md: 22 }} sx={{ paddingTop: "10px" }}>
@@ -34,6 +36,13 @@ function Inbox() {
             >
               Your Inbox
             </Typography>
+            <Button
+              variant="contained"
+              onClick={clearInbox}
+              style={{ marginLeft: "30rem" }}
+            >
+              Clear
+            </Button>
           </Toolbar>
         </Container>
       </AppBar>
@@ -47,21 +56,13 @@ function Inbox() {
       >
         {inbox.map((element, index) => {
           if (element.type === "post") {
-            return (
-              <InboxElement
-                key={index}
-                username={element.author.displayName}
-                profilePic={element.author.profileImage}
-                text={element.content}
-                visibility={element.type}
-              />
-            );
+            return <Post post={element} />;
           }
           if (element.type === "comment") {
             return (
               <InboxElement
                 key={index}
-                username=""
+                username={element.displayName}
                 profilePic=""
                 text={element.comment}
                 visibility={element.type}

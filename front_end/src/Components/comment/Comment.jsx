@@ -14,7 +14,7 @@ const style = {
 
 export default function Comment(props) {
   const { comments, newComment, setNewComment, createComment } =
-    useCommentsViewModel(props.postId, props.userId);
+    useCommentsViewModel(props.postId, props.userId, props.displayName);
 
   return (
     <List sx={style} component="nav" aria-label="mailbox folders">

@@ -51,6 +51,7 @@ export default function Post(props) {
   const [markdownContent, setMarkdownContent] = useRemark();
   const { state } = React.useContext(StoreContext);
   const userId = state.user.id;
+  const displayName = state.user.username;
 
   const {
     expandComments,
@@ -144,11 +145,15 @@ export default function Post(props) {
         </CardActions>
         <Collapse in={expandComments} timeout="auto" unmountOnExit>
           <CardContent>
-            <Comment userId={userId} postId={props.post.id} />
+            <Comment
+              userId={props.post.author.id}
+              postId={props.post.id}
+              displayName={displayName}
+            />
           </CardContent>
         </Collapse>
       </Card>
-      <Share open={share} onClose={handleShare} post={props.post}/>
+      <Share open={share} onClose={handleShare} post={props.post} />
     </>
   );
 }
