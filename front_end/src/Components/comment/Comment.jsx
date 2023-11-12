@@ -14,44 +14,44 @@ const style = {
 
 export default function Comment(props) {
   const { comments, newComment, setNewComment, createComment } =
-      useCommentsViewModel(props.postId);
+    useCommentsViewModel(props.postId, props.userId, props.displayName);
 
   return (
-      <List sx={style} component="nav" aria-label="mailbox folders">
-        {comments.map((comment, index) => {
-          return (
-              <div key={index}>
-                <Divider />
-                <ListItem>
-                  <ListItemText
-                      primary={comment.comment}
-                      secondary={comment.published}
-                      primaryTypographyProps={{
-                        style: { fontWeight: "bold", fontSize: "12px" },
-                      }}
-                      secondaryTypographyProps={{ style: { fontSize: "12px" } }}
-                  />
-                </ListItem>
-                <Divider />
-              </div>
-          );
-        })}
-        <TextField
-            id="outlined-basic"
-            label="New comment"
-            variant="outlined"
-            size="small"
-            fullWidth
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-        />
-        <Button
-            variant="contained"
-            onClick={createComment}
-            sx={{ marginTop: "6px" }}
-        >
-          Submit
-        </Button>
-      </List>
+    <List sx={style} component="nav" aria-label="mailbox folders">
+      {comments.map((comment, index) => {
+        return (
+          <div key={index}>
+            <Divider />
+            <ListItem>
+              <ListItemText
+                primary={comment.comment}
+                secondary={comment.published}
+                primaryTypographyProps={{
+                  style: { fontWeight: "bold", fontSize: "12px" },
+                }}
+                secondaryTypographyProps={{ style: { fontSize: "12px" } }}
+              />
+            </ListItem>
+            <Divider />
+          </div>
+        );
+      })}
+      <TextField
+        id="outlined-basic"
+        label="New comment"
+        variant="outlined"
+        size="small"
+        fullWidth
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
+      />
+      <Button
+        variant="contained"
+        onClick={createComment}
+        sx={{ marginTop: "6px" }}
+      >
+        Submit
+      </Button>
+    </List>
   );
 }
