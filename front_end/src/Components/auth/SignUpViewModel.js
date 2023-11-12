@@ -1,37 +1,41 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { useStore } from './../../store';
+import { useState } from "react";
+import axios from "axios";
+import { useStore } from "./../../store";
 
 const useSignUpViewModel = (navigate) => {
   const { dispatch } = useStore();
 
   const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
+    username: "",
+    email: "",
+    password: "",
   });
 
   const handleSubmit = async () => {
-    const response = await axios.post('http://127.0.0.1:8000/api/register/', formData);
+    const response = await axios.post(
+      "http://127.0.0.1:8000/api/register/",
+      formData
+    );
 
     if (response.status === 201) {
-      dispatch({ type: 'SET_TOKEN', payload: response.data.token });
+      dispatch({ type: "SET_TOKEN", payload: response.data.token });
 
       const user = {
+        id: response.data.author.id,
         username: response.data.author.displayName,
         profileImage: response.data.author.profileImage,
         gitHub: response.data.author.gitHub,
       };
-      dispatch({ type: 'SET_USER', payload: user });
+      dispatch({ type: "SET_USER", payload: user });
 
       setFormData({
-        username: '',
-        password: '',
+        username: "",
+        password: "",
       });
 
-      navigate('/home');
+      navigate("/home");
     } else {
-      console.error('Registration failed');
+      console.error("Registration failed");
     }
   };
 
