@@ -75,7 +75,13 @@ export default function Post(props) {
 
   return (
     <>
-      <Card sx={{ width: 600, padding: 1, margin: 3 }}>
+      <Card
+        sx={{
+          width: props.width,
+          padding: props.padding,
+          margin: props.margin,
+        }}
+      >
         <CardHeader
           avatar={
             <Avatar
