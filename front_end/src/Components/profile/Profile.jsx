@@ -1,57 +1,85 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import UserCard from "./UserCard";
 import Post from "../post/Post";
-import { Fab } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
-import CreatePost from "../createpost/CreatePost";
+import { Box, Grid, Typography } from "@mui/material"; // Import Typography
 import useProfileViewModel from "../../api/ProfileViewModel";
-import { StoreContext } from './../../store';
-
+import useEventsViewModel from "./EventsViewModel";
+import { StoreContext } from "./../../store";
+import EventTile from "./EventTile";
 
 function ProfilePage({ isOwner = true }) {
-    const { state } = useContext(StoreContext);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const {posts, followers} = useProfileViewModel();
+  const { state } = useContext(StoreContext);
+  const { posts, followers } = useProfileViewModel();
+  const { events } = useEventsViewModel();
 
-    const openCreateModal = () => {
-        setIsCreateModalOpen(true);
-    };
+  let likes = 0;
+  posts.forEach((post) => (likes += post.count));
 
-    const closeCreateModal = () => {
-        setIsCreateModalOpen(false);
-    };
+  return (
+    <Box>
+      <Grid container spacing={2} sx={{ p: 3 }}>
+        <Grid item xs={12}>
+          <UserCard
+            isOwner={isOwner}
+            followersCount={followers.length}
+            postsCount={posts.length}
+            name={state.user.username}
+            username={state.user.username}
+            github={state.user.github}
+            likesCount={likes}
+            imagePath={state.user.profileImage}
+          />
+        </Grid>
 
-    let likes = 0;
-    posts.forEach((post) => likes+=(post.count))
-
-    return (
-        <>
-            <UserCard isOwner={isOwner}
-                      followersCount={followers.length}
-                      postsCount={posts.length} 
-                      name={state.user.username} 
-                      username={state.user.username} 
-                      github={state.user.github}
-                      likesCount={likes}
-                      imagePath={state.user.profileImage} />
-            <div>
-                {posts.map((post, index) => (
-                    <Post post={post} />
-                ))}
-            </div>
-            {isOwner ? (
-                <Fab
-                    color="primary"
-                    aria-label="add"
-                    style={{ position: 'fixed', top: '20rem', right: '5rem' }}
-                    onClick={openCreateModal}
-                >
-                    <AddIcon />
-                </Fab>
-            ) : null}
-            {isCreateModalOpen && <CreatePost open={isCreateModalOpen} onClose={closeCreateModal} action='CREATE' />}
-        </>
-    );
+        <Grid item xs={12} md={7}>
+          <Typography
+            sx={{
+              background: "#ff006e",
+              color: "white",
+              padding: 2,
+              borderRadius: 1,
+              fontWeight: "bold",
+            }}
+          >
+            Posts
+          </Typography>
+          <Box
+            sx={{
+              height: "calc(100vh - 64px)",
+              overflow: "auto",
+            }}
+          >
+            {posts.map((post, index) => (
+              <Post key={index} post={post} padding={1} margin={1} />
+            ))}
+          </Box>
+        </Grid>
+        <Grid item xs={12} md={5}>
+          <Typography
+            sx={{
+              background: "#0d1321",
+              color: "white",
+              padding: 2,
+              borderRadius: 1,
+              fontWeight: "bold",
+            }}
+          >
+            Github Activity
+          </Typography>
+          <Box
+            sx={{
+              height: "calc(100vh - 64px)",
+              overflow: "auto",
+            }}
+          >
+            {events.map((event, index) => (
+              <EventTile key={index} type={event.type} name={event.repo.name} />
+            ))}
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
+  );
 }
 
 export default ProfilePage;
