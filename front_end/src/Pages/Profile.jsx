@@ -6,8 +6,10 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import * as bootIcons from "react-icons/bs";
 import ProfilePage from '../Components/profile/Profile';
+import { useParams } from 'react-router-dom';
 
 function Profile({user}) {
+  const { userId } = useParams();
   return (
     <Box px={{ md: 22 }} sx={{paddingTop: "10px"}}>
     <AppBar position="static" sx={{ backgroundColor: '#3a86ff' }}>
@@ -35,7 +37,7 @@ function Profile({user}) {
       </Container>
     </AppBar>
     <Box sx={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-      <ProfilePage isOwner={true}/>
+      <ProfilePage userId = {userId}/>
     </Box>
     </Box>
   );

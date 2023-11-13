@@ -1,20 +1,25 @@
 import { useState, useEffect, useContext} from 'react';
 import axios from 'axios';
 import { StoreContext, useStore } from './../store';
+import { createUrlFromId } from './helper';
+import { useParams } from 'react-router-dom';
 
 const useProfileViewModel = () => {
     const { dispatch } = useStore();
     const { state } = useContext(StoreContext);
-    const userId = state.user.id;
-  
+
     const [profileData, setProfile] = useState([]);
     const [followers, setFollowers] = useState([]);
     const [posts, setPosts] = useState([]);
 
+    const { userId } = useParams();
+
     useEffect(() => {
+      const baseUrl = createUrlFromId(userId);
+
       const fetchPosts = async () => {
         try {
-          const response = await axios.get(`${userId}/posts/`);
+          const response = await axios.get(`${baseUrl}/posts/`);
   
           if (response.status === 200) {
             const data = response.data.items.reverse();
@@ -29,7 +34,7 @@ const useProfileViewModel = () => {
 
       const fetchFollowers = async () => {
         try {
-          const response = await axios.get(`${userId}/followers/`);
+          const response = await axios.get(`${baseUrl}/followers/`);
   
           if (response.status === 200) {
             const data = response.data.items;
@@ -42,21 +47,22 @@ const useProfileViewModel = () => {
         }
       };
 
-      const fetchUserData = async () => {
-        try {
-          const response = await axios.get(userId);
-          
-          if (response.status === 200) {
-            setProfile(response.data);
-          } else {
-            console.error('Error fetching user data');
-          }
-        } catch {
-          console.log('cant fetch data')
+      const fetchProfileData = async (url) => {
+        // Helper method to fetch all authors (including yourself)
+        const users_response = await axios.get(
+            "http://127.0.0.1:8000/api/authors/"
+        );
+        if (users_response.status === 200) {                
+            const foundUserData = users_response.data.items.find(item => item.id === url);
+            setProfile(foundUserData);
+        } else {
+            console.error(
+                `Couldn't fetch authors. Status code: ${users_response.status}`
+            );
         }
       };
 
-      fetchUserData();
+      fetchProfileData(baseUrl);
       fetchFollowers();
       fetchPosts();
     }, [userId]);
@@ -72,11 +78,12 @@ const useProfileViewModel = () => {
           github,
           profileImage: image
       };
+      const url = state.user.id;
 
-      const response = await axios.post(`${userId}/`, body);
+      const response = await axios.post(`${url}/`, body);
       if (response.status === 200) {
         const user = {
-          id: userId,
+          id: url,
           username: response.data.displayName,
           profileImage: response.data.profileImage,
           github: response.data.github,
@@ -93,7 +100,7 @@ const useProfileViewModel = () => {
       posts,
       profileData,
       followers,
-      updateProfile
+      updateProfile,
     };
   };
   

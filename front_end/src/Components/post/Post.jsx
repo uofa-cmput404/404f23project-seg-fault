@@ -1,4 +1,4 @@
-import * as React from "react";
+import React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -14,6 +14,7 @@ import CommentIcon from "@mui/icons-material/Comment";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
+import { Link } from "react-router-dom";
 import { useRemark } from "react-remark";
 import Comment from "../comment/Comment";
 import "./Post.css";
@@ -21,6 +22,7 @@ import PostMenu from "../postMenu/PostMenu";
 import Share from "../share/Share";
 import usePostViewModel from "./PostViewModel";
 import { StoreContext } from "../../store";
+import { extractIdFromUrl } from "../../api/helper";
 
 function isImageUrl(url) {
   return /\.(jpeg|jpg|gif|png|bmp)$/.test(url);
@@ -38,7 +40,7 @@ function PostDisplay({ content, contentType }) {
       );
     }
   } else if (contentType.startsWith("image")) {
-    //possibly need to decode images when we connect with other teams add the content type before the image
+    // possibly need to decode images when we connect with other teams add the content type before the image
     return <CardMedia component="img" image={content} alt="postImage" />;
   } else if (contentType === "text/markdown") {
     return content;
@@ -91,7 +93,12 @@ export default function Post(props) {
               <PostMenu post={props.post} />
             ) : null
           }
-          title={props.post.author.displayName}
+          // Wraps the title to a profile link.
+          title={
+            <Link to={`/profile/${extractIdFromUrl(props.post.author.id)}`} style={{ textDecoration: 'none' }}>
+              {props.post.author.displayName}
+            </Link>
+          }
         />
         <Stack direction="column" spacing={2}>
           <Typography className="title" variant="body2">
@@ -152,3 +159,4 @@ export default function Post(props) {
     </>
   );
 }
+

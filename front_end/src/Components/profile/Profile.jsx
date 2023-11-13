@@ -6,12 +6,16 @@ import AddIcon from '@mui/icons-material/Add';
 import CreatePost from "../createpost/CreatePost";
 import useProfileViewModel from "../../api/ProfileViewModel";
 import { StoreContext } from './../../store';
+import { extractIdFromUrl } from "../../api/helper";
+import  { Navigate } from 'react-router-dom';
 
-
-function ProfilePage({ isOwner = true }) {
+function ProfilePage({userId}) {
     const { state } = useContext(StoreContext);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const {posts, followers} = useProfileViewModel();
+    const {posts, followers, profileData} = useProfileViewModel();
+
+    // Verifies if the owner's id is same as that in the url.
+    const isOwner = extractIdFromUrl(state.user.id) === userId;
 
     const openCreateModal = () => {
         setIsCreateModalOpen(true);
@@ -22,18 +26,23 @@ function ProfilePage({ isOwner = true }) {
     };
 
     let likes = 0;
-    posts.forEach((post) => likes+=(post.count))
+    posts.forEach((post) => likes+=(post.count));
+
+     // Redirect to home page if profile does not exist.
+     if (!profileData) {
+        return <Navigate to='/home'  />
+    }
 
     return (
         <>
             <UserCard isOwner={isOwner}
                       followersCount={followers.length}
                       postsCount={posts.length} 
-                      name={state.user.username} 
-                      username={state.user.username} 
-                      github={state.user.github}
+                      name={profileData.displayName} 
+                      username={profileData.displayName} 
+                      github={profileData.github}
                       likesCount={likes}
-                      imagePath={state.user.profileImage} />
+                      imagePath={profileData.profileImage} />
             <div>
                 {posts.map((post, index) => (
                     <Post post={post} />
