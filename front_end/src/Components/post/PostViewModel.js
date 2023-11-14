@@ -9,27 +9,36 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
 
   const fetchLikes = useCallback(async () => {
     const response = await axios.get(`${props.post.id}/likes/`);
+
     if (response.status === 200) {
       const liked = response.data.items.some(
         (like) => like.author.id === userId
       );
+      console.log(liked);
       setLiked(liked);
       setLikes(response.data.items);
     } else {
-      console.error("Error fetching comments");
+      console.error("Error fetching likes");
     }
   }, [props.post.id, userId]);
 
   const likePost = useCallback(async () => {
-    const response = await axios.post(`${props.post.author.id}/inbox/`, {
-      type: "Like",
-      author: userId,
-      object: props.post.id,
-    });
+    const user = await axios.get(userId + '/');
 
-    if (response.status === 201) {
+    const payload = {
+      "context": "https://www.w3.org/ns/activitystreams",
+      "summary": `${user.data.displayName} Likes your post`,
+      "type": "Like",
+      "author": user.data,
+      "object": props.post.id,
+    }
+
+    const response = await axios.post(`${props.post.author.id}/inbox/`, payload);
+
+    if (response.status === 200) {
       fetchLikes();
     } else {
+      console.log(response.status)
       console.error("Error liking post");
     }
   }, [props.post.author.id, userId, props.post.id, fetchLikes]);

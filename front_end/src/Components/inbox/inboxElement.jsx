@@ -14,14 +14,14 @@ function InboxElement(props) {
   const visibilityColors = {
     post: "#8338ec",
     friend_request: "#06d6a0",
-    like_notification: "#ff006e",
+    Like: "#ff006e",
     comment: "#3a86ff",
   };
 
   const visibilityLabels = {
     post: "Shared a private post with you!",
     friend_request: "Wants to be your friend!",
-    like_notification: "Liked your post!",
+    Like: "Liked your post!",
     comment: "Commented on your post!",
   };
 
@@ -60,9 +60,9 @@ function InboxElement(props) {
     <Card className="card">
       <CardHeader
         avatar={
-          <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />
+          <Avatar src={props.author.profileImage} alt="profile_pic" className="avatar" />
         }
-        title={props.username}
+        title={props.author.displayName}
       />
       <Stack direction="column" spacing={2}>
         <CardActions disableSpacing>
