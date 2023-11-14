@@ -12,17 +12,17 @@ import "./inboxElement.css";
 
 function InboxElement(props) {
   const visibilityColors = {
-    private: "#8338ec",
+    post: "#8338ec",
     friend_request: "#06d6a0",
     like_notification: "#ff006e",
-    comment_notification: "#3a86ff",
+    comment: "#3a86ff",
   };
 
   const visibilityLabels = {
-    private: "Shared a private post with you!",
+    post: "Shared a private post with you!",
     friend_request: "Wants to be your friend!",
     like_notification: "Liked your post!",
-    comment_notification: "Commented on your post!",
+    comment: "Commented on your post!",
   };
 
   const visibilityColor = visibilityColors[props.visibility] || "#000";
