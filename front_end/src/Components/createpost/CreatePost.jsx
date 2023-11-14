@@ -45,7 +45,7 @@ export default function CreatePost(props) {
   //const [description, setDescription] = React.useState(''); // TODO: add description
   const [contentType, setContentType] = React.useState(props.post && props.post.contentType ? props.post.contentType : 'text/plain');
   const [content, setContent] = React.useState(props.post && props.post.content ? props.post.content : null);
-  const [visibility, setVisibility] = React.useState(props.post && props.post.visibility ? props.post.visibility : null);
+  const [visibility, setVisibility] = React.useState(props.post && props.post.visibility ? props.post.visibility : (props.private) ? "private" : null);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
 
   const {createPost, editPost} = usePostsViewModel();
@@ -248,9 +248,12 @@ export default function CreatePost(props) {
               onChange={(event)=>setVisibility(event.target.value)}
               value={visibility}
             >
-              <FormControlLabel value="public" control={<Radio />} label="Public" />
-              <FormControlLabel value="friends" control={<Radio />} label="Friends Only" />
-              {/* <FormControlLabel value="private" control={<Radio />} label="Private" /> */}
+              {
+                props.private ?
+                <FormControlLabel value="private" control={<Radio />} label="Private" checked={true} /> :
+                (<><FormControlLabel value="public" control={<Radio />} label="Public" />
+                <FormControlLabel value="friends" control={<Radio />} label="Friends Only" /></>)
+              }
             </RadioGroup>
           </FormControl>
           <ButtonGroup
@@ -258,7 +261,7 @@ export default function CreatePost(props) {
             variant="contained"
             aria-label="outlined primary button group"
           >
-            <Button onClick={onCreatePost}>{props.action === "EDIT" ? "Update" : "Post"}</Button>
+            <Button onClick={onCreatePost}>{props.action === "EDIT" ? "Update" : (props.private ? `Post to ${props.recipient}` : "Post")}</Button>
           </ButtonGroup>
         </div>
         <Snackbar

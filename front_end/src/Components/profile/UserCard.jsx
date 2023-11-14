@@ -7,11 +7,13 @@ import CardContent from '@mui/joy/CardContent';
 import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import EditProfile from './EditProfile';
+import CreatePost from '../createpost/CreatePost';
 
 export default function UserCard({name, imagePath, github, isOwner, followersCount, postsCount, likesCount}) {
   
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
-  
+  const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
+
   const openEditModal = () => {
     setIsEditModalOpen(true);
   };
@@ -20,9 +22,17 @@ export default function UserCard({name, imagePath, github, isOwner, followersCou
     setIsEditModalOpen(false);
   };
 
+  const openCreateModal = () => {
+    setIsCreateModalOpen(true);
+  };
+
+  const closeCreateModal = () => {
+    setIsCreateModalOpen(false);
+  };
+
     const menuTemplate = !isOwner ? (
         <Box sx={{ display: 'flex', gap: 1.5, '& > button': { flex: 1 } }}>
-            <Button variant="outlined" color="neutral">
+            <Button variant="outlined" color="neutral" onClick={openCreateModal}>
                 Post to {name}
             </Button>
             <Button variant="solid" color="primary">
@@ -132,6 +142,7 @@ export default function UserCard({name, imagePath, github, isOwner, followersCou
         </CardContent>
       </Card>
       <EditProfile username = {name} github={github}  image = {imagePath} open={isEditModalOpen} onClose={closeEditModal} action='EDIT'/>
+      {isCreateModalOpen && <CreatePost open={isCreateModalOpen} onClose={closeCreateModal} action='CREATE' private={true} recipient={name} />}
     </Box>
   );
 }

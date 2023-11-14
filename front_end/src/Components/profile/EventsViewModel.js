@@ -9,13 +9,14 @@ const useEventsViewModel = () => {
 
   const fetchGithubEvents = useCallback(
     async (username) => {
-      const response = await axios.get(
-        `https://api.github.com/users/${username}/events`
-      );
-
-      if (response.status === 200) {
-        setEvents(response.data);
-      } else {
+      try {
+        const response = await axios.get(
+          `https://api.github.com/users/${username}/events`
+        );
+        if (response.status === 200) {
+          setEvents(response.data);
+        }
+      } catch (e) {
         console.log("Error fetching events");
       }
     },
@@ -23,15 +24,17 @@ const useEventsViewModel = () => {
   );
 
   const fetchGithub = useCallback(async () => {
-    const response = await axios.get(userId);
-    if (response.status === 200) {
-      const gitUrl = response.data.github.split("/");
-      const username = gitUrl[gitUrl.length - 1];
-
-      if (username) {
-        fetchGithubEvents(username);
+    try {
+      const response = await axios.get(`${userId}/`);
+      if (response.status === 200) {
+        const gitUrl = response.data.github.split("/");
+        const username = gitUrl[gitUrl.length - 1];
+  
+        if (username) {
+          fetchGithubEvents(username);
+        }
       }
-    } else {
+    } catch (e) {
       console.log("Error fetching author");
     }
   }, [userId, fetchGithubEvents]);

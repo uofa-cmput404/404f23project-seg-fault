@@ -8,7 +8,6 @@ import TextField from '@mui/material/TextField';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import '../createpost/CreatePost.css'
 import useProfileViewModel from '../../api/ProfileViewModel'
-import { StoreContext } from './../../store';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 
@@ -17,14 +16,18 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 export default function EditProfile(props) {
-
+  
   const {updateProfile} = useProfileViewModel();
-
-  const { state } = React.useContext(StoreContext);
   const [openSnackBar, setOpenSnackBar] = React.useState(false);
   const [username, setUsername] = React.useState(props.username);
   const [githubUrl, setGithubUrl] = React.useState(props.github);
   const [image, setImage] = React.useState(props.image);
+
+  React.useEffect(() => {
+    setUsername(props.username);
+    setGithubUrl(props.github);
+    setImage(props.image);
+  }, [props.username, props.github, props.image]);
 
   const handleSnackBarClose = (event, reason) => {
     if (reason === 'clickaway') {
@@ -63,11 +66,11 @@ export default function EditProfile(props) {
           </Typography>
           <Box className="userBox">
               <Avatar
-                  src={state.user.profileImage}
+                  src={image}
                   sx={{ width: 40, height: 40 }}
               />
               <Typography fontWeight={500} variant="span">
-                {state.user.username}
+                {props.username}
               </Typography>
           </Box>
           <TextField
