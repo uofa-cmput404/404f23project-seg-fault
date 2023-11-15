@@ -142,15 +142,13 @@ const usePostsViewModel = () => {
             console.error("Error creating post");
         }
 
-        if (visibility === "friends"){
-            const followers = await fetchFollowers();
-            for (let follower of followers) {
-                console.log(follower);
-                const followerUrl = follower.follower.url;
-                const postUrl = response.data.data.url
-                const post_res = await axios.get(postUrl);
-                await axios.post(`${followerUrl}/inbox/`, post_res.data)
-            }
+        const followers = await fetchFollowers();
+        for (let follower of followers) {
+            console.log(follower);
+            const followerUrl = follower.follower.url;
+            const postUrl = response.data.data.url
+            const post_res = await axios.get(postUrl);
+            await axios.post(`${followerUrl}/inbox/`, post_res.data)
         }
     };
 
