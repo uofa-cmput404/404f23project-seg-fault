@@ -103,34 +103,26 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 
 import dj_database_url
-# Get the value of the DATABASE_ENV variable from the environment
-DATABASE_ENV = os.environ.get('DATABASE_ENV')
-# Get the value of the DATABASE_ENV variable from the environment
-DATABASE_ENV = os.environ.get('DATABASE_ENV')
+url = "postgres://xswudawltrbszv:f4c1a2b017d883b5f3c7ec93c742ddd6bafa739042fcabd9f6f896df9ad6b8ea@ec2-3-210-173-88.compute-1.amazonaws.com:5432/da6q5i7hnj2mif"
+DATABASES = {'default': dj_database_url.config(default=url)}
 
-if DATABASE_ENV == 'remote':
-    # Remote (Heroku) - Use the PostgreSQL database configuration
-    DATABASES = {
-        'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
-    }
-else:
-    # Local (SQLite) - Use the local SQLite database configuration
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'mydb',
-#         'USER': 'admin',
-#         'PASSWORD': 'admin',
-#         'HOST': 'localhost',  # Set the host to your PostgreSQL server's address
-#         'PORT': '',           # Leave empty to use the default PostgreSQL port (5432)
+# Get the value of the DATABASE_ENV variable from the environment
+# DATABASE_ENV = os.environ.get('DATABASE_ENV')
+
+# if DATABASE_ENV == 'remote':
+#     # Remote (Heroku) - Use the PostgreSQL database configuration
+#     DATABASES = {
+#         'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 #     }
-# }
+# else:
+#     # Local (SQLite) - Use the local SQLite database configuration
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.sqlite3',
+#             'NAME': BASE_DIR / 'db.sqlite3',
+#         }
+#     }
+
 
 
 
