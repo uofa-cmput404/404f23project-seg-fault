@@ -1,12 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import * as AiIcons from "react-icons/ai";
-import { SidebarItems } from "./SidebarItems";
+import { side_bar_items } from "./SidebarItems";
 import "./Sidebar.css";
 import { IconContext } from "react-icons";
 import { useStore } from "../store";
 
-function Sidebar() {
+function Sidebar({userId}) {
   const { dispatch } = useStore();
 
   const handleLogout = () => {
@@ -22,7 +22,7 @@ function Sidebar() {
               <AiIcons.AiFillAliwangwang style={{ fontSize: "3rem" }} />
               <h1>Vibely</h1>
             </li>
-            {SidebarItems.map((item, index) => {
+            {side_bar_items(userId).map((item, index) => {
               return (
                 <li key={index} className={item.class}>
                   <Link to={item.path}>

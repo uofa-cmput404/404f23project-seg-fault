@@ -1,19 +1,42 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import UserCard from "./UserCard";
 import Post from "../post/Post";
+import { Fab } from "@mui/material";
 import { Box, Grid, Typography } from "@mui/material"; // Import Typography
 import useProfileViewModel from "../../api/ProfileViewModel";
+import { StoreContext } from './../../store';
+import CreatePost from "../createpost/CreatePost";
+import { extractIdFromUrl } from "../../api/helper";
+import  { Navigate } from 'react-router-dom';
 import useEventsViewModel from "./EventsViewModel";
-import { StoreContext } from "./../../store";
+import AddIcon from '@mui/icons-material/Add';
+
 import EventTile from "./EventTile";
 
-function ProfilePage({ isOwner = true }) {
-  const { state } = useContext(StoreContext);
-  const { posts, followers } = useProfileViewModel();
-  const { events } = useEventsViewModel();
+function ProfilePage({userId}) {
+    const { state } = useContext(StoreContext);
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const {posts, followers, profileData} = useProfileViewModel();
+    const { events } = useEventsViewModel();
+    
+    // Verifies if the owner's id is same as that in the url.
+    const isOwner = extractIdFromUrl(state.user.id) === userId;
 
-  let likes = 0;
-  posts.forEach((post) => (likes += post.count));
+    const openCreateModal = () => {
+        setIsCreateModalOpen(true);
+    };
+
+    const closeCreateModal = () => {
+      setIsCreateModalOpen(false);
+    };
+
+    let likes = 0;
+    posts.forEach((post) => (likes += post.count));
+
+    // Redirect to home page if profile does not exist.
+    if (!profileData) {
+        return <Navigate to='/home'  />
+    }
 
   return (
     <Box>
@@ -23,11 +46,11 @@ function ProfilePage({ isOwner = true }) {
             isOwner={isOwner}
             followersCount={followers.length}
             postsCount={posts.length}
-            name={state.user.username}
-            username={state.user.username}
-            github={state.user.github}
+            name={profileData.displayName}
+            username={profileData.displayName}
+            github={profileData.github}
             likesCount={likes}
-            imagePath={state.user.profileImage}
+            imagePath={profileData.profileImage}
           />
         </Grid>
 
@@ -53,6 +76,17 @@ function ProfilePage({ isOwner = true }) {
               <Post key={index} post={post} padding={1} margin={1} />
             ))}
           </Box>
+          {isOwner ? (
+                <Fab
+                    color="primary"
+                    aria-label="add"
+                    style={{ position: 'fixed', top: '20rem', right: '5rem' }}
+                    onClick={openCreateModal}
+                >
+                    <AddIcon />
+                </Fab>
+            ) : null}
+            {isCreateModalOpen && <CreatePost open={isCreateModalOpen} onClose={closeCreateModal} action='CREATE' />}
         </Grid>
         <Grid item xs={12} md={5}>
           <Typography

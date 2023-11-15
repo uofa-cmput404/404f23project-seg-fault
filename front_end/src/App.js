@@ -14,6 +14,7 @@ import SignIn from "./Components/auth/SignIn";
 import SignUp from "./Components/auth/SignUp";
 import Sidebar from "./Components/Sidebar";
 import { StoreProvider, StoreContext } from "./store";
+import { extractIdFromUrl } from "./api/helper";
 
 function SidebarLayout() {
   const { state } = useContext(StoreContext);
@@ -22,7 +23,7 @@ function SidebarLayout() {
   if (token) {
     return (
       <div className="sidebar">
-        <Sidebar />
+        <Sidebar userId = {extractIdFromUrl(state.user.id)} />
       </div>
     );
   }
@@ -42,9 +43,9 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/inbox" element={<Inbox />} />
               <Route path="/social_hub" element={<Friends />} />
-              <Route path="/profile" element={<Profile />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/signup" element={<SignUp />} />
+              <Route path="/profile/:userId" element={<Profile />} />
             </Routes>
           </div>
         </Router>

@@ -1,9 +1,11 @@
 import React from "react";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
-import { Chip } from "@mui/material";
+import { Chip, Link } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import ButtonBase from "@mui/material/ButtonBase";
+import { Link as RouterLink } from "react-router-dom";
+import { extractIdFromUrl } from "../../api/helper";
 
 function AuthorTile(props) {
   const chipLabels = {
@@ -34,7 +36,16 @@ function AuthorTile(props) {
         avatar={
           <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />
         }
-        title={props.username}
+        title={
+          // Wrap the title in a Link component
+          <Link
+            component={RouterLink}
+            to={`/profile/${extractIdFromUrl(props.id)}`}
+            style={{ textDecoration: 'none' }}
+          >
+            {props.username}
+          </Link>
+        }
         action={
           <ButtonBase onClick={handleClick}>
             <Chip
