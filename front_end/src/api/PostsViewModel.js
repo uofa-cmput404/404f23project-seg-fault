@@ -109,25 +109,38 @@ const usePostsViewModel = () => {
         description,
         contentType,
         content,
-        visibility
+        visibility,
+        recipient
     ) => {
-        // Creates a new posts
-        const body = {
-            title,
-            description,
-            contentType,
-            content,
-            published: null,
-            visibility,
-            unlisted: false,
-            categories: "none",
-        };
+        try {
+            // Creates a new posts
+            const body = {
+                title,
+                description,
+                contentType,
+                content,
+                published: null,
+                visibility,
+                unlisted: false,
+                categories: "none",
+                recipient
+            };
 
-        const response = await axios.post(`${userId}/posts/`, body);
-        if (response.status === 200) {
+            const response = await axios.post(`${userId}/posts/`, body);
+            const author_response = await fetchProfileData(state.user.id);
             console.log("Post created");
-        } else {
-            console.error("Error creating post");
+            if(visibility === "private") {
+                // send to the recipient's inbox
+                const inbox_payload = {...response.data.data, 
+                                        id: response.data.id, type: "post", author: author_response, 
+                                        source: author_response.displayName, origin: recipient.displayName};
+                delete inbox_payload["url"];
+
+                await axios.post(`${recipient.id}/inbox/`, inbox_payload);
+                console.log("Sent to recipient's inbox.");
+            }
+            } catch(e) {
+            console.error("Error creating post or sending to inbox");
         }
     };
 
@@ -182,5 +195,20 @@ const usePostsViewModel = () => {
         editPost,
     };
 };
+
+const fetchProfileData = async (url) => {
+    // Helper method to fetch all authors (including yourself)
+    const users_response = await axios.get(
+        "http://127.0.0.1:8000/api/authors/"
+    );
+    if (users_response.status === 200) {                
+        const foundUserData = users_response.data.items.find(item => item.id === url);
+        return foundUserData;
+    } else {
+        console.error(
+            `Couldn't fetch authors. Status code: ${users_response.status}`
+        );
+    }
+  };
 
 export default usePostsViewModel;

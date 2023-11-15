@@ -19,7 +19,7 @@ function InboxElement(props) {
   };
 
   const visibilityLabels = {
-    post: "Shared a private post with you!",
+    post: "Shared a post to you!",
     friend_request: "Wants to be your friend!",
     Like: "Liked your post!",
     comment: "Commented on your post!",

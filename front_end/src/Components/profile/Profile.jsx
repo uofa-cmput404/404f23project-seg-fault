@@ -51,6 +51,7 @@ function ProfilePage({userId}) {
             github={profileData.github}
             likesCount={likes}
             imagePath={profileData.profileImage}
+            profileData={profileData}
           />
         </Grid>
 
