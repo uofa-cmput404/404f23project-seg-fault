@@ -69,6 +69,18 @@ function Inbox() {
               />
             );
           }
+          if (element.type === "Like") {  
+            return (
+              <InboxElement
+                key={index}
+                username={element.displayName}
+                profilePic=""
+                text={element.summary}
+                visibility={element.type}
+                author={element.author}
+              />
+            );
+          }
 
           return null;
         })}
