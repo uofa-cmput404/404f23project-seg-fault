@@ -1,11 +1,12 @@
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { StoreContext } from "../../store";
+import { useParams } from "react-router-dom";
+import { createUrlFromId } from "../../api/helper";
 
 const useEventsViewModel = () => {
-  const { state } = useContext(StoreContext);
-  const userId = state.user.id;
   const [events, setEvents] = useState([]);
+  const { userId } = useParams();
+  const baseUrl = createUrlFromId(userId);
 
   const fetchGithubEvents = useCallback(
     async (username) => {
@@ -25,7 +26,7 @@ const useEventsViewModel = () => {
 
   const fetchGithub = useCallback(async () => {
     try {
-      const response = await axios.get(`${userId}/`);
+      const response = await axios.get(`${baseUrl}/`);
       if (response.status === 200) {
         const gitUrl = response.data.github.split("/");
         const username = gitUrl[gitUrl.length - 1];
@@ -37,7 +38,7 @@ const useEventsViewModel = () => {
     } catch (e) {
       console.log("Error fetching author");
     }
-  }, [userId, fetchGithubEvents]);
+  }, [baseUrl, fetchGithubEvents]);
 
   useEffect(() => {
     fetchGithub();
