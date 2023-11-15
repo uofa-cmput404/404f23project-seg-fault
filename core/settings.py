@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import django_on_heroku # top of the file
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -64,7 +67,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -91,12 +95,35 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+ROOT_URL = "http://127.0.0.1:8000/api"
+
+import dj_database_url
+from dotenv import load_dotenv
+load_dotenv()
+DATABASE_ENV = os.getenv('DATABASE_ENV')
+if DATABASE_ENV == 'remote':
+    # Remote (Heroku) - Use the PostgreSQL database configuration
+    print("Using remote database")
+    ROOT_URL = "https://vibely-d65c3bd797dd.herokuapp.com/api"
+    DATABASE_URL = "postgres://xswudawltrbszv:f4c1a2b017d883b5f3c7ec93c742ddd6bafa739042fcabd9f6f896df9ad6b8ea@ec2-3-210-173-88.compute-1.amazonaws.com:5432/da6q5i7hnj2mif"
+    DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
+else:
+    print("Using local database")
+    ROOT_URL = "http://127.0.0.1:8000/api"
+    # Local (SQLite) - Use the local SQLite database configuration
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
 
 
 # Password validation
@@ -136,3 +163,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+django_on_heroku.settings(locals()) # bottom of the file

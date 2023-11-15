@@ -21,7 +21,8 @@ from rest_framework import pagination
 import uuid
 import base64
 
-root_url = "http://127.0.0.1:8000/api"
+from core.settings import ROOT_URL
+root_url = ROOT_URL
 
 
 class FollowerView(views.APIView):

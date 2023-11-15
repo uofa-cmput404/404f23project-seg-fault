@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from ..models import Author, User, AuthorFollower, Post, Inbox, Like
 from ..authors.serializers import AuthorSerializer
 
-root_url = "http://127.0.0.1:8000/api" 
+from core.settings import ROOT_URL
+root_url = ROOT_URL 
 
 
 
