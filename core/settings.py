@@ -110,8 +110,8 @@ DATABASE_ENV = os.getenv('DATABASE_ENV')
 if DATABASE_ENV == 'remote':
     # Remote (Heroku) - Use the PostgreSQL database configuration
     print("Using remote database")
-    ROOT_URL = "https://vibely-d65c3bd797dd.herokuapp.com/api"
-    DATABASE_URL = "postgres://xswudawltrbszv:f4c1a2b017d883b5f3c7ec93c742ddd6bafa739042fcabd9f6f896df9ad6b8ea@ec2-3-210-173-88.compute-1.amazonaws.com:5432/da6q5i7hnj2mif"
+    ROOT_URL = "https://vibely-23b7dc4c736d.herokuapp.com/api"
+    DATABASE_URL = "postgres://lturuolyhsbwaw:affa3f56c85a0ebbca6edc3d0b1451d1b3c68cc2ee4002479611aa0c894225fd@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d1ouen0v3gthfj"
     DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 else:
     print("Using local database")
