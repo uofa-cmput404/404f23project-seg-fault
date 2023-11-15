@@ -4,7 +4,8 @@ from .models import Author, AuthorFollower, Comment
 
 ## from authors directory
 from .authors.serializers import AuthorSerializer, UserSerializer
-
+from core.settings import ROOT_URL
+root_url = ROOT_URL
 
 
 class FollowerListSerializer(serializers.ModelSerializer):
@@ -35,5 +36,4 @@ class CommentSerializer(serializers.ModelSerializer):
         return "comment"
 
     def get_id(self, obj):
-        root_url = "http://127.0.0.1:8000/api"
         return f"{root_url}/authors/{obj.author.id.hex}/posts/{obj.post.id.hex}/comments/{obj.id.hex}"

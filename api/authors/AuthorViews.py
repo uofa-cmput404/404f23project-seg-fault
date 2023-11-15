@@ -14,7 +14,8 @@ from rest_framework import pagination
 from django.shortcuts import get_object_or_404
 import uuid
 
-root_url = "http://127.0.0.1:8000/api"
+from core.settings import ROOT_URL
+root_url = ROOT_URL
 
 #TODO: ensure unique usernames when registering
 #TODO: when post request to change author, 
