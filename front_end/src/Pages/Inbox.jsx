@@ -73,8 +73,8 @@ function Inbox() {
             return (
               <InboxElement
                 key={index}
-                username={element.displayName}
-                profilePic=""
+                username={element.author.displayName}
+                profilePic={element.author.profileImage}
                 text={element.summary}
                 visibility={element.type}
                 author={element.author}

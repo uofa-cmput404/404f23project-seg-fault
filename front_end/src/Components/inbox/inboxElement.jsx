@@ -60,9 +60,9 @@ function InboxElement(props) {
     <Card className="card">
       <CardHeader
         avatar={
-          <Avatar src={props.author.profileImage} alt="profile_pic" className="avatar" />
+          <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />
         }
-        title={props.author.displayName}
+        title={props.username}
       />
       <Stack direction="column" spacing={2}>
         <CardActions disableSpacing>

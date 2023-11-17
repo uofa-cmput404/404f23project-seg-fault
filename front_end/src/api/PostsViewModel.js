@@ -32,7 +32,6 @@ const usePostsViewModel = () => {
             if (followers_response.status === 200) {
                 for (let follower of followers_response.data.items) {
                     if (follower.follower.id === userId) {
-                        console.log('i shouldnt be ablt to see this')
                         return true
                     }
                 }
@@ -104,6 +103,19 @@ const usePostsViewModel = () => {
         }
     }, [userId]);
 
+    const fetchFollowers = useCallback(async () => {
+        const parts = userId.split("/");
+        const userGuid = parts[parts.length - 1];
+        const response = await axios.get(
+          `http://127.0.0.1:8000/api/authors/${userGuid}/followers/`
+        );
+        if (response.status === 200) {
+          return response.data.items;
+        } else {
+          console.error("Error fetching followers");
+        }
+    }, [userId]);
+
     const createPost = async (
         title,
         description,
@@ -128,6 +140,15 @@ const usePostsViewModel = () => {
             console.log("Post created");
         } else {
             console.error("Error creating post");
+        }
+
+        const followers = await fetchFollowers();
+        for (let follower of followers) {
+            console.log(follower);
+            const followerUrl = follower.follower.url;
+            const postUrl = response.data.data.url
+            const post_res = await axios.get(postUrl);
+            await axios.post(`${followerUrl}/inbox/`, post_res.data)
         }
     };
 
