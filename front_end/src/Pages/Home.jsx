@@ -13,7 +13,8 @@ import usePostsViewModel from "../api/PostsViewModel";
 
 function Home() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { loading, posts } = usePostsViewModel();
+  const { loading, posts, remotePosts} = usePostsViewModel();
+  console.log(remotePosts);
 
   const openCreateModal = () => {
     setIsCreateModalOpen(true);
@@ -81,7 +82,36 @@ function Home() {
           }}
         >
           {posts.map((post, index) => {
-            return <Post post={post} width={600} padding={1} margin={1} />;
+            return <Post 
+              post={post}
+              content={post.content}
+              profileImage={post.author.profileImage}
+              userId={post.author.id}
+              displayName={post.author.displayName}
+              title={post.title}
+              contentType={post.contentType}
+              visibility={post.visibility}
+              id={post.id}
+              width={600} 
+              padding={1} 
+              margin={1} 
+              type={"local"}/>;
+          })}
+          {remotePosts.map((post, index) => {
+            return <Post 
+              post={remotePosts} 
+              content={post.content}
+              profileImage={post.owner.image}
+              userId={post.owner.id}
+              displayName={post.owner.username}
+              title={post.title}
+              contentType={post.contentType}
+              visibility={post.visibility}
+              id={post.id}
+              width={600} 
+              padding={1} 
+              margin={1} 
+              type={"remoteGroup1"}/>;
           })}
         </Box>
       )}

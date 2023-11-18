@@ -6,16 +6,31 @@ const usePostsViewModel = () => {
     const { state } = useContext(StoreContext);
     const userId = state.user.id;
     const [posts, setPosts] = useState([]);
+    const [remotePosts, setRemotePosts] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchPosts = useCallback(async () => {
         // Fetches all public, friend posts or user posts
+        const fetchRemoteAuthors = async() => {
+            const users_response = await axios.get(
+                `${process.env.REACT_APP_TEAM_ONE_URL}/authors/`
+            );
+            if (users_response.status === 200) {
+                return users_response.data.results;
+            } else {
+                console.error(
+                    `Couldn't fetch authors. Status code: ${users_response.status}`
+                );
+                return [];
+            }
+        }
 
         const fetchAuthors = async () => {
             // Helper method to fetch all authors (including yourself)
             const users_response = await axios.get(
-                "http://127.0.0.1:8000/api/authors/"
+                `${process.env.REACT_APP_API_URL}/authors/`
             );
+
             if (users_response.status === 200) {
                 return users_response.data.items;
             } else {
@@ -67,12 +82,25 @@ const usePostsViewModel = () => {
             }
         };
 
+        const  fetchRemotePostsByAuthor = async (author) => {
+            // Helper method to fetch the posts of an specific author
+            const posts_response = await axios.get(`${process.env.REACT_APP_TEAM_ONE_URL}/authors/${author.id}/posts/`);
+            if (posts_response.status === 200) {
+                return posts_response.data.results;
+            } else {
+                console.error(
+                    `Couldn't fetch remote posts. Status code: ${posts_response.status}`
+                );
+                return [];
+            }
+        };
+
         const filterPosts = (allPosts, followingUsersIds) => {
             // Helper method to filter posts based on visibility, friends posts or your own posts
             allPosts = allPosts.filter(
                 (item) =>
                     item.visibility === "public" ||
-                    item.author.id === userId ||
+                    (item.author.id === userId && (item.visibility !== "private"))||
                     (followingUsersIds.includes(item.author.id) &&
                         (item.visibility === "friends"))
             );
@@ -86,6 +114,21 @@ const usePostsViewModel = () => {
               });
         };
 
+        const filterRemotePosts = (allPosts) => {
+            allPosts = allPosts.filter(
+                (item) =>
+                    item.visibility === "PUBLIC"
+            );
+
+
+            return allPosts.sort((a, b) => {
+                const dateA = new Date(a.published);
+                const dateB = new Date(b.published);
+              
+                return dateB - dateA;
+              });
+        }
+
         try {
             const authors = await fetchAuthors();
             const followingUsersIds = await fetchFollowingUsersIds(authors);
@@ -96,6 +139,13 @@ const usePostsViewModel = () => {
 
             const filteredPosts = filterPosts(allPosts, followingUsersIds);
 
+            const remoteAuthors = await fetchRemoteAuthors();
+            const allRemotePosts = (
+                await Promise.all(remoteAuthors.map((author) => fetchRemotePostsByAuthor(author)))
+            ).flat();
+            const filteredRemotePosts = filterRemotePosts(allRemotePosts);
+
+            setRemotePosts(filteredRemotePosts);
             setPosts(filteredPosts);
             setLoading(false);
         } catch (error) {
@@ -201,6 +251,7 @@ const usePostsViewModel = () => {
         createPost,
         deletePost,
         editPost,
+        remotePosts
     };
 };
 
