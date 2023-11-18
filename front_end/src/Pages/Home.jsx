@@ -10,10 +10,13 @@ import CreatePost from "../Components/createpost/CreatePost";
 import HomeIcon from "@mui/icons-material/Home";
 import Button from "@mui/material/Button";
 import usePostsViewModel from "../api/PostsViewModel";
+import useRemotePostsViewModel from "../api/RemotePostsViewModel";
 
 function Home() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { loading, posts, remotePosts} = usePostsViewModel();
+  const { loading, posts} = usePostsViewModel();
+  const { loadingRemotePosts, remotePosts} = useRemotePostsViewModel();
+
   console.log(remotePosts);
 
   const openCreateModal = () => {
@@ -57,7 +60,7 @@ function Home() {
           </Toolbar>
         </Container>
       </AppBar>
-      {loading ? (
+      {(loading || loadingRemotePosts)? (
         <Stack
           spacing={1}
           sx={{
