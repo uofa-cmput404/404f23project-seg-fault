@@ -12,7 +12,39 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import django_on_heroku # top of the file
+import dj_database_url
+from dotenv import load_dotenv
+from pathlib import Path
+
+import requests
 import os
+
+def fetch_database_url(app_name, heroku_api_key):
+    """
+    Fetches the DATABASE_URL environment variable for a given Heroku app.
+
+    Parameters:
+    app_name (str): Name of the Heroku app.
+    heroku_api_key (str): API key for Heroku account.
+
+    Returns:
+    str: The DATABASE_URL if successful, else an error message.
+    """
+    headers = {
+        "Authorization": f"Bearer {heroku_api_key}",
+        "Accept": "application/vnd.heroku+json; version=3"
+    }
+
+    response = requests.get(f"https://api.heroku.com/apps/{app_name}/config-vars", headers=headers)
+
+    if response.status_code == 200:
+        db_url = response.json().get("DATABASE_URL", "")
+        return db_url
+    else:
+        return "Failed to fetch DATABASE_URL"
+
+
+
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -102,18 +134,13 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #     }
 # }
 ROOT_URL = "http://127.0.0.1:8000/api"
-
-import dj_database_url
-from dotenv import load_dotenv
 load_dotenv()
 DATABASE_ENV = os.getenv('DATABASE_ENV')
-if DATABASE_ENV == 'remote':
-    # Remote (Heroku) - Use the PostgreSQL database configuration
-    print("Using remote database")
-    ROOT_URL = "https://vibely-23b7dc4c736d.herokuapp.com/api"
-    DATABASE_URL = "postgres://lturuolyhsbwaw:affa3f56c85a0ebbca6edc3d0b1451d1b3c68cc2ee4002479611aa0c894225fd@ec2-44-213-228-107.compute-1.amazonaws.com:5432/d1ouen0v3gthfj"
-    DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
-else:
+DJANGO_ENV = os.getenv('DJANGO_ENV')
+
+
+# 1 local django with local db
+if (DATABASE_ENV == 'local') and (DJANGO_ENV == 'local'):
     print("Using local database")
     ROOT_URL = "http://127.0.0.1:8000/api"
     # Local (SQLite) - Use the local SQLite database configuration
@@ -123,6 +150,23 @@ else:
             'NAME': BASE_DIR / 'db.sqlite3',
         }
     }
+
+# 2 local django with remote db. need to make api call to get db url
+elif (DATABASE_ENV == 'remote') and (DJANGO_ENV == 'local'):
+    app_name = "vibely"  
+    heroku_api_key = "fe31462d-e9d0-4e23-84c0-36f40b2979b4" 
+    # Fetch the database URL using the Heroku API
+    db_url = fetch_database_url(app_name, heroku_api_key)
+    ROOT_URL = "https://vibely-23b7dc4c736d.herokuapp.com/api"
+    DATABASES = {'default': dj_database_url.config(default=db_url)}
+    
+# 3 local django with remote db
+else:
+    print("Using remote db")
+    ROOT_URL = "https://vibely-23b7dc4c736d.herokuapp.com/api"
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    DATABASE_URL = os.environ.get('DATABASE_URL')  # from the heroku machine
+    DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
 
 
 
