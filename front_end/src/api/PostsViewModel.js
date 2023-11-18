@@ -109,7 +109,7 @@ const usePostsViewModel = () => {
         const parts = userId.split("/");
         const userGuid = parts[parts.length - 1];
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/authors/${userGuid}/followers/`
+          `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`
         );
         if (response.status === 200) {
           return response.data.items;
@@ -157,9 +157,10 @@ const usePostsViewModel = () => {
     const deletePost = async (postId) => {
         const response = await axios.delete(postId);
 
-        if (response.status === 200) {
-            console.error("Deleted");
+        if (response.status === 204) {
+            console.log("Deleted");
         } else {
+            console.log(response.status);
             console.error("Error deleting post");
         }
     };
