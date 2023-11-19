@@ -12,11 +12,31 @@ const useFriendsViewModel = () => {
   const [following, setFollowing] = useState([]);
 
   const fetchAuthors = useCallback(async () => {
-    const response = await axios.get(`${process.env.REACT_APP_API_URL}/authors/`);
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL}/authors/`
+    );
     if (response.status === 200) {
       setAuthors(response.data.items);
     } else {
       console.error("Error fetching authors");
+    }
+  }, []);
+
+  const fetchTeamOneRemoteAuthors = useCallback(async () => {
+    const response = await axios.get(
+      `${process.env.REACT_APP_TEAM_ONE_URL}/authors/`
+    );
+
+    if (response.status === 200) {
+      const remoteAuthors = response.data.results.map((author) => ({
+        id: author.id,
+        displayName: author.username,
+        profileImage: author.image,
+        remote: true,
+      }));
+      setAuthors((authors) => [...authors, ...remoteAuthors]);
+    } else {
+      console.error("Error fetching team one authors.");
     }
   }, []);
 
@@ -48,9 +68,10 @@ const useFriendsViewModel = () => {
 
   useEffect(() => {
     fetchAuthors();
+    fetchTeamOneRemoteAuthors();
     fetchFollowers();
     fetchFollowing();
-  }, [fetchAuthors, fetchFollowers, fetchFollowing]);
+  }, [fetchAuthors, fetchTeamOneRemoteAuthors, fetchFollowers, fetchFollowing]);
 
   const changeView = (view) => {
     setSelectedView(view);
