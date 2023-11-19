@@ -162,6 +162,7 @@ export default function Post(props) {
               userId={props.userId}
               postId={props.id}
               displayName={displayName}
+              type={props.type}
             />
           </CardContent>
         </Collapse>

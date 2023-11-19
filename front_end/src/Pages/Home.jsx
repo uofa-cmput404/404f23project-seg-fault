@@ -100,17 +100,18 @@ function Home() {
               margin={1} 
               type={"local"}/>;
           })}
+          {/* //"http://127.0.0.1:8000/api/authors/8ae5ec05b8c344bbb9bec4b169d2a59d/posts/ea0ddf86422947c1b7b7b789fe72b21b" */}
           {remotePosts.map((post, index) => {
             return <Post 
-              post={remotePosts} 
+              post={post} 
               content={post.content}
               profileImage={post.owner.image}
-              userId={post.owner.id}
+              userId={`${process.env.REACT_APP_TEAM_ONE_URL}/authors/${post.owner.id}`}
               displayName={post.owner.username}
               title={post.title}
               contentType={post.contentType}
               visibility={post.visibility}
-              id={post.id}
+              id={`${process.env.REACT_APP_TEAM_ONE_URL}/authors/${post.owner.id}/posts/${post.id}`}
               width={600} 
               padding={1} 
               margin={1} 

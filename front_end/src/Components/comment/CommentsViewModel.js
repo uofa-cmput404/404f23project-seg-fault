@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 
-export function useCommentsViewModel(postId, userId, displayName) {
+export function useCommentsViewModel(postId, userId, displayName, type) {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
 
@@ -9,11 +9,15 @@ export function useCommentsViewModel(postId, userId, displayName) {
     const response = await axios.get(`${postId}/comments/`);
 
     if (response.status === 200) {
-      setComments(response.data.comments);
+      if (type === "local") {
+        setComments(response.data.comments);
+      } else if (type === "remoteGroup1") {
+        setComments(response.data.results);
+      }
     } else {
       console.error("Error fetching comments");
     }
-  }, [postId]);
+  }, [postId, type]);
 
   const dispatchCommentNotification = useCallback(async () => {
     const response = await axios.post(`${userId}/inbox/`, {
