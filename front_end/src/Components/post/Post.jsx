@@ -96,13 +96,14 @@ export default function Post(props) {
             />
           }
           action={
-            userId === props.userId ? (
-              <PostMenu post={props.post} />
-            ) : null
+            userId === props.userId ? <PostMenu post={props.post} /> : null
           }
           // Wraps the title to a profile link.
           title={
-            <Link to={`/profile/${extractIdFromUrl(props.id)}`} style={{ textDecoration: 'none' }}>
+            <Link
+              to={`/profile/${extractIdFromUrl(props.id)}`}
+              style={{ textDecoration: "none" }}
+            >
               {props.displayName}
             </Link>
           }
@@ -151,9 +152,7 @@ export default function Post(props) {
             className="openCommentsButton"
             size="small"
           >
-            {expandComments
-              ? "Hide Comments"
-              : `View Comments`}
+            {expandComments ? "Hide Comments" : `View Comments`}
           </Button>
         </CardActions>
         <Collapse in={expandComments} timeout="auto" unmountOnExit>
@@ -170,4 +169,3 @@ export default function Post(props) {
     </>
   );
 }
-
