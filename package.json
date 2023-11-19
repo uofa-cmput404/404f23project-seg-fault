@@ -2,10 +2,11 @@
     "name": "vibely",
     "version": "1.0.0",
     "scripts": {
-      "heroku-postbuild": "cd front_end && npm install && npm run build"
+      "heroku-postbuild": "cd front_end && npm install"
     },
     "engines": {
-      "node": "18.x"
+      "node": "18.x",
+      "npm": "10.x"
     }
   }
   
