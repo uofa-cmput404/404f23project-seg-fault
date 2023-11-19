@@ -54,7 +54,7 @@ function Friends() {
                 textTransform: "capitalize",
               }}
             >
-              Other Authors
+              Authors
             </Button>
             <Button
               onClick={() => changeView("friends")}
@@ -107,6 +107,7 @@ function Friends() {
               id={author.id}
               username={author.displayName}
               profilePic={author.profileImage}
+              remoteAuthor={author.remote}
               status="follow"
               authorAction={followAuthor}
             />
