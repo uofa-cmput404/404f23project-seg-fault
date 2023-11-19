@@ -12,7 +12,7 @@ const useFriendsViewModel = () => {
   const [following, setFollowing] = useState([]);
 
   const fetchAuthors = useCallback(async () => {
-    const response = await axios.get("http://127.0.0.1:8000/api/authors/");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/authors/`);
     if (response.status === 200) {
       setAuthors(response.data.items);
     } else {
@@ -24,7 +24,7 @@ const useFriendsViewModel = () => {
     const parts = userId.split("/");
     const userGuid = parts[parts.length - 1];
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/authors/${userGuid}/followers/`
+      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`
     );
     if (response.status === 200) {
       setFollowers(response.data.items);
@@ -37,7 +37,7 @@ const useFriendsViewModel = () => {
     const parts = userId.split("/");
     const userGuid = parts[parts.length - 1];
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/authors/${userGuid}/following/`
+      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`
     );
     if (response.status === 200) {
       setFollowing(response.data.items);
@@ -58,7 +58,7 @@ const useFriendsViewModel = () => {
 
   const followAuthor = async (authorId) => {
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/authors/follow/",
+      `${process.env.REACT_APP_API_URL}/authors/follow/`,
       { user_id: userId, author_id_to_follow: authorId }
     );
 
@@ -71,7 +71,7 @@ const useFriendsViewModel = () => {
 
   const unfollowAuthor = async (authorId) => {
     const response = await axios.post(
-      "http://127.0.0.1:8000/api/authors/unfollow/",
+      `${process.env.REACT_APP_API_URL}/authors/unfollow/`,
       { user_id: userId, author_id_to_unfollow: authorId }
     );
 

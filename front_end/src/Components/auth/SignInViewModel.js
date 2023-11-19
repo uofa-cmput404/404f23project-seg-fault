@@ -11,7 +11,7 @@ const useSignInViewModel = (navigate) => {
   });
 
   const handleSubmit = async () => {
-    const response = await axios.post('http://127.0.0.1:8000/api/login/', formData);
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/login/`, formData);
 
     if (response.status === 200) {
       dispatch({ type: 'SET_TOKEN', payload: response.data.token });

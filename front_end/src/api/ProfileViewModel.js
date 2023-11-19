@@ -50,7 +50,7 @@ const useProfileViewModel = () => {
       const fetchProfileData = async (url) => {
         // Helper method to fetch all authors (including yourself)
         const users_response = await axios.get(
-            "http://127.0.0.1:8000/api/authors/"
+            `${process.env.REACT_APP_API_URL}/authors/`
         );
         if (users_response.status === 200) {                
             const foundUserData = users_response.data.items.find(item => item.id === url);

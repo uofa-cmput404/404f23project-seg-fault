@@ -14,8 +14,9 @@ const usePostsViewModel = () => {
         const fetchAuthors = async () => {
             // Helper method to fetch all authors (including yourself)
             const users_response = await axios.get(
-                "http://127.0.0.1:8000/api/authors/"
+                `${process.env.REACT_APP_API_URL}/authors/`
             );
+
             if (users_response.status === 200) {
                 return users_response.data.items;
             } else {
@@ -72,7 +73,7 @@ const usePostsViewModel = () => {
             allPosts = allPosts.filter(
                 (item) =>
                     item.visibility === "public" ||
-                    item.author.id === userId ||
+                    (item.author.id === userId && (item.visibility !== "private"))||
                     (followingUsersIds.includes(item.author.id) &&
                         (item.visibility === "friends"))
             );
@@ -85,6 +86,7 @@ const usePostsViewModel = () => {
                 return dateB - dateA;
               });
         };
+
 
         try {
             const authors = await fetchAuthors();
@@ -107,7 +109,7 @@ const usePostsViewModel = () => {
         const parts = userId.split("/");
         const userGuid = parts[parts.length - 1];
         const response = await axios.get(
-          `http://127.0.0.1:8000/api/authors/${userGuid}/followers/`
+          `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`
         );
         if (response.status === 200) {
           return response.data.items;
@@ -155,9 +157,10 @@ const usePostsViewModel = () => {
     const deletePost = async (postId) => {
         const response = await axios.delete(postId);
 
-        if (response.status === 200) {
-            console.error("Deleted");
+        if (response.status === 204) {
+            console.log("Deleted");
         } else {
+            console.log(response.status);
             console.error("Error deleting post");
         }
     };
@@ -200,7 +203,7 @@ const usePostsViewModel = () => {
         fetchPosts,
         createPost,
         deletePost,
-        editPost,
+        editPost
     };
 };
 
