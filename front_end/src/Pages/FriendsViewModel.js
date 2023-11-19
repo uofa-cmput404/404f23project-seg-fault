@@ -20,6 +20,24 @@ const useFriendsViewModel = () => {
     }
   }, []);
 
+  const fetchTeamOneRemoteAuthors = useCallback(async () => {
+    const response = await axios.get(
+      "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/"
+    );
+
+    if (response.status === 200) {
+      const remoteAuthors = response.data.results.map((author) => ({
+        id: author.id,
+        displayName: author.username,
+        profileImage: author.image,
+        remote: true,
+      }));
+      setAuthors((authors) => [...authors, ...remoteAuthors]);
+    } else {
+      console.error("Error fetching team one authors.");
+    }
+  }, []);
+
   const fetchFollowers = useCallback(async () => {
     const parts = userId.split("/");
     const userGuid = parts[parts.length - 1];
@@ -48,9 +66,10 @@ const useFriendsViewModel = () => {
 
   useEffect(() => {
     fetchAuthors();
+    fetchTeamOneRemoteAuthors();
     fetchFollowers();
     fetchFollowing();
-  }, [fetchAuthors, fetchFollowers, fetchFollowing]);
+  }, [fetchAuthors, fetchTeamOneRemoteAuthors, fetchFollowers, fetchFollowing]);
 
   const changeView = (view) => {
     setSelectedView(view);
