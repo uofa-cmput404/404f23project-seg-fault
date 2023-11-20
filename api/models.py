@@ -83,3 +83,13 @@ class Inbox(models.Model):
         self.items = []
         self.save()
 
+
+class FollowRequest(models.Model):
+    
+    type = models.CharField(max_length=10, default='Follow')
+    summary = models.TextField()
+    actor = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='follow_requests_made')
+    object = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='follow_requests_received')
+
+    def __str__(self):
+        return f"{self.actor.displayName} wants to follow {self.object.displayName}"
