@@ -17,7 +17,7 @@ export function extractIdFromUrl(url) {
 
 export function createUrlFromId(id) {
     // Base URL
-    const baseUrl = 'http://127.0.0.1:8000/api/authors/';
+    const baseUrl = `${process.env.REACT_APP_API_URL}/authors/`;
 
     // Construct the complete URL by appending the ID
     const url = `${baseUrl}${id}`;

@@ -73,9 +73,23 @@ function ProfilePage({userId}) {
               overflow: "auto",
             }}
           >
-            {posts.map((post, index) => (
-              <Post key={index} post={post} padding={1} margin={1} />
-            ))}
+          {posts.map((post, index) => {
+            return <Post 
+              post={post}
+              content={post.content}
+              profileImage={post.author.profileImage}
+              userId={post.author.id}
+              displayName={post.author.displayName}
+              title={post.title}
+              contentType={post.contentType}
+              visibility={post.visibility}
+              id={post.id}
+              width={600} 
+              padding={1} 
+              margin={1} 
+              key={index}
+              type={"local"}/>;
+          })}
           </Box>
           {isOwner ? (
                 <Fab

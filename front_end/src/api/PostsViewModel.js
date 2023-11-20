@@ -14,8 +14,9 @@ const usePostsViewModel = () => {
         const fetchAuthors = async () => {
             // Helper method to fetch all authors (including yourself)
             const users_response = await axios.get(
-                "http://127.0.0.1:8000/api/authors/"
+                `${process.env.REACT_APP_API_URL}/authors/`
             );
+
             if (users_response.status === 200) {
                 return users_response.data.items;
             } else {
@@ -32,7 +33,6 @@ const usePostsViewModel = () => {
             if (followers_response.status === 200) {
                 for (let follower of followers_response.data.items) {
                     if (follower.follower.id === userId) {
-                        console.log('i shouldnt be ablt to see this')
                         return true
                     }
                 }
@@ -73,7 +73,7 @@ const usePostsViewModel = () => {
             allPosts = allPosts.filter(
                 (item) =>
                     item.visibility === "public" ||
-                    item.author.id === userId ||
+                    (item.author.id === userId && (item.visibility !== "private"))||
                     (followingUsersIds.includes(item.author.id) &&
                         (item.visibility === "friends"))
             );
@@ -86,6 +86,7 @@ const usePostsViewModel = () => {
                 return dateB - dateA;
               });
         };
+
 
         try {
             const authors = await fetchAuthors();
@@ -101,6 +102,19 @@ const usePostsViewModel = () => {
             setLoading(false);
         } catch (error) {
             console.error("Error:", error);
+        }
+    }, [userId]);
+
+    const fetchFollowers = useCallback(async () => {
+        const parts = userId.split("/");
+        const userGuid = parts[parts.length - 1];
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`
+        );
+        if (response.status === 200) {
+          return response.data.items;
+        } else {
+          console.error("Error fetching followers");
         }
     }, [userId]);
 
@@ -142,14 +156,24 @@ const usePostsViewModel = () => {
             } catch(e) {
             console.error("Error creating post or sending to inbox");
         }
+
+        const followers = await fetchFollowers();
+        for (let follower of followers) {
+            console.log(follower);
+            const followerUrl = follower.follower.url;
+            const postUrl = response.data.data.url
+            const post_res = await axios.get(postUrl);
+            await axios.post(`${followerUrl}/inbox/`, post_res.data)
+        }
     };
 
     const deletePost = async (postId) => {
         const response = await axios.delete(postId);
 
-        if (response.status === 200) {
-            console.error("Deleted");
+        if (response.status === 204) {
+            console.log("Deleted");
         } else {
+            console.log(response.status);
             console.error("Error deleting post");
         }
     };
@@ -192,7 +216,7 @@ const usePostsViewModel = () => {
         fetchPosts,
         createPost,
         deletePost,
-        editPost,
+        editPost
     };
 };
 

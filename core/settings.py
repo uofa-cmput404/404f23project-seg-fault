@@ -11,6 +11,41 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
 from pathlib import Path
+import django_on_heroku # top of the file
+import dj_database_url
+from dotenv import load_dotenv
+from pathlib import Path
+
+import requests
+import os
+
+def fetch_database_url(app_name, heroku_api_key):
+    """
+    Fetches the DATABASE_URL environment variable for a given Heroku app.
+
+    Parameters:
+    app_name (str): Name of the Heroku app.
+    heroku_api_key (str): API key for Heroku account.
+
+    Returns:
+    str: The DATABASE_URL if successful, else an error message.
+    """
+    headers = {
+        "Authorization": f"Bearer {heroku_api_key}",
+        "Accept": "application/vnd.heroku+json; version=3"
+    }
+
+    response = requests.get(f"https://api.heroku.com/apps/{app_name}/config-vars", headers=headers)
+
+    if response.status_code == 200:
+        db_url = response.json().get("DATABASE_URL", "")
+        return db_url
+    else:
+        return "Failed to fetch DATABASE_URL"
+
+
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -64,7 +99,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware'
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -91,12 +127,47 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+ROOT_URL = "http://127.0.0.1:8000/api"
+load_dotenv()
+DATABASE_ENV = os.getenv('DATABASE_ENV')
+DJANGO_ENV = os.getenv('DJANGO_ENV')
+
+
+# 1 local django with local db
+if (DATABASE_ENV == 'local') and (DJANGO_ENV == 'local'):
+    print("Using local database")
+    ROOT_URL = "http://127.0.0.1:8000/api"
+    # Local (SQLite) - Use the local SQLite database configuration
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+
+# 2 local django with remote db. need to make api call to get db url
+elif (DATABASE_ENV == 'remote') and (DJANGO_ENV == 'local'):
+    app_name = "vibely"  
+    heroku_api_key = "fe31462d-e9d0-4e23-84c0-36f40b2979b4" 
+    # Fetch the database URL using the Heroku API
+    db_url = fetch_database_url(app_name, heroku_api_key)
+    ROOT_URL = "https://vibely-23b7dc4c736d.herokuapp.com/api"
+    DATABASES = {'default': dj_database_url.config(default=db_url)}
+    
+# 3 local django with remote db
+else:
+    print("Using remote db")
+    ROOT_URL = "https://vibely-23b7dc4c736d.herokuapp.com/api"
+    DATABASE_URL = os.getenv('DATABASE_URL')
+    DATABASE_URL = os.environ.get('DATABASE_URL')  # from the heroku machine
+    DATABASES = {'default': dj_database_url.config(default=DATABASE_URL)}
+
 
 
 # Password validation
@@ -136,3 +207,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+django_on_heroku.settings(locals()) # bottom of the file

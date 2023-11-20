@@ -72,6 +72,9 @@ def inbox_view(request, author_id):
                     # also need to send notification to inbox
                     author_inbox, created = Inbox.objects.get_or_create(author=author)
                     author_inbox.add_item(data)
+                else:
+                    return Response({"message": "error"}, status=status.HTTP_400_BAD_REQUEST)
+                    
 
                 return Response({"message": "Like added successfully"}, status=status.HTTP_201_CREATED)
             else:

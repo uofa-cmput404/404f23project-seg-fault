@@ -37,24 +37,33 @@ function AuthorTile(props) {
           <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />
         }
         title={
-          // Wrap the title in a Link component
           <Link
             component={RouterLink}
             to={`/profile/${extractIdFromUrl(props.id)}`}
-            style={{ textDecoration: 'none' }}
+            style={{ textDecoration: "none" }}
           >
             {props.username}
           </Link>
         }
         action={
-          <ButtonBase onClick={handleClick}>
-            <Chip
-              label={chipLabels[props.status]}
-              size="small"
-              sx={{ paddingRight: 2, marginTop: 1.5 }}
-              style={{ backgroundColor: chipColor, color: "#fff" }}
-            />
-          </ButtonBase>
+          <>
+            <ButtonBase onClick={handleClick}>
+              <Chip
+                label={chipLabels[props.status]}
+                size="small"
+                sx={{ paddingRight: 2, marginTop: 1.5 }}
+                style={{ backgroundColor: chipColor, color: "#fff" }}
+              />
+            </ButtonBase>
+            {props.remoteAuthor && (
+              <Chip
+                label="Remote"
+                size="small"
+                sx={{ paddingRight: 2, marginTop: 1.5 }}
+                style={{ backgroundColor: "#ffad3d", color: "#fff" }}
+              />
+            )}
+          </>
         }
       />
     </Card>
