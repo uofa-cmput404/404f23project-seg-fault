@@ -83,3 +83,5 @@ class Inbox(models.Model):
         self.items = []
         self.save()
 
+# class Node(models.Model):
+#     url = models.URLField(null=True)
