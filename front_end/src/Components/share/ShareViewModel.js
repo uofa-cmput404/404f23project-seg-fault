@@ -11,7 +11,7 @@ const useShareViewModel = () => {
   const [following, setFollowing] = useState([]);
 
   const fetchAuthors = useCallback(async () => {
-    const response = await axios.get("http://127.0.0.1:8000/api/authors/");
+    const response = await axios.get(`${process.env.REACT_APP_API_URL}/authors/`);
     if (response.status === 200) {
       setAuthors(response.data.items);
     } else {
@@ -23,7 +23,7 @@ const useShareViewModel = () => {
     const parts = userId.split("/");
     const userGuid = parts[parts.length - 1];
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/authors/${userGuid}/followers/`
+      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`
     );
     if (response.status === 200) {
       setFollowers(response.data.items);
@@ -36,7 +36,7 @@ const useShareViewModel = () => {
     const parts = userId.split("/");
     const userGuid = parts[parts.length - 1];
     const response = await axios.get(
-      `http://127.0.0.1:8000/api/authors/${userGuid}/following/`
+      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`
     );
     if (response.status === 200) {
       setFollowing(response.data.items);
