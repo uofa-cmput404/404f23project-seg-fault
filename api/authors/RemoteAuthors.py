@@ -1,22 +1,17 @@
-import sys
-import os
-import django
-
-# Assuming your script is in the 'segfault/api/authors' directory,
-# and your Django project root is 'segfault'
-project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-sys.path.append(project_root)
-
-# if it doesn't work, navigate the directory containing manage.py. export the variable manually with bash
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-
-# Initialize Django
-django.setup()
+# for running the one off script
+# import sys
+# import os
+# import django
+# project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# sys.path.append(project_root)
+# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+# django.setup()
 
 import requests
 import json
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
+from rest_framework.request import Request
 
 
 def transform_author_data(author):
@@ -63,6 +58,7 @@ def fetch_data_from_url(url):
 
 # first try using our serializer (proper specs, like if we were connecting with a clone of our app it should work)
 # if it doesn't work then use the custom transformation for team 1
+#TODO: eventually make it so so it tries default, then team 1, then team 2 ...
 def process_author(item):
     try:
         serializer = DefaultAuthorSerializer(data=item)
@@ -74,7 +70,12 @@ def process_author(item):
 
 #TODO: should have a model for nodes we are connecting to. iterate over the nodes and do this for every url + /authors/
 #TODO: each node object should have url and credentials
-def get_external_authors():
+def get_external_authors(request):
+
+    # if it's a request from remote then only get our authors
+    if not is_request_from_frontend(request):
+        return []
+
     authors = []
     external_node_url = "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/"
 
@@ -90,6 +91,9 @@ def get_external_authors():
         external_node_url = data.get('next')
     # return as a list because we want to use "+" to add to our response data we already have
     return authors
+
+def is_request_from_frontend(request):
+    return request.META.get('HTTP_X_FROM_FRONTEND') == 'true'
 
 # ------ testing output
 # print(get_external_authors())
