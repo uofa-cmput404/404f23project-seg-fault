@@ -82,6 +82,7 @@ class CustomPagination(pagination.PageNumberPagination):
     page_size = 5  # Number of items per page
     page_size_query_param = 'size'  # Allow clients to set the page size using a query parameter
     max_page_size = 100  # Set a maximum page size
+    
     def paginate_queryset(self, queryset, request, view=None):
         # Check if pagination query parameters are provided
         page_param = request.query_params.get('page', None)
@@ -100,6 +101,8 @@ class CustomPagination(pagination.PageNumberPagination):
             'size': int(self.request.query_params.get('size', self.page_size)),
         })
 
+from . import RemoteAuthors
+# api/authors
 class AuthorListView(generics.ListAPIView):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
@@ -115,11 +118,10 @@ class AuthorListView(generics.ListAPIView):
         author_serializer = self.get_serializer(authors, many=True)
         return Response({
             "type": "authors",
-            "items": author_serializer.data
-        }, status=status.HTTP_200_OK)
-    
+            "items": author_serializer.data + RemoteAuthors.get_external_authors()
+        }, status=status.HTTP_200_OK) 
 
-
+# api/authors{author_id}
 class AuthorDetailView(generics.ListCreateAPIView):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
@@ -144,6 +146,8 @@ class AuthorDetailView(generics.ListCreateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
     
     def create(self, request, *args, **kwargs):
         # This will override the default behavior of creating a new object
