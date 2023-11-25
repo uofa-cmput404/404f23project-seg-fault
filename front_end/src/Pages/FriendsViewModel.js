@@ -23,13 +23,20 @@ const useFriendsViewModel = () => {
   }, []);
 
   const fetchTeamOneRemoteAuthors = useCallback(async () => {
+    const creds = 'string:string';
+    const base64Credentials = btoa(creds);
     const response = await axios.get(
-      `${process.env.REACT_APP_TEAM_ONE_URL}/authors/`
+      `${process.env.REACT_APP_TEAM_ONE_URL}/authors/`,
+      {
+        headers: {
+          'Authorization': `Basic ${base64Credentials}`,
+        },
+      }
     );
 
     if (response.status === 200) {
       const remoteAuthors = response.data.results.map((author) => ({
-        id: author.id,
+        id: `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${author.id}`,
         displayName: author.username,
         profileImage: author.image,
         remote: true,

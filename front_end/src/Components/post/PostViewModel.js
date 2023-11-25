@@ -8,8 +8,8 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
   const [likes, setLikes] = useState([]);
 
   const fetchLikes = useCallback(async () => {
-    if (props.type === "local") {
-      const response = await axios.get(`${props.id}/likes/`);
+    if (!props.post.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+      const response = await axios.get(`${props.post.id}/likes/`);
 
       if (response.status === 200) {
         const liked = response.data.items.some(
@@ -22,30 +22,30 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         console.error("Error fetching likes");
       }
     }
-  }, [props.id, userId, props.type]);
+  }, [props.post.id, userId]);
 
   const likePost = useCallback(async () => {
-    if (props.type === "local") {
-      const user = await axios.get(userId + '/');
 
-      const payload = {
-        "context": "https://www.w3.org/ns/activitystreams",
-        "summary": `${user.data.displayName} Likes your post`,
-        "type": "Like",
-        "author": user.data,
-        "object": props.id,
-      }
+    const user = await axios.get(userId + '/');
 
-      const response = await axios.post(`${props.userId}/inbox/`, payload);
-
-      if (response.status === 200) {
-        fetchLikes();
-      } else {
-        console.log(response.status)
-        console.error("Error liking post");
-      }
+    const payload = {
+      "context": "https://www.w3.org/ns/activitystreams",
+      "summary": `${user.data.displayName} Likes your post`,
+      "type": "Like",
+      "author": user.data,
+      "object": props.post.id,
     }
-  }, [props.userId, userId, props.id, fetchLikes, props.type]);
+
+    const response = await axios.post(`${props.post.author.id}/inbox/`, payload);
+
+    if (response.status === 200) {
+      fetchLikes();
+    } else {
+      console.log(response.status)
+      console.error("Error liking post");
+    }
+
+  }, [props.post.author.id, userId, props.post.id, fetchLikes,]);
 
   useEffect(() => {
     fetchLikes();

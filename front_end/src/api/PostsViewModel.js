@@ -27,57 +27,87 @@ const usePostsViewModel = () => {
             }
         };
 
-        const isFollowing = async (author) => {
-            // Helper method to fetch the posts of an specific author
-            const followers_response = await axios.get(`${author.url}/followers/`);
-            if (followers_response.status === 200) {
-                for (let follower of followers_response.data.items) {
-                    if (follower.follower.id === userId) {
-                        return true
-                    }
-                }
-            } else {
-                console.error(
-                    `Couldn't fetch followers. Status code: ${followers_response.status}`
-                );
-            }
-            return false;
-        };
-
-        const fetchFollowingUsersIds = async (authors) => {
-            const following = []
-            for (let author of authors) {
-                const isUserFollowing = await isFollowing(author);
-                if ( isUserFollowing ) {
-                    following.push(author.id)
-                }
-            }
-            return following;
-        };
-
         const fetchPostsByAuthor = async (author) => {
-            // Helper method to fetch the posts of an specific author
-            const posts_response = await axios.get(`${author.url}/posts/`);
-            if (posts_response.status === 200) {
-                return posts_response.data.items;
-            } else {
-                console.error(
-                    `Couldn't fetch posts. Status code: ${posts_response.status}`
-                );
-                return [];
+            // Helper method to fetch the posts of a specific author
+            if (author.id.startsWith(process.env.REACT_APP_API_URL)) {
+                // get local posts
+                const posts_response = await axios.get(`${author.url}/posts/`);
+                if (posts_response.status === 200) {
+                    return posts_response.data.items;
+                } else {
+                    console.error(
+                        `Couldn't fetch posts. Status code: ${posts_response.status}`
+                    );
+                    return [];
+                }
+            } else if (author.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+                // get team one posts
+                const creds = 'string:string';
+                const base64Credentials = btoa(creds);
+                const posts_response = await axios.get(`${author.url}/posts/`,
+                    {
+                        headers: {
+                            'Authorization': `Basic ${base64Credentials}`,
+                        },
+                    }
+                  );
+                if (posts_response.status === 200) {
+                    const team1_posts = posts_response.data.results;
+                    const posts = []
+
+                    for (const team1_post of team1_posts){
+                        let content = team1_post.content
+                        if (team1_post.image) {
+                            content = `${process.env.REACT_APP_TEAM_ONE_URL}/${team1_post.image}`
+                        } else if (team1_post.image_link) {
+                            content = team1_post.image_link
+                        }
+
+                        posts.push({
+                            "type": "post",
+                            "title": team1_post.title,
+                            "id": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}/posts/${team1_post.id}`,
+                            "source": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}/posts/${team1_post.id}`,
+                            "origin": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}/posts/${team1_post.id}`,
+                            "description": team1_post.description,
+                            "contentType": "text/plain",
+                            "content": content,
+                            "author": {
+                                "type": "author",
+                                "id": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}`,
+                                "host": process.env.REACT_APP_TEAM_ONE_URL,
+                                "displayName": team1_post.author.username,
+                                "url": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}`,
+                                "github": team1_post.author.github,
+                                "profileImage": team1_post.author.image
+                            },
+                            "categories": [
+                                "none"
+                            ],
+                            "count": team1_post.count,
+                            "comments": null,
+                            "published": team1_post.published,
+                            "visibility": team1_post.visibility.toLowerCase(),
+                            "unlisted": false
+                        });
+                        
+                    }
+                    return posts;
+                } else {
+                    console.error(
+                        `Couldn't fetch posts. Status code: ${posts_response.status}`
+                    );
+                    return [];
+                }
             }
         };
 
-        const filterPosts = (allPosts, followingUsersIds) => {
+        const filterPosts = (allPosts) => {
             // Helper method to filter posts based on visibility, friends posts or your own posts
             allPosts = allPosts.filter(
                 (item) =>
-                    item.visibility === "public" ||
-                    (item.author.id === userId && (item.visibility !== "private"))||
-                    (followingUsersIds.includes(item.author.id) &&
-                        (item.visibility === "friends"))
+                    item.visibility === "public"
             );
-
 
             return allPosts.sort((a, b) => {
                 const dateA = new Date(a.published);
@@ -90,20 +120,19 @@ const usePostsViewModel = () => {
 
         try {
             const authors = await fetchAuthors();
-            const followingUsersIds = await fetchFollowingUsersIds(authors);
 
             const allPosts = (
                 await Promise.all(authors.map((author) => fetchPostsByAuthor(author)))
             ).flat();
 
-            const filteredPosts = filterPosts(allPosts, followingUsersIds);
+            const filteredPosts = filterPosts(allPosts);
 
             setPosts(filteredPosts);
             setLoading(false);
         } catch (error) {
             console.error("Error:", error);
         }
-    }, [userId]);
+    }, []);
 
     const fetchFollowers = useCallback(async () => {
         const parts = userId.split("/");

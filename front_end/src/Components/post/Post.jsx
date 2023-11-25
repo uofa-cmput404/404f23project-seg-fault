@@ -29,7 +29,7 @@ function isImageUrl(url) {
 }
 
 function PostDisplay({ content, contentType }) {
-  if (contentType === "text/plain" || contentType === "string") {
+  if (contentType === "text/plain") {
     if (isImageUrl(content)) {
       return <CardMedia component="img" image={content} alt="postImage" />;
     } else {
@@ -53,7 +53,6 @@ export default function Post(props) {
   const [markdownContent, setMarkdownContent] = useRemark();
   const { state } = React.useContext(StoreContext);
   const userId = state.user.id;
-  const displayName = state.user.username;
 
   const {
     expandComments,
@@ -72,8 +71,8 @@ export default function Post(props) {
   };
 
   React.useEffect(() => {
-    setMarkdownContent(props.content);
-  }, [props.content, setMarkdownContent]);
+    setMarkdownContent(props.post.content);
+  }, [props.post.content, setMarkdownContent]);
 
   return (
     <>
@@ -87,7 +86,7 @@ export default function Post(props) {
         <CardHeader
           avatar={
             <Avatar
-              src={props.profileImage}
+              src={props.post.author.profileImage}
               alt={""}
               sx={{
                 width: 45,
@@ -96,28 +95,28 @@ export default function Post(props) {
             />
           }
           action={
-            userId === props.userId ? (
+            userId === props.post.author.id ? (
               <PostMenu post={props.post} />
             ) : null
           }
           // Wraps the title to a profile link.
           title={
-            <Link to={`/profile/${extractIdFromUrl(props.id)}`} style={{ textDecoration: 'none' }}>
-              {props.displayName}
+            <Link to={`/profile/${extractIdFromUrl(props.post.author.id)}`} style={{ textDecoration: 'none' }}>
+              {props.post.author.displayName}
             </Link>
           }
         />
         <Stack direction="column" spacing={2}>
           <Typography className="title" variant="body2">
-            {props.title}
+            {props.post.title}
           </Typography>
           <PostDisplay
             content={
-              props.contentType === "text/markdown"
+              props.post.contentType === "text/markdown"
                 ? markdownContent
-                : props.content
+                : props.post.content
             }
-            contentType={props.contentType}
+            contentType={props.post.contentType}
           />
         </Stack>
         <CardActions disableSpacing>
@@ -138,9 +137,9 @@ export default function Post(props) {
             </IconButton>
           </div>
           <Chip
-            label={props.visibility.toLowerCase()}
+            label={props.post.visibility.toLowerCase()}
             size="small"
-            color={visibilityColors[props.visibility.toLowerCase()]}
+            color={visibilityColors[props.post.visibility.toLowerCase()]}
             className="postVisibility"
             sx={{ paddingRight: 2 }}
           />
@@ -159,9 +158,9 @@ export default function Post(props) {
         <Collapse in={expandComments} timeout="auto" unmountOnExit>
           <CardContent>
             <Comment
-              userId={props.userId}
-              postId={props.id}
-              displayName={displayName}
+              userId={props.post.author.id}
+              postId={props.post.id}
+              displayName={props.post.author.displayName}
             />
           </CardContent>
         </Collapse>
