@@ -110,7 +110,6 @@ class AuthorListView(generics.ListAPIView):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     pagination_class = CustomPagination  # Use the custom pagination class
-
     def list(self, request, *args, **kwargs):
         page = self.paginate_queryset(self.get_queryset())
         if page is not None:
