@@ -126,7 +126,6 @@ const usePostsViewModel = () => {
         visibility,
         recipient
     ) => {
-        try {
             // Creates a new posts
             const body = {
                 title,
@@ -153,15 +152,12 @@ const usePostsViewModel = () => {
                 await axios.post(`${recipient.id}/inbox/`, inbox_payload);
                 console.log("Sent to recipient's inbox.");
             }
-            } catch(e) {
-            console.error("Error creating post or sending to inbox");
-        }
 
         const followers = await fetchFollowers();
         for (let follower of followers) {
             console.log(follower);
             const followerUrl = follower.follower.url;
-            const postUrl = response.data.data.url
+            const postUrl = response.data.data.url;
             const post_res = await axios.get(postUrl);
             await axios.post(`${followerUrl}/inbox/`, post_res.data)
         }
@@ -223,7 +219,7 @@ const usePostsViewModel = () => {
 const fetchProfileData = async (url) => {
     // Helper method to fetch all authors (including yourself)
     const users_response = await axios.get(
-        "http://127.0.0.1:8000/api/authors/"
+        `${process.env.REACT_APP_API_URL}/authors/`
     );
     if (users_response.status === 200) {                
         const foundUserData = users_response.data.items.find(item => item.id === url);
