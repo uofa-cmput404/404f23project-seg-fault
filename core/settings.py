@@ -89,6 +89,7 @@ REST_FRAMEWORK = {
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_HEADERS = True
 # CORS_ALLOWED_ORIGINS = ['http://localhost:3000'] # react front end server location
 
 MIDDLEWARE = [
