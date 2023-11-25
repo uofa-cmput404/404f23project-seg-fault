@@ -89,6 +89,7 @@ REST_FRAMEWORK = {
 
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_HEADERS = True
 # CORS_ALLOWED_ORIGINS = ['http://localhost:3000'] # react front end server location
 
 MIDDLEWARE = [
@@ -108,7 +109,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'front_end/build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -207,5 +208,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'front_end/build/static'),  # Path to where the React static files are
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where Django collects static files
 
 django_on_heroku.settings(locals()) # bottom of the file
