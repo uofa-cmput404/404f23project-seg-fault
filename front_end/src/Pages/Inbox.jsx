@@ -81,7 +81,6 @@ function Inbox() {
               />
             );
           }
-
           return null;
         })}
       </Box>

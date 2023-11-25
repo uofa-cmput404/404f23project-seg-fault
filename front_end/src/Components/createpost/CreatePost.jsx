@@ -107,7 +107,7 @@ export default function CreatePost(props) {
       if (props.action === "EDIT"){
         await editPost(title, 'description', contentType, content, visibility, props.post.id)
       } else {
-        await createPost(title, 'description', contentType, content, visibility) // TODO: add description
+        await createPost(title, 'description', contentType, content, visibility, props.recipient) // TODO: add description
       }
       reset()
       props.onClose()
@@ -261,7 +261,7 @@ export default function CreatePost(props) {
             variant="contained"
             aria-label="outlined primary button group"
           >
-            <Button onClick={onCreatePost}>{props.action === "EDIT" ? "Update" : (props.private ? `Post to ${props.recipient}` : "Post")}</Button>
+            <Button onClick={onCreatePost}>{props.action === "EDIT" ? "Update" : (props.private ? `Post to ${props.recipient.displayName}` : "Post")}</Button>
           </ButtonGroup>
         </div>
         <Snackbar

@@ -9,7 +9,7 @@ import Sheet from '@mui/joy/Sheet';
 import EditProfile from './EditProfile';
 import CreatePost from '../createpost/CreatePost';
 
-export default function UserCard({name, imagePath, github, isOwner, followersCount, postsCount, likesCount}) {
+export default function UserCard({name, imagePath, github, isOwner, followersCount, postsCount, likesCount, profileData}) {
   
   const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = React.useState(false);
@@ -142,7 +142,7 @@ export default function UserCard({name, imagePath, github, isOwner, followersCou
         </CardContent>
       </Card>
       <EditProfile username = {name} github={github}  image = {imagePath} open={isEditModalOpen} onClose={closeEditModal} action='EDIT'/>
-      {isCreateModalOpen && <CreatePost open={isCreateModalOpen} onClose={closeCreateModal} action='CREATE' private={true} recipient={name} />}
+      {isCreateModalOpen && <CreatePost open={isCreateModalOpen} onClose={closeCreateModal} action='CREATE' private={true} recipient={profileData} />}
     </Box>
   );
 }
