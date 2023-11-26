@@ -23,6 +23,7 @@ import Share from "../share/Share";
 import usePostViewModel from "./PostViewModel";
 import { StoreContext } from "../../store";
 import { extractIdFromUrl } from "../../api/helper";
+import ReactMarkdown from 'react-markdown';
 
 function isImageUrl(url) {
   return /\.(jpeg|jpg|gif|png|bmp)$/.test(url);
@@ -41,9 +42,12 @@ function PostDisplay({ content, contentType }) {
     }
   } else if (contentType.startsWith("image")) {
     // possibly need to decode images when we connect with other teams add the content type before the image
+    if (!content.startsWith("data:image")) {
+      return <CardMedia component="img" image={`data:${contentType},`+content} alt="postImage" />;
+    }
     return <CardMedia component="img" image={content} alt="postImage" />;
   } else if (contentType === "text/markdown") {
-    return content;
+    return <ReactMarkdown>{content}</ReactMarkdown>;
   } else {
     return <p>Unsupported content type: {contentType}</p>;
   }
@@ -98,7 +102,17 @@ export default function Post(props) {
           action={
             userId === props.userId ? (
               <PostMenu post={props.post} />
-            ) : null
+            ) : (
+              !props.userId.startsWith(process.env.REACT_APP_API_URL) &&(
+              <Chip
+              label="remote"
+              size="small"
+              color="warning"
+              className="postVisibility"
+              sx={{ paddingRight: 2, width: '6rem' }}
+            />
+              )
+            )
           }
           // Wraps the title to a profile link.
           title={
@@ -113,9 +127,7 @@ export default function Post(props) {
           </Typography>
           <PostDisplay
             content={
-              props.contentType === "text/markdown"
-                ? markdownContent
-                : props.content
+              props.content
             }
             contentType={props.contentType}
           />
@@ -137,13 +149,13 @@ export default function Post(props) {
               <SendIcon onClick={handleShare} />
             </IconButton>
           </div>
-          <Chip
-            label={props.visibility.toLowerCase()}
-            size="small"
-            color={visibilityColors[props.visibility.toLowerCase()]}
-            className="postVisibility"
-            sx={{ paddingRight: 2 }}
-          />
+            <Chip
+              label={props.visibility.toLowerCase()}
+              size="small"
+              color={visibilityColors[props.visibility.toLowerCase()]}
+              className="postVisibility"
+              sx={{ paddingRight: 2 }}
+            />
         </CardActions>
         <CardActions>
           <Button

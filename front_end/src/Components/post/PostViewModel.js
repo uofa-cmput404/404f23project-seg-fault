@@ -12,7 +12,7 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
   const [likes, setLikes] = useState([]);
 
   const fetchLikes = useCallback(async () => {
-    if (props.type === "local") {
+    if (props.id.startsWith(process.env.REACT_APP_API_URL)) {
       const response = await axios.get(`${props.id}/likes/`, {
         headers: {
           Authorization: `Token ${authToken}`,
@@ -30,7 +30,7 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         console.error("Error fetching likes");
       }
     }
-  }, [props.id, userId, props.type, authToken]);
+  }, [props.id, userId, authToken]);
 
   const likePost = useCallback(async () => {
     if (props.type === "local") {
