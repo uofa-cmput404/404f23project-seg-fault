@@ -23,15 +23,3 @@ urlpatterns = [
     # Serve React App
     re_path(r'^$', TemplateView.as_view(template_name='index.html')),
 ]
-
-
-
-
-
-# from django.contrib import admin
-# from django.urls import include, path
-
-# urlpatterns = [
-#     path('admin/', admin.site.urls),
-#     path('api/', include('api.urls'))
-# ]

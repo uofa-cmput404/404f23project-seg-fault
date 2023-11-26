@@ -83,12 +83,18 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.BasicAuthentication',
         'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
 
+
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_ALL_HEADERS = True
 # CORS_ALLOWED_ORIGINS = ['http://localhost:3000'] # react front end server location
 
 MIDDLEWARE = [
@@ -159,7 +165,7 @@ elif (DATABASE_ENV == 'remote') and (DJANGO_ENV == 'local'):
     db_url = fetch_database_url(app_name, heroku_api_key)
     ROOT_URL = "https://vibely-23b7dc4c736d.herokuapp.com/api"
     DATABASES = {'default': dj_database_url.config(default=db_url)}
-
+    
 # 3 local django with remote db
 else:
     print("Using remote db")
@@ -173,20 +179,20 @@ else:
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
-]
+# AUTH_PASSWORD_VALIDATORS = [
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+#     },
+#     {
+#         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+#     },
+# ]
 
 
 # Internationalization
@@ -205,12 +211,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-# Static files (CSS, JavaScript, Images)
+
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'front_end/build/static'),  # Path to where the React static files are
 ]
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  # Where Django collects static files
-
 
 django_on_heroku.settings(locals()) # bottom of the file

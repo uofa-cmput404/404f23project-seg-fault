@@ -3,7 +3,7 @@ from .. models import Author
 from .serializers import UserSerializer, AuthorSerializer, AuthorDetailSerializer
 from django.contrib.auth.models import User
 ##### user auth
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 ##### views
 from rest_framework import generics, views, permissions, status
@@ -82,6 +82,7 @@ class CustomPagination(pagination.PageNumberPagination):
     page_size = 5  # Number of items per page
     page_size_query_param = 'size'  # Allow clients to set the page size using a query parameter
     max_page_size = 100  # Set a maximum page size
+    
     def paginate_queryset(self, queryset, request, view=None):
         # Check if pagination query parameters are provided
         page_param = request.query_params.get('page', None)
@@ -100,26 +101,31 @@ class CustomPagination(pagination.PageNumberPagination):
             'size': int(self.request.query_params.get('size', self.page_size)),
         })
 
+from . import RemoteAuthors
+# api/authors
+#TODO: fix pagination and do the detail view
 class AuthorListView(generics.ListAPIView):
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     pagination_class = CustomPagination  # Use the custom pagination class
-
     def list(self, request, *args, **kwargs):
         page = self.paginate_queryset(self.get_queryset())
         if page is not None:
             author_serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(author_serializer.data)
         
+        # determine if token or basic
+        auth_type = 'token' if isinstance(request.successful_authenticator, TokenAuthentication) else 'basic'
         authors = self.get_queryset()
         author_serializer = self.get_serializer(authors, many=True)
         return Response({
             "type": "authors",
-            "items": author_serializer.data
-        }, status=status.HTTP_200_OK)
-    
+            "items": author_serializer.data + RemoteAuthors.get_external_authors(request, auth_type)
+        }, status=status.HTTP_200_OK) 
 
-
+# api/authors{author_id}
 class AuthorDetailView(generics.ListCreateAPIView):
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
@@ -144,6 +150,8 @@ class AuthorDetailView(generics.ListCreateAPIView):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
     
     def create(self, request, *args, **kwargs):
         # This will override the default behavior of creating a new object

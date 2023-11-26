@@ -23,6 +23,7 @@ local_settings.py
 
 # Environment variables (if using .env files for configuration)
 .env
+**/.env
 
 # Compiled Python files
 *.pyc
@@ -43,3 +44,6 @@ Thumbs.db
 # Dependency directories
 venv/
 **/migrations/
+
+# Build directories
+**/build/

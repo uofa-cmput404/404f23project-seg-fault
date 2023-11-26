@@ -93,3 +93,6 @@ class FollowRequest(models.Model):
 
     def __str__(self):
         return f"{self.actor.displayName} wants to follow {self.object.displayName}"
+
+# class Node(models.Model):
+#     url = models.URLField(null=True)
