@@ -1,13 +1,3 @@
-import os
-import django
-
-# Set the environment variable for Django settings
-# did it using bash
-
-# Initialize Django
-django.setup()
-
-
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from ..models import Author
@@ -44,5 +34,11 @@ class RemoteAuthorSerializer(serializers.ModelSerializer):
         model = Author
         fields = ('type', 'id', 'host', 'displayName', 'url', 'github', 'profileImage')
 
+#default serializer for remote connections
 class DefaultAuthorSerializer(serializers.Serializer):
-    fields = ('type', 'id', 'host', 'displayName', 'url', 'github', 'profileImage')
+    id = serializers.CharField()  # ID should always be a non-null, non-blank string
+    host = serializers.CharField(allow_blank=True)
+    displayName = serializers.CharField(allow_blank=True)
+    url = serializers.CharField(allow_blank=True)
+    github = serializers.CharField(allow_blank=True, allow_null=True)  # GitHub can be null
+    profileImage = serializers.CharField(allow_blank=True, allow_null=True)  # Profile image can be null
