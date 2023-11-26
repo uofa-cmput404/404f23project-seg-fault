@@ -1,20 +1,23 @@
-import { useState } from 'react';
-import axios from 'axios';
-import { useStore } from './../../store';
+import { useState } from "react";
+import axios from "axios";
+import { useStore } from "./../../store";
 
 const useSignInViewModel = (navigate) => {
   const { dispatch } = useStore();
 
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    username: "",
+    password: "",
   });
 
   const handleSubmit = async () => {
-    const response = await axios.post(`${process.env.REACT_APP_API_URL}/login/`, formData);
+    const response = await axios.post(
+      `${process.env.REACT_APP_API_URL}/login/`,
+      formData
+    );
 
     if (response.status === 200) {
-      dispatch({ type: 'SET_TOKEN', payload: response.data.token });
+      dispatch({ type: "SET_TOKEN", payload: response.data.token });
 
       const user = {
         id: response.data.author.id,
@@ -22,16 +25,16 @@ const useSignInViewModel = (navigate) => {
         profileImage: response.data.author.profileImage,
         github: response.data.author.github,
       };
-      dispatch({ type: 'SET_USER', payload: user });
-      
+      dispatch({ type: "SET_USER", payload: user });
+
       setFormData({
-        username: '',
-        password: '',
+        username: "",
+        password: "",
       });
 
-      navigate('/home');
+      navigate("/home");
     } else {
-      console.error('Login failed');
+      console.error("Login failed");
     }
   };
 
