@@ -1,13 +1,3 @@
-import os
-import django
-
-# Set the environment variable for Django settings
-# did it using bash
-
-# Initialize Django
-django.setup()
-
-
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from ..models import Author

@@ -1,11 +1,11 @@
 # for running the one off script
-# import sys
-# import os
-# import django
-# project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# sys.path.append(project_root)
-# os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-# django.setup()
+import sys
+import os
+import django
+project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(project_root)
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+django.setup()
 
 import requests
 import json
@@ -35,17 +35,17 @@ def transform_author_data(author):
     }
 # our app's default author serializer. we should first assume that authors objects we get follow the specs
 class DefaultAuthorSerializer(serializers.Serializer):
-    id = serializers.CharField()
-    host = serializers.CharField()
-    displayName = serializers.CharField()
-    url = serializers.CharField()
-    github = serializers.CharField()
-    profileImage = serializers.CharField()
+    id = serializers.CharField()  # ID should always be a non-null, non-blank string
+    host = serializers.CharField(allow_blank=True)
+    displayName = serializers.CharField(allow_blank=True)
+    url = serializers.CharField(allow_blank=True)
+    github = serializers.CharField(allow_blank=True, allow_null=True)  # GitHub can be null
+    profileImage = serializers.CharField(allow_blank=True, allow_null=True)  # Profile image can be null
+
 
 # given url, makes get request and returns the json
 # TODO: get credentials from Node model instead of hardcoded
-def fetch_data_from_url(url):
-    creds = ("string", "string")
+def fetch_data_from_url(url, creds):
     try:
         response = requests.get(url, auth=creds)
         if response.status_code == 200:
@@ -65,38 +65,55 @@ def process_author(item):
         serializer.is_valid(raise_exception=True)
         return serializer.data
     except ValidationError:
+        print("error")
         return transform_author_data(item)
     return None
 
 #TODO: should have a model for nodes we are connecting to. iterate over the nodes and do this for every url + /authors/
 #TODO: each node object should have url and credentials
-def get_external_authors(request):
+node_credentials = {
+    "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/": ("string", "string"),
+    "https://silk-cmput404-project-21e5c91727a7.herokuapp.com/api/authors/": ("segfault", "django100")
+}
 
-    # if it's a request from remote then only get our authors
-    if not is_request_from_frontend(request):
+
+def get_external_authors(request, auth_type):
+    # if request from remote then only get our authors (basic auth)
+    if auth_type == "basic":
         return []
+    
+    # if request is from frontend then return both (token auth)
 
-    authors = []
-    external_node_url = "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/"
+    all_authors = []
+    for external_node_url, creds in node_credentials.items():
+        authors = []
+        while external_node_url:
+            data = fetch_data_from_url(external_node_url, creds)
+            if data is None:
+                break
 
-    while external_node_url:
-        data = fetch_data_from_url(external_node_url)
-        if data is None:
-            break
-        items_key = 'results' if 'results' in data else 'items'
-        for item in data.get('results', []):
-            author_data = process_author(item)
-            if author_data:
-                authors.append(author_data)
-        external_node_url = data.get('next')
-    # return as a list because we want to use "+" to add to our response data we already have
-    return authors
+            items_key = 'items'
+            if 'results' in data:
+                items_key = 'results'
+            elif 'data' in data:
+                items_key = 'data'
 
-def is_request_from_frontend(request):
-    return request.META.get('HTTP_X_FROM_FRONTEND') == 'true'
+
+            for item in data.get(items_key, []):
+                author_data = process_author(item)
+                if author_data:
+                    authors.append(author_data)
+            external_node_url = data.get('next')
+        all_authors.extend(authors)
+
+    return all_authors
+
+
+# def is_request_from_frontend(request):
+#     return request.META.get('HTTP_X_FROM_FRONTEND') == 'true'
 
 # ------ testing output
 # print(get_external_authors())
-# authors_data = get_external_authors()
+# authors_data = get_external_authors('remote')
 # authors_json = json.dumps(authors_data, indent = 4)
 # print(authors_json)

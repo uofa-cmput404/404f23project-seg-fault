@@ -105,8 +105,8 @@ from . import RemoteAuthors
 # api/authors
 #TODO: fix pagination and do the detail view
 class AuthorListView(generics.ListAPIView):
-    # authentication_classes = [BasicAuthentication, TokenAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     pagination_class = CustomPagination  # Use the custom pagination class
@@ -116,11 +116,13 @@ class AuthorListView(generics.ListAPIView):
             author_serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(author_serializer.data)
         
+        # determine if token or basic
+        auth_type = 'token' if isinstance(request.successful_authenticator, TokenAuthentication) else 'basic'
         authors = self.get_queryset()
         author_serializer = self.get_serializer(authors, many=True)
         return Response({
             "type": "authors",
-            "items": author_serializer.data + RemoteAuthors.get_external_authors(request)
+            "items": author_serializer.data + RemoteAuthors.get_external_authors(request, auth_type)
         }, status=status.HTTP_200_OK) 
 
 # api/authors{author_id}
