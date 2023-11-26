@@ -1,6 +1,6 @@
 ### models and serializers
-from .models import Author, AuthorFollower, Comment, Post
-from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer
+from .models import Author, AuthorFollower, Comment, Post, FollowRequest, Inbox
+from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer, FriendRequestSerializer
 from django.contrib.auth.models import User
 ### user auth
 from rest_framework.authtoken.models import Token
@@ -167,3 +167,27 @@ class CommentListView(generics.ListCreateAPIView):
         comment = serializer.save(post=post, author=author)
         comment.url = serializer.get_id(comment)
         comment.save()
+
+class CreateFollowRequestView(views.APIView):
+
+    def post(self, request):
+        actor_id = request.data.get('actor', {}).get('id')
+        object_id = request.data.get('object', {}).get('id')
+
+        actor = get_object_or_404(Author, id=actor_id)
+        object = get_object_or_404(Author, id=object_id)
+
+        follow_request = FollowRequest.objects.create(
+            summary=request.data.get('summary'),
+            actor=actor,
+            object=object
+        )
+
+        serializer = FriendRequestSerializer(follow_request)
+        serialized_data = serializer.data
+
+
+        inbox, created = Inbox.objects.get_or_create(author=object)
+        inbox.add_item(serialized_data)
+
+        return Response({'message': 'Follow request sent.'}, status=status.HTTP_201_CREATED)
