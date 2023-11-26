@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
 import { StoreContext } from "../store";
+import { convertVibelyPostToTeamOnePost, convertTeamOnePostToVibelyPost } from "./helper";
 
 const usePostsViewModel = () => {
     const { state } = useContext(StoreContext);
@@ -56,42 +57,9 @@ const usePostsViewModel = () => {
                     const posts = []
 
                     for (const team1_post of team1_posts){
-                        let content = team1_post.content
-                        if (team1_post.image) {
-                            content = `${process.env.REACT_APP_TEAM_ONE_URL}/${team1_post.image}`
-                        } else if (team1_post.image_link) {
-                            content = team1_post.image_link
-                        }
-
-                        posts.push({
-                            "type": "post",
-                            "title": team1_post.title,
-                            "id": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}/posts/${team1_post.id}`,
-                            "source": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}/posts/${team1_post.id}`,
-                            "origin": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}/posts/${team1_post.id}`,
-                            "description": team1_post.description,
-                            "contentType": "text/plain",
-                            "content": content,
-                            "author": {
-                                "type": "author",
-                                "id": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}`,
-                                "host": process.env.REACT_APP_TEAM_ONE_URL,
-                                "displayName": team1_post.author.username,
-                                "url": `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${team1_post.author.id}`,
-                                "github": team1_post.author.github,
-                                "profileImage": team1_post.author.image
-                            },
-                            "categories": [
-                                "none"
-                            ],
-                            "count": team1_post.count,
-                            "comments": null,
-                            "published": team1_post.published,
-                            "visibility": team1_post.visibility.toLowerCase(),
-                            "unlisted": false
-                        });
-                        
+                        posts.push(convertTeamOnePostToVibelyPost(team1_post));
                     }
+
                     return posts;
                 } else {
                     console.error(
@@ -155,40 +123,56 @@ const usePostsViewModel = () => {
         visibility,
         recipient
     ) => {
-            // Creates a new posts
-            const body = {
-                title,
-                description,
-                contentType,
-                content,
-                published: null,
-                visibility,
-                unlisted: false,
-                categories: "none",
-                recipient
-            };
+        // Creates a new posts
+        const body = {
+            title,
+            description,
+            contentType,
+            content,
+            published: null,
+            visibility,
+            unlisted: false,
+            categories: "none",
+            recipient
+        };
 
-            const response = await axios.post(`${userId}/posts/`, body);
-            const author_response = await fetchProfileData(state.user.id);
-            console.log("Post created");
-            if(visibility === "private") {
-                // send to the recipient's inbox
-                const inbox_payload = {...response.data.data, 
-                                        id: response.data.id, type: "post", author: author_response, 
-                                        source: author_response.displayName, origin: recipient.displayName};
-                delete inbox_payload["url"];
+        const response = await axios.post(`${userId}/posts/`, body);
+        const author_response = await fetchProfileData(state.user.id);
+        console.log("Post created");
+        if(visibility === "private") {
+            // send to the recipient's inbox
+            const inbox_payload = {...response.data.data, 
+                                    id: response.data.id, type: "post", author: author_response, 
+                                    source: author_response.displayName, origin: recipient.displayName};
+            delete inbox_payload["url"];
 
-                await axios.post(`${recipient.id}/inbox/`, inbox_payload);
-                console.log("Sent to recipient's inbox.");
-            }
-
-        const followers = await fetchFollowers();
-        for (let follower of followers) {
-            console.log(follower);
-            const followerUrl = follower.follower.url;
+            await axios.post(`${recipient.id}/inbox/`, inbox_payload);
+            console.log("Sent to recipient's inbox.");
+        }
+        else {
+            const followers = await fetchFollowers(); //TODO: followers needs to account for remote authors as well
             const postUrl = response.data.data.url;
             const post_res = await axios.get(postUrl);
-            await axios.post(`${followerUrl}/inbox/`, post_res.data)
+            for (let follower of followers) {
+                console.log(follower);
+
+                // (type=post) 
+                
+                // post to local inbox
+                if (follower.id.startsWith(process.env.REACT_APP_API_URL)) {
+                    const followerUrl = follower.follower.url;
+                    await axios.post(`${followerUrl}/inbox/`, post_res.data);
+                }
+
+                // post to remote team one inbox
+                else if(follower.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+                    const followerUrl = `${process.env.REACT_APP_TEAM_ONE_URL}/authors/${follower.id}`;
+                    const match_post_res_data_with_team_1 = convertVibelyPostToTeamOnePost(post_res.data, follower);
+                    await axios.post(`${followerUrl}/inbox/`, match_post_res_data_with_team_1);
+                }
+
+                // post to remote team two inbox
+            }
         }
     };
 
