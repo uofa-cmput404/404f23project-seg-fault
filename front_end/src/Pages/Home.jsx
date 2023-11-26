@@ -10,14 +10,10 @@ import CreatePost from "../Components/createpost/CreatePost";
 import HomeIcon from "@mui/icons-material/Home";
 import Button from "@mui/material/Button";
 import usePostsViewModel from "../api/PostsViewModel";
-import useRemotePostsViewModel from "../api/RemotePostsViewModel";
 
 function Home() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { loading, posts} = usePostsViewModel();
-  const { loadingRemotePosts, remotePosts} = useRemotePostsViewModel();
-
-  console.log(remotePosts);
+  const { loading, posts } = usePostsViewModel();
 
   const openCreateModal = () => {
     setIsCreateModalOpen(true);
@@ -60,7 +56,7 @@ function Home() {
           </Toolbar>
         </Container>
       </AppBar>
-      {(loading || loadingRemotePosts)? (
+      {loading ? (
         <Stack
           spacing={1}
           sx={{
@@ -85,36 +81,23 @@ function Home() {
           }}
         >
           {posts.map((post, index) => {
-            return <Post 
-              post={post}
-              content={post.content}
-              profileImage={post.author.profileImage}
-              userId={post.author.id}
-              displayName={post.author.displayName}
-              title={post.title}
-              contentType={post.contentType}
-              visibility={post.visibility}
-              id={post.id}
-              width={600} 
-              padding={1} 
-              margin={1} 
-              type={"local"}/>;
-          })}
-          {remotePosts.map((post, index) => {
-            return <Post 
-              post={remotePosts} 
-              content={post.content}
-              profileImage={post.owner.image}
-              userId={post.owner.id}
-              displayName={post.owner.username}
-              title={post.title}
-              contentType={post.contentType}
-              visibility={post.visibility}
-              id={post.id}
-              width={600} 
-              padding={1} 
-              margin={1} 
-              type={"remoteGroup1"}/>;
+            return (
+              <Post
+                post={post}
+                content={post.content}
+                profileImage={post.author.profileImage}
+                userId={post.author.id}
+                displayName={post.author.displayName}
+                title={post.title}
+                contentType={post.contentType}
+                visibility={post.visibility}
+                id={post.id}
+                width={600}
+                padding={1}
+                margin={1}
+                type={"local"}
+              />
+            );
           })}
         </Box>
       )}

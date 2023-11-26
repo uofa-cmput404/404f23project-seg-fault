@@ -5,21 +5,30 @@ import { StoreContext } from "../store";
 const useInboxViewModel = () => {
   const { state } = useContext(StoreContext);
   const userId = state.user.id;
+  const authToken = state.token;
 
   const [inbox, setInbox] = useState([]);
 
   const getInbox = useCallback(async () => {
-    const response = await axios.get(`${userId}/inbox/`);
+    const response = await axios.get(`${userId}/inbox/`, {
+      headers: {
+        Authorization: `Token ${authToken}`,
+      },
+    });
 
     if (response.status === 200) {
       setInbox(response.data.items);
     } else {
       console.log("Error fetching inbox");
     }
-  }, [userId]);
+  }, [userId, authToken]);
 
   const clearInbox = useCallback(async () => {
-    const response = await axios.delete(`${userId}/inbox/`);
+    const response = await axios.delete(`${userId}/inbox/`, {
+      headers: {
+        Authorization: `Token ${authToken}`,
+      },
+    });
 
     if (response.status === 200) {
       setInbox({});
@@ -28,7 +37,7 @@ const useInboxViewModel = () => {
     } else {
       console.log("Error clearing inbox");
     }
-  }, [userId]);
+  }, [userId, authToken]);
 
   useEffect(() => {
     getInbox();

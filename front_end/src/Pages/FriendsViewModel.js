@@ -6,6 +6,7 @@ const useFriendsViewModel = () => {
   const [selectedView, setSelectedView] = useState("authors");
   const { state } = useContext(StoreContext);
   const userId = state.user.id;
+  const authToken = state.token;
 
   const [authors, setAuthors] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -13,65 +14,61 @@ const useFriendsViewModel = () => {
 
   const fetchAuthors = useCallback(async () => {
     const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/authors/`
+      `${process.env.REACT_APP_API_URL}/authors/`,
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      }
     );
     if (response.status === 200) {
       setAuthors(response.data.items);
     } else {
       console.error("Error fetching authors");
     }
-  }, []);
-
-  const fetchTeamOneRemoteAuthors = useCallback(async () => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_TEAM_ONE_URL}/authors/`
-    );
-
-    if (response.status === 200) {
-      const remoteAuthors = response.data.results.map((author) => ({
-        id: author.id,
-        displayName: author.username,
-        profileImage: author.image,
-        remote: true,
-      }));
-      setAuthors((authors) => [...authors, ...remoteAuthors]);
-    } else {
-      console.error("Error fetching team one authors.");
-    }
-  }, []);
+  }, [authToken]);
 
   const fetchFollowers = useCallback(async () => {
     const parts = userId.split("/");
     const userGuid = parts[parts.length - 1];
     const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`
+      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`,
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      }
     );
     if (response.status === 200) {
       setFollowers(response.data.items);
     } else {
       console.error("Error fetching followers");
     }
-  }, [userId]);
+  }, [userId, authToken]);
 
   const fetchFollowing = useCallback(async () => {
     const parts = userId.split("/");
     const userGuid = parts[parts.length - 1];
     const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`
+      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`,
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      }
     );
     if (response.status === 200) {
       setFollowing(response.data.items);
     } else {
       console.error("Error fetching following");
     }
-  }, [userId]);
+  }, [userId, authToken]);
 
   useEffect(() => {
     fetchAuthors();
-    fetchTeamOneRemoteAuthors();
     fetchFollowers();
     fetchFollowing();
-  }, [fetchAuthors, fetchTeamOneRemoteAuthors, fetchFollowers, fetchFollowing]);
+  }, [fetchAuthors, fetchFollowers, fetchFollowing]);
 
   const changeView = (view) => {
     setSelectedView(view);
@@ -80,7 +77,12 @@ const useFriendsViewModel = () => {
   const followAuthor = async (authorId) => {
     const response = await axios.post(
       `${process.env.REACT_APP_API_URL}/authors/follow/`,
-      { user_id: userId, author_id_to_follow: authorId }
+      { user_id: userId, author_id_to_follow: authorId },
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      }
     );
 
     if (response.status === 200) {
@@ -93,7 +95,12 @@ const useFriendsViewModel = () => {
   const unfollowAuthor = async (authorId) => {
     const response = await axios.post(
       `${process.env.REACT_APP_API_URL}/authors/unfollow/`,
-      { user_id: userId, author_id_to_unfollow: authorId }
+      { user_id: userId, author_id_to_unfollow: authorId },
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      }
     );
 
     if (response.status === 200) {
