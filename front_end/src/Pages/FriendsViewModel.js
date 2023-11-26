@@ -13,7 +13,6 @@ const useFriendsViewModel = () => {
   const [following, setFollowing] = useState([]);
 
   const fetchAuthors = useCallback(async () => {
-    console.log(`Token ${authToken}`);
     const response = await axios.get(
       `${process.env.REACT_APP_API_URL}/authors/`,
       {
