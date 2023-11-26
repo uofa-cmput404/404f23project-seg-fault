@@ -1,7 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useContext } from "react";
 import axios from "axios";
+import { StoreContext } from "../../store";
 
 function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
+  const { state } = useContext(StoreContext);
+  const authToken = state.token;
+
   const [expandComments, setExpandedComments] = useState(false);
   const [liked, setLiked] = useState(false);
   const [share, setShare] = useState(false);
@@ -9,7 +13,11 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
 
   const fetchLikes = useCallback(async () => {
     if (!props.post.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
-      const response = await axios.get(`${props.post.id}/likes/`);
+      const response = await axios.get(`${props.post.id}/likes/`, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
 
       if (response.status === 200) {
         const liked = response.data.items.some(
@@ -22,11 +30,16 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         console.error("Error fetching likes");
       }
     }
-  }, [props.post.id, userId]);
+
+  }, [props.post.id, userId, authToken]);
 
   const likePost = useCallback(async () => {
 
-    const user = await axios.get(userId + '/');
+    const user = await axios.get(userId + '/', {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
 
     const payload = {
       "context": "https://www.w3.org/ns/activitystreams",
@@ -36,7 +49,11 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
       "object": props.post.id,
     }
 
-    const response = await axios.post(`${props.post.author.id}/inbox/`, payload);
+    const response = await axios.post(`${props.post.author.id}/inbox/`, payload, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
 
     if (response.status === 200) {
       fetchLikes();
@@ -45,7 +62,7 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
       console.error("Error liking post");
     }
 
-  }, [props.post.author.id, userId, props.post.id, fetchLikes,]);
+  }, [props.post.author.id, userId, props.post.id, fetchLikes, authToken]);
 
   useEffect(() => {
     fetchLikes();

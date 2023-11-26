@@ -13,8 +13,7 @@ import usePostsViewModel from "../api/PostsViewModel";
 
 function Home() {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const { loading, posts} = usePostsViewModel();
-
+  const { loading, posts } = usePostsViewModel();
 
   const openCreateModal = () => {
     setIsCreateModalOpen(true);
@@ -57,7 +56,7 @@ function Home() {
           </Toolbar>
         </Container>
       </AppBar>
-      {(loading)? (
+      {loading ? (
         <Stack
           spacing={1}
           sx={{
