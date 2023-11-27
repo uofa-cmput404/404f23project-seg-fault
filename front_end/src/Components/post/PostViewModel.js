@@ -23,9 +23,28 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         const liked = response.data.items.some(
           (like) => like.author.id === userId
         );
-        console.log(liked);
         setLiked(liked);
         setLikes(response.data.items);
+      } else {
+        console.error("Error fetching likes");
+      }
+    } else if (props.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+      // TODO: Group one is still working on inbox and comments
+      const creds = "vibely:string";
+      const base64Credentials = btoa(creds);
+
+      const response = await axios.get(`${props.id}/likes/`, {
+        headers: {
+          Authorization: `Basic ${base64Credentials}`,
+        },
+      });
+
+      if (response.status === 201) {
+        const liked = response.result.items.some(
+          (like) => like.author.id === userId
+        );
+        setLiked(liked);
+        setLikes(response.result.items);
       } else {
         console.error("Error fetching likes");
       }
@@ -33,7 +52,7 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
   }, [props.id, userId, authToken]);
 
   const likePost = useCallback(async () => {
-    if (props.type === "local") {
+    if (props.id.startsWith(process.env.REACT_APP_API_URL)) {
       const user = await axios.get(userId + "/", {
         headers: {
           Authorization: `Token ${authToken}`,
@@ -60,8 +79,39 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         console.log(response.status);
         console.error("Error liking post");
       }
+    } else if (props.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+      // TODO: Group one is still working on inbox and comments
+      const creds = "vibely:string";
+      const base64Credentials = btoa(creds);
+
+      const user = await axios.get(userId + "/", {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+
+      const payload = {
+        context: "https://www.w3.org/ns/activitystreams",
+        summary: `${user.data.displayName} Likes your post`,
+        type: "Like",
+        author: user.data,
+        object: props.id,
+      };
+
+      const response = await axios.post(`${props.userId}/inbox/`, payload, {
+        headers: {
+          Authorization: `Basic ${base64Credentials}`,
+        },
+      });
+
+      if (response.status === 200) {
+        fetchLikes();
+      } else {
+        console.log(response.status);
+        console.error("Error liking post");
+      }
     }
-  }, [props.userId, userId, props.id, fetchLikes, props.type, authToken]);
+  }, [props.userId, userId, props.id, fetchLikes, authToken]);
 
   useEffect(() => {
     fetchLikes();
