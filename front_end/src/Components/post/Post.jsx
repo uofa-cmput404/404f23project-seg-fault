@@ -40,9 +40,9 @@ function PostDisplay({ content, contentType }) {
         </Typography>
       );
     }
-  } else if (contentType.startsWith("image")) {
+  } else if (contentType && contentType.startsWith("image")) {
     // possibly need to decode images when we connect with other teams add the content type before the image
-    if (!content.startsWith("data:image")) {
+    if (content && !content.startsWith("data:image")) {
       return <CardMedia component="img" image={`data:${contentType},`+content} alt="postImage" />;
     }
     return <CardMedia component="img" image={content} alt="postImage" />;
@@ -76,8 +76,8 @@ export default function Post(props) {
   };
 
   React.useEffect(() => {
-    setMarkdownContent(props.content);
-  }, [props.content, setMarkdownContent]);
+    setMarkdownContent(props.post.content);
+  }, [props.post.content, setMarkdownContent]);
 
   return (
     <>
@@ -91,7 +91,7 @@ export default function Post(props) {
         <CardHeader
           avatar={
             <Avatar
-              src={props.profileImage}
+              src={props.post.author.profileImage}
               alt={""}
               sx={{
                 width: 45,
@@ -100,10 +100,10 @@ export default function Post(props) {
             />
           }
           action={
-            userId === props.userId ? (
+            userId === props.post.author.id ? (
               <PostMenu post={props.post} />
             ) : (
-              !props.userId.startsWith(process.env.REACT_APP_API_URL) &&(
+              (props.post.author.id && !props.post.author.id.startsWith(process.env.REACT_APP_API_URL)) &&(
               <Chip
               label="remote"
               size="small"
@@ -116,20 +116,20 @@ export default function Post(props) {
           }
           // Wraps the title to a profile link.
           title={
-            <Link to={`/profile/${extractIdFromUrl(props.id)}`} style={{ textDecoration: 'none' }}>
-              {props.displayName}
+            <Link to={`/profile/${extractIdFromUrl(props.post.id)}`} style={{ textDecoration: 'none' }}>
+              {props.post.author.displayName}
             </Link>
           }
         />
         <Stack direction="column" spacing={2}>
           <Typography className="title" variant="body2">
-            {props.title}
+            {props.post.title}
           </Typography>
           <PostDisplay
             content={
-              props.content
+              props.post.content
             }
-            contentType={props.contentType}
+            contentType={props.post.contentType}
           />
         </Stack>
         <CardActions disableSpacing>
@@ -150,9 +150,9 @@ export default function Post(props) {
             </IconButton>
           </div>
             <Chip
-              label={props.visibility.toLowerCase()}
+              label={props.post.visibility.toLowerCase()}
               size="small"
-              color={visibilityColors[props.visibility.toLowerCase()]}
+              color={visibilityColors[props.post.visibility.toLowerCase()]}
               className="postVisibility"
               sx={{ paddingRight: 2 }}
             />
@@ -171,8 +171,8 @@ export default function Post(props) {
         <Collapse in={expandComments} timeout="auto" unmountOnExit>
           <CardContent>
             <Comment
-              userId={props.userId}
-              postId={props.id}
+              userId={props.post.author.id}
+              postId={props.post.id}
               displayName={displayName}
             />
           </CardContent>
