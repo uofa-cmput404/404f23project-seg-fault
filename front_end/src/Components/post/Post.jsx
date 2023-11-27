@@ -23,6 +23,7 @@ import Share from "../share/Share";
 import usePostViewModel from "./PostViewModel";
 import { StoreContext } from "../../store";
 import { extractIdFromUrl } from "../../api/helper";
+import ReactMarkdown from 'react-markdown';
 
 function isImageUrl(url) {
   return /\.(jpeg|jpg|gif|png|bmp)$/.test(url);
@@ -39,11 +40,14 @@ function PostDisplay({ content, contentType }) {
         </Typography>
       );
     }
-  } else if (contentType.startsWith("image")) {
+  } else if (contentType && contentType.startsWith("image")) {
     // possibly need to decode images when we connect with other teams add the content type before the image
+    if (content && !content.startsWith("data:image")) {
+      return <CardMedia component="img" image={`data:${contentType},`+content} alt="postImage" />;
+    }
     return <CardMedia component="img" image={content} alt="postImage" />;
   } else if (contentType === "text/markdown") {
-    return content;
+    return <ReactMarkdown>{content}</ReactMarkdown>;
   } else {
     return <p>Unsupported content type: {contentType}</p>;
   }
@@ -72,8 +76,8 @@ export default function Post(props) {
   };
 
   React.useEffect(() => {
-    setMarkdownContent(props.content);
-  }, [props.content, setMarkdownContent]);
+    setMarkdownContent(props.post.content);
+  }, [props.post.content, setMarkdownContent]);
 
   return (
     <>
@@ -87,7 +91,7 @@ export default function Post(props) {
         <CardHeader
           avatar={
             <Avatar
-              src={props.profileImage}
+              src={props.post.author.profileImage}
               alt={""}
               sx={{
                 width: 45,
@@ -96,28 +100,36 @@ export default function Post(props) {
             />
           }
           action={
-            userId === props.userId ? (
+            userId === props.post.author.id ? (
               <PostMenu post={props.post} />
-            ) : null
+            ) : (
+              (props.post.author.id && !props.post.author.id.startsWith(process.env.REACT_APP_API_URL)) &&(
+              <Chip
+              label="remote"
+              size="small"
+              color="warning"
+              className="postVisibility"
+              sx={{ paddingRight: 2, width: '6rem' }}
+            />
+              )
+            )
           }
           // Wraps the title to a profile link.
           title={
-            <Link to={`/profile/${extractIdFromUrl(props.id)}`} style={{ textDecoration: 'none' }}>
-              {props.displayName}
+            <Link to={`/profile/${extractIdFromUrl(props.post.id)}`} style={{ textDecoration: 'none' }}>
+              {props.post.author.displayName}
             </Link>
           }
         />
         <Stack direction="column" spacing={2}>
           <Typography className="title" variant="body2">
-            {props.title}
+            {props.post.title}
           </Typography>
           <PostDisplay
             content={
-              props.contentType === "text/markdown"
-                ? markdownContent
-                : props.content
+              props.post.content
             }
-            contentType={props.contentType}
+            contentType={props.post.contentType}
           />
         </Stack>
         <CardActions disableSpacing>
@@ -137,13 +149,13 @@ export default function Post(props) {
               <SendIcon onClick={handleShare} />
             </IconButton>
           </div>
-          <Chip
-            label={props.visibility.toLowerCase()}
-            size="small"
-            color={visibilityColors[props.visibility.toLowerCase()]}
-            className="postVisibility"
-            sx={{ paddingRight: 2 }}
-          />
+            <Chip
+              label={props.post.visibility.toLowerCase()}
+              size="small"
+              color={visibilityColors[props.post.visibility.toLowerCase()]}
+              className="postVisibility"
+              sx={{ paddingRight: 2 }}
+            />
         </CardActions>
         <CardActions>
           <Button
@@ -159,8 +171,8 @@ export default function Post(props) {
         <Collapse in={expandComments} timeout="auto" unmountOnExit>
           <CardContent>
             <Comment
-              userId={props.userId}
-              postId={props.id}
+              userId={props.post.author.id}
+              postId={props.post.id}
               displayName={displayName}
             />
           </CardContent>

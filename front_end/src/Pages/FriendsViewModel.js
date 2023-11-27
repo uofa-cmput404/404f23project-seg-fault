@@ -88,17 +88,59 @@ const useFriendsViewModel = () => {
   
       // if they are not friends, send to inbox
       if(!areFriends(authorId))
-      {  
-        const response_request = await axios.post(
-          `${process.env.REACT_APP_API_URL}/follow-request/`,
-          { actor:{"id": getIdFromUrl(userId) }, object:{"id": getIdFromUrl(authorId)}, "summary": "baba" },
+      {
+        if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
+          const response_request = await axios.post(
+            `${process.env.REACT_APP_API_URL}/follow-request/`,
+            { actor:{"id": getIdFromUrl(userId) }, object:{"id": getIdFromUrl(authorId)}, "summary": "baba" },
+            {
+              headers: {
+                Authorization: `Token ${authToken}`,
+              },
+            }
+          );
+          console.log(response_request);
+        }
+
+        else if(authorId.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+          const creds = 'vibely:string';
+          const base64Credentials = btoa(creds);
+          const inbox_response = await axios.post(`${authorId}/inbox/`,
           {
-            headers: {
-              Authorization: `Token ${authToken}`,
-            },
+            items: {
+              type: "Follow",      
+              summary: "Hey let's be friends",
+              actor: {
+                type: "author",
+                id: userId,
+                host: process.env.REACT_APP_API_URL,
+                displayName: state.username,
+                url: userId,
+                github: "",
+                profileImage: ""
+              },
+              object: {
+                id: authorId,
+                host: null,
+                displayName: "User",
+                github: null,
+                profileImage: null,
+                first_name: "",
+                last_name: "",
+                email: "",
+                username: "user3",
+                type: "author"
+              }
           }
-        );
-        console.log(response_request);
+          },
+              {
+                  headers: {
+                      'Authorization': `Basic ${base64Credentials}`,
+                  },
+              }
+            );
+            console.log(inbox_response);
+        }
       }
 
       if (response.status === 200) {

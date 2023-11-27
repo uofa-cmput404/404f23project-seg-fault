@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import axios from "axios";
 import { StoreContext } from "../store";
+import { convertTeamOnePostToVibelyPost } from "./helper";
 
 const usePostsViewModel = () => {
   const { state } = useContext(StoreContext);
@@ -26,6 +27,7 @@ const usePostsViewModel = () => {
 
       if (users_response.status === 200) {
         return users_response.data.items;
+
       } else {
         console.error(
           `Couldn't fetch authors. Status code: ${users_response.status}`
@@ -34,63 +36,76 @@ const usePostsViewModel = () => {
       }
     };
 
-    const isFollowing = async (author) => {
-      // Helper method to fetch the posts of an specific author
-      const followers_response = await axios.get(`${author.url}/followers/`, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
-      if (followers_response.status === 200) {
-        for (let follower of followers_response.data.items) {
-          if (follower.follower.id === userId) {
-            return true;
-          }
-        }
-      } else {
-        console.error(
-          `Couldn't fetch followers. Status code: ${followers_response.status}`
-        );
-      }
-      return false;
-    };
-
-    const fetchFollowingUsersIds = async (authors) => {
-      const following = [];
-      for (let author of authors) {
-        const isUserFollowing = await isFollowing(author);
-        if (isUserFollowing) {
-          following.push(author.id);
-        }
-      }
-      return following;
-    };
-
     const fetchPostsByAuthor = async (author) => {
-      // Helper method to fetch the posts of an specific author
-      const posts_response = await axios.get(`${author.url}/posts/`, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
-      if (posts_response.status === 200) {
-        return posts_response.data.items;
-      } else {
-        console.error(
-          `Couldn't fetch posts. Status code: ${posts_response.status}`
-        );
-        return [];
-      }
-    };
+      if (author.id.startsWith(process.env.REACT_APP_API_URL)) {
+        // get local posts
+        const posts_response = await axios.get(`${author.url}/posts/`, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        });
+        if (posts_response.status === 200) {
+          return posts_response.data.items;
+        } else {
+          console.error(
+            `Couldn't fetch posts. Status code: ${posts_response.status}`
+          );
+          return [];
+        }
+      } else if (author.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+        // get team one posts
+        const creds = 'vibely:string';
+        const base64Credentials = btoa(creds);
+        const posts_response = await axios.get(`${author.url}/posts/`,
+            {
+                headers: {
+                    'Authorization': `Basic ${base64Credentials}`,
+                },
+            }
+          );
+        if (posts_response.status === 200) {
+            const team1_posts = posts_response.data.results;
+            const posts = []
 
-    const filterPosts = (allPosts, followingUsersIds) => {
+            for (const team1_post of team1_posts){
+                posts.push(convertTeamOnePostToVibelyPost(team1_post));
+            }
+
+            return posts;
+        } else {
+            console.error(
+                `Couldn't fetch posts. Status code: ${posts_response.status}`
+            );
+            return [];
+        }
+    } else if (author.id.startsWith(process.env.REACT_APP_TEAM_TWO_URL)){
+      // get team two posts
+      const creds = 'segfault:django100';
+      const base64Credentials = btoa(creds);
+      const posts_response = await axios.get(`${author.id}/posts/`,
+          {
+              headers: {
+                  'Authorization': `Basic ${base64Credentials}`,
+              },
+          }
+        );
+      if (posts_response.status === 200) {
+          return posts_response.data.data;
+      } else {
+          console.error(
+              `Couldn't fetch posts. Status code: ${posts_response.status}`
+          );
+          return [];
+      }
+    }
+    return [];
+  };
+
+    const filterPosts = (allPosts) => {
       // Helper method to filter posts based on visibility, friends posts or your own posts
       allPosts = allPosts.filter(
         (item) =>
-          item.visibility === "public" ||
-          (item.author.id === userId && item.visibility !== "private") ||
-          (followingUsersIds.includes(item.author.id) &&
-            item.visibility === "friends")
+          item.visibility.toLowerCase() === "public" && item.unlisted === false
       );
 
       return allPosts.sort((a, b) => {
@@ -103,20 +118,19 @@ const usePostsViewModel = () => {
 
     try {
       const authors = await fetchAuthors();
-      const followingUsersIds = await fetchFollowingUsersIds(authors);
 
       const allPosts = (
         await Promise.all(authors.map((author) => fetchPostsByAuthor(author)))
       ).flat();
 
-      const filteredPosts = filterPosts(allPosts, followingUsersIds);
+      const filteredPosts = filterPosts(allPosts);
 
       setPosts(filteredPosts);
       setLoading(false);
     } catch (error) {
       console.error("Error:", error);
     }
-  }, [userId, authToken]);
+  }, [authToken]);
 
   const fetchFollowers = useCallback(async () => {
     const parts = userId.split("/");
@@ -187,7 +201,6 @@ const usePostsViewModel = () => {
 
     const followers = await fetchFollowers();
     for (let follower of followers) {
-      console.log(follower);
       const followerUrl = follower.follower.url;
       const postUrl = response.data.data.url;
       const post_res = await axios.get(postUrl);

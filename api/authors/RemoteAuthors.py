@@ -20,7 +20,7 @@ def transform_author_data(author):
     author_host = "https://cmput-average-21-b54788720538.herokuapp.com/api"
     author_url = f"{author_host}/authors/{author_id}"
     author_id = author_url
-    author_displayName = author.get('displayName', '')
+    author_displayName = author.get('username', '')
     author_github = author.get('github', '')
     author_profileImage = author.get('image', '')
     
@@ -65,14 +65,13 @@ def process_author(item):
         serializer.is_valid(raise_exception=True)
         return serializer.data
     except ValidationError:
-        print("error")
         return transform_author_data(item)
     return None
 
 #TODO: should have a model for nodes we are connecting to. iterate over the nodes and do this for every url + /authors/
 #TODO: each node object should have url and credentials
 node_credentials = {
-    "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/": ("string", "string"),
+    "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/": ("vibely", "string"),
     "https://silk-cmput404-project-21e5c91727a7.herokuapp.com/api/authors/": ("segfault", "django100")
 }
 

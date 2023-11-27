@@ -12,8 +12,8 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
   const [likes, setLikes] = useState([]);
 
   const fetchLikes = useCallback(async () => {
-    if (props.type === "local") {
-      const response = await axios.get(`${props.id}/likes/`, {
+    if (props.post.id.startsWith(process.env.REACT_APP_API_URL)) {
+      const response = await axios.get(`${props.post.id}/likes/`, {
         headers: {
           Authorization: `Token ${authToken}`,
         },
@@ -23,17 +23,71 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         const liked = response.data.items.some(
           (like) => like.author.id === userId
         );
-        console.log(liked);
         setLiked(liked);
         setLikes(response.data.items);
       } else {
         console.error("Error fetching likes");
       }
+    } else if (props.post.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+      // TODO: Group one is still working on inbox and comments
+      const creds = "vibely:string";
+      const base64Credentials = btoa(creds);
+
+      const response = await axios.get(`${props.post.id}/likes/`, {
+        headers: {
+          Authorization: `Basic ${base64Credentials}`,
+        },
+      });
+
+      if (response.status === 201) {
+        const liked = response.result.items.some(
+          (like) => like.author.id === userId
+        );
+        setLiked(liked);
+        setLikes(response.result.items);
+      } else {
+        console.error("Error fetching likes");
+      }
     }
-  }, [props.id, userId, props.type, authToken]);
+  }, [props.post.id, userId, authToken]);
 
   const likePost = useCallback(async () => {
-    if (props.type === "local") {
+    if (props.id.startsWith(process.env.REACT_APP_API_URL)) {
+      const user = await axios.get(userId + "/", {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+
+      const payload = {
+        context: "https://www.w3.org/ns/activitystreams",
+        summary: `${user.data.displayName} Likes your post`,
+        type: "Like",
+        author: user.data,
+        object: props.post.id,
+      };
+
+      const response = await axios.post(
+        `${props.post.author.id}/inbox/`,
+        payload,
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        fetchLikes();
+      } else {
+        console.log(response.status);
+        console.error("Error liking post");
+      }
+    } else if (props.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+      // TODO: Group one is still working on inbox and comments
+      const creds = "vibely:string";
+      const base64Credentials = btoa(creds);
+
       const user = await axios.get(userId + "/", {
         headers: {
           Authorization: `Token ${authToken}`,
@@ -50,7 +104,7 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
 
       const response = await axios.post(`${props.userId}/inbox/`, payload, {
         headers: {
-          Authorization: `Token ${authToken}`,
+          Authorization: `Basic ${base64Credentials}`,
         },
       });
 
@@ -61,7 +115,15 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         console.error("Error liking post");
       }
     }
-  }, [props.userId, userId, props.id, fetchLikes, props.type, authToken]);
+  }, [
+    props.userId,
+    props.post.id,
+    props.post.author.id,
+    userId,
+    props.id,
+    fetchLikes,
+    authToken,
+  ]);
 
   useEffect(() => {
     fetchLikes();
