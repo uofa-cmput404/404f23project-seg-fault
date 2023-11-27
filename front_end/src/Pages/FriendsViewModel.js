@@ -75,23 +75,46 @@ const useFriendsViewModel = () => {
   };
 
   const followAuthor = async (authorId) => {
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/authors/follow/`,
-      { user_id: userId, author_id_to_follow: authorId },
-      {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      }
-    );
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/authors/follow/`,
+        { user_id: userId, author_id_to_follow: authorId },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+  
+      // if they are not friends, send to inbox
+      const response_request = await axios.post(
+        `${process.env.REACT_APP_API_URL}/follow-request/`,
+        { actor:{"id": getIdFromUrl(userId) }, object:{"id": getIdFromUrl(authorId)}, "summary": "baba" },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+      console.log(response_request);
 
-    if (response.status === 200) {
-      window.location.reload();
-    } else {
+      if (response.status === 200) {
+        window.location.reload();
+      }
+    }
+    catch(e) {
       console.error("Error following author");
     }
-  };
+  }
 
+  function getIdFromUrl(url) {
+    // Split the URL by '/'
+    const urlParts = url.split('/');
+
+    // Get the last part of the URL
+    return urlParts[urlParts.length - 1];
+  }
+    
   const unfollowAuthor = async (authorId) => {
     const response = await axios.post(
       `${process.env.REACT_APP_API_URL}/authors/unfollow/`,
@@ -121,6 +144,17 @@ const useFriendsViewModel = () => {
     return isFollower && isFollowing;
   });
 
+  const areFriends = (author) => {
+    const isFollower = followers.find(
+      (follower) => follower.follower.id === author.id
+    );
+    const isFollowing = following.find(
+      (follow) => follow.user.id === author.id
+    );
+
+    return isFollower && isFollowing;
+  }
+
   const filteredAuthors = authors.filter((author) => {
     const isFollowing = following.find(
       (follow) => follow.user.id === author.id
@@ -139,6 +173,7 @@ const useFriendsViewModel = () => {
     filteredAuthors,
     followAuthor,
     unfollowAuthor,
+    areFriends
   };
 };
 
