@@ -87,16 +87,18 @@ const useFriendsViewModel = () => {
       );
   
       // if they are not friends, send to inbox
-      const response_request = await axios.post(
-        `${process.env.REACT_APP_API_URL}/follow-request/`,
-        { actor:{"id": getIdFromUrl(userId) }, object:{"id": getIdFromUrl(authorId)}, "summary": "baba" },
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-          },
-        }
-      );
-      console.log(response_request);
+      if(!areFriends(authorId)){
+        const response_request = await axios.post(
+          `${process.env.REACT_APP_API_URL}/follow-request/`,
+          { actor:{"id": getIdFromUrl(userId) }, object:{"id": getIdFromUrl(authorId)}, "summary": "baba" },
+          {
+            headers: {
+              Authorization: `Token ${authToken}`,
+            },
+          }
+        );
+        console.log(response_request);
+      }
 
       if (response.status === 200) {
         window.location.reload();
