@@ -76,6 +76,7 @@ const useFriendsViewModel = () => {
 
   const followAuthor = async (authorId) => {
     try {
+      // follows the author
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/authors/follow/`,
         { user_id: userId, author_id_to_follow: authorId },
@@ -86,7 +87,7 @@ const useFriendsViewModel = () => {
         }
       );
   
-      // if they are not friends, send to inbox
+      // if they are not friends, sends to the author's inbox
       if(!areFriends(authorId))
       {
         if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
