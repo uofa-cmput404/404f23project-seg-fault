@@ -84,18 +84,9 @@ function Home() {
             return (
               <Post
                 post={post}
-                content={post.content}
-                profileImage={post.author.profileImage}
-                userId={post.author.id}
-                displayName={post.author.displayName}
-                title={post.title}
-                contentType={post.contentType}
-                visibility={post.visibility}
-                id={post.id}
                 width={600}
                 padding={1}
                 margin={1}
-                type={"local"}
               />
             );
           })}
