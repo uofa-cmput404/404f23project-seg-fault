@@ -12,8 +12,8 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
   const [likes, setLikes] = useState([]);
 
   const fetchLikes = useCallback(async () => {
-    if (props.id.startsWith(process.env.REACT_APP_API_URL)) {
-      const response = await axios.get(`${props.id}/likes/`, {
+    if (props.post.id.startsWith(process.env.REACT_APP_API_URL)) {
+      const response = await axios.get(`${props.post.id}/likes/`, {
         headers: {
           Authorization: `Token ${authToken}`,
         },
@@ -49,10 +49,11 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         console.error("Error fetching likes");
       }
     }
-  }, [props.id, userId, authToken]);
+  }, [props.post.id, userId, authToken]);
 
   const likePost = useCallback(async () => {
     if (props.id.startsWith(process.env.REACT_APP_API_URL)) {
+
       const user = await axios.get(userId + "/", {
         headers: {
           Authorization: `Token ${authToken}`,
@@ -64,10 +65,10 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         summary: `${user.data.displayName} Likes your post`,
         type: "Like",
         author: user.data,
-        object: props.id,
+        object: props.post.id,
       };
 
-      const response = await axios.post(`${props.userId}/inbox/`, payload, {
+      const response = await axios.post(`${props.post.author.id}/inbox/`, payload, {
         headers: {
           Authorization: `Token ${authToken}`,
         },
