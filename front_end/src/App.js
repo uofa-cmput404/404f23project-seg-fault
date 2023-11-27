@@ -10,7 +10,7 @@ import Home from "./Pages/Home";
 import Friends from "./Pages/Friends";
 import Profile from "./Pages/Profile";
 import Inbox from "./Pages/Inbox";
-import SignIn from "./Components/auth/SignIn";
+import Auth from "./Components/auth/SignIn";
 import SignUp from "./Components/auth/SignUp";
 import Sidebar from "./Components/Sidebar";
 import { StoreProvider, StoreContext } from "./store";
@@ -43,7 +43,7 @@ function App() {
               <Route path="/home" element={<Home />} />
               <Route path="/inbox" element={<Inbox />} />
               <Route path="/social_hub" element={<Friends />} />
-              <Route path="/signin" element={<SignIn />} />
+              <Route path="/signin" element={<Auth />} />
               <Route path="/signup" element={<SignUp />} />
               <Route path="/profile/:userId" element={<Profile />} />
             </Routes>
