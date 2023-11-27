@@ -141,8 +141,6 @@ const useFriendsViewModel = () => {
             );
             console.log(inbox_response);
         }
-      }
-
       if (response.status === 200) {
         window.location.reload();
       }
