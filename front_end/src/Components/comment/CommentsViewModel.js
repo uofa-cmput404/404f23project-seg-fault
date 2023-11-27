@@ -37,6 +37,21 @@ export function useCommentsViewModel(postId, userId, displayName) {
       } else {
         console.error("Error fetching comments");
       }
+    } else if (userId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+      const creds = "segfault:django100";
+      const base64Credentials = btoa(creds);
+
+      const response = await axios.get(`${postId}/comments`, {
+        headers: {
+          Authorization: `Basic ${base64Credentials}`,
+        },
+      });
+
+      if (response.status === 200) {
+        setComments(response.data.data);
+      } else {
+        console.error("Error fetching comments");
+      }
     }
   }, [postId, userId, authToken]);
 
@@ -96,6 +111,30 @@ export function useCommentsViewModel(postId, userId, displayName) {
         {
           type: "comment",
           comment: newComment,
+        },
+        {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        fetchComments();
+        setNewComment("");
+      } else {
+        console.log("Error dispatching comment notification");
+      }
+    } else if (userId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+      const creds = "segfault:django100";
+      const base64Credentials = btoa(creds);
+
+      const response = await axios.post(
+        `${postId}/comments`,
+        {
+          comment: newComment,
+          postId: postId,
+          authorId: userId,
         },
         {
           headers: {
