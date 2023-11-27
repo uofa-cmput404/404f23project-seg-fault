@@ -28,12 +28,12 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
       } else {
         console.error("Error fetching likes");
       }
-    } else if (props.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+    } else if (props.post.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
       // TODO: Group one is still working on inbox and comments
       const creds = "vibely:string";
       const base64Credentials = btoa(creds);
 
-      const response = await axios.get(`${props.id}/likes/`, {
+      const response = await axios.get(`${props.post.id}/likes/`, {
         headers: {
           Authorization: `Basic ${base64Credentials}`,
         },
@@ -53,7 +53,6 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
 
   const likePost = useCallback(async () => {
     if (props.id.startsWith(process.env.REACT_APP_API_URL)) {
-
       const user = await axios.get(userId + "/", {
         headers: {
           Authorization: `Token ${authToken}`,
@@ -68,11 +67,15 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         object: props.post.id,
       };
 
-      const response = await axios.post(`${props.post.author.id}/inbox/`, payload, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
+      const response = await axios.post(
+        `${props.post.author.id}/inbox/`,
+        payload,
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
 
       if (response.status === 200) {
         fetchLikes();
@@ -112,7 +115,15 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
         console.error("Error liking post");
       }
     }
-  }, [props.userId, userId, props.id, fetchLikes, authToken]);
+  }, [
+    props.userId,
+    props.post.id,
+    props.post.author.id,
+    userId,
+    props.id,
+    fetchLikes,
+    authToken,
+  ]);
 
   useEffect(() => {
     fetchLikes();
