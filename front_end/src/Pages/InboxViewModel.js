@@ -30,7 +30,7 @@ const useInboxViewModel = () => {
       },
     });
 
-    if (response.status === 200) {
+    if (response.status === 200 || response.status === 201) {
       setInbox({});
       window.location.reload();
       console.log("Inbox cleared successfully");

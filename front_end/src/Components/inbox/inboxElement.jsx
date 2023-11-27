@@ -9,48 +9,54 @@ import Stack from "@mui/material/Stack";
 import ButtonBase from "@mui/material/ButtonBase";
 
 import "./inboxElement.css";
+import useFriendsViewModel from "../../Pages/FriendsViewModel";
 
 function InboxElement(props) {
+
+  const { followAuthor, areFriends } = useFriendsViewModel();
+
   const visibilityColors = {
     post: "#8338ec",
-    friend_request: "#06d6a0",
+    Follow: "#06d6a0",
     Like: "#ff006e",
     comment: "#3a86ff",
   };
 
   const visibilityLabels = {
     post: "Shared a post to you!",
-    friend_request: "Wants to be your friend!",
+    Follow: "Wants to be your friend!",
     Like: "Liked your post!",
     comment: "Commented on your post!",
   };
 
   const visibilityColor = visibilityColors[props.visibility] || "#000";
 
-  const handleAccept = () => {};
-
-  const handleDecline = () => {};
+  const handleAccept = () => {
+    if(areFriends(props.inboxData.actor)) return;
+    
+    followAuthor(props.inboxData.actor.id);
+  };
 
   const renderActions = () => {
-    if (props.visibility === "friend_request") {
+    if (props.visibility === "Follow") {
       return (
         <div className="actionButtons">
           <ButtonBase onClick={handleAccept}>
             <Chip
-              label="Accept"
+              label={ areFriends(props.inboxData.actor) ? "Accepted" : "Accept"}
               size="small"
               sx={{ paddingRight: 2, marginTop: 1.5 }}
               style={{ backgroundColor: "#8ac926", color: "#fff" }}
             />
           </ButtonBase>
-          <ButtonBase onClick={handleDecline}>
+          {/* <ButtonBase onClick={handleDecline}>
             <Chip
               label="Decline"
               size="small"
               sx={{ paddingRight: 2, marginTop: 1.5 }}
               style={{ backgroundColor: "#ff595e", color: "#fff" }}
             />
-          </ButtonBase>
+          </ButtonBase> */}
         </div>
       );
     }

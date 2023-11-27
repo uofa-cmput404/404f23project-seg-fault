@@ -81,6 +81,19 @@ function Inbox() {
               />
             );
           }
+          if (element.type === "Follow") {  
+            return (
+              <InboxElement
+                key={index}
+                username={element.actor.displayName}
+                profilePic={element.actor.profileImage}
+                text="Hey let's be friends!"
+                visibility={element.type}
+                author={element.object}
+                inboxData={element}
+              />
+            );
+          }
           return null;
         })}
       </Box>
