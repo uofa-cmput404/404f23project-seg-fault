@@ -32,6 +32,8 @@ function InboxElement(props) {
   const visibilityColor = visibilityColors[props.visibility] || "#000";
 
   const handleAccept = () => {
+    if(areFriends(props.inboxData.actor)) return;
+    
     followAuthor(props.inboxData.actor.id);
   };
 
