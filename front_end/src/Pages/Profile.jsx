@@ -1,7 +1,7 @@
 import * as React from "react";
 import Box from "@mui/material/Box";
 import ProfilePage from "../Components/profile/Profile";
-import { useParams } from 'react-router-dom';
+import { useParams } from "react-router-dom";
 
 function Profile() {
   const { userId } = useParams();
@@ -15,7 +15,7 @@ function Profile() {
           alignItems: "center",
         }}
       >
-        <ProfilePage userId = {userId} />
+        <ProfilePage userId={userId} />
       </Box>
     </Box>
   );

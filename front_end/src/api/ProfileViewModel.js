@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { StoreContext, useStore } from "./../store";
 import { createUrlFromId } from "./helper";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 
 const useProfileViewModel = () => {
   const { dispatch } = useStore();
@@ -15,25 +15,49 @@ const useProfileViewModel = () => {
 
   const { userId } = useParams();
 
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const authorId = queryParams.get("authorId");
+
   useEffect(() => {
     const baseUrl = createUrlFromId(userId);
 
     const fetchPosts = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/posts/`, {
+      if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
+        try {
+          const response = await axios.get(`${baseUrl}/posts/`, {
+            headers: {
+              Authorization: `Token ${authToken}`,
+            },
+          });
+
+          if (response.status === 200) {
+            const data = response.data.items.reverse();
+            setPosts(data);
+          } else {
+            console.error("Error fetching posts");
+          }
+        } catch {
+          console.log("cant fetch posts");
+        }
+      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+        const creds = "segfault:django100";
+        const base64Credentials = btoa(creds);
+
+        const response = await axios.get(`${authorId}/posts/`, {
           headers: {
-            Authorization: `Token ${authToken}`,
+            Authorization: `Basic ${base64Credentials}`,
           },
         });
-
         if (response.status === 200) {
-          const data = response.data.items.reverse();
+          const data = response.data.data;
           setPosts(data);
         } else {
-          console.error("Error fetching posts");
+          console.error(
+            `Couldn't fetch posts. Status code: ${response.status}`
+          );
+          return [];
         }
-      } catch {
-        console.log("cant fetch posts");
       }
     };
 
@@ -58,30 +82,42 @@ const useProfileViewModel = () => {
 
     const fetchProfileData = async (url) => {
       // Helper method to fetch all authors (including yourself)
-      const users_response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/authors/`,
-        {
+
+      if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
+        const response = await axios.get(`${authorId}`, {
           headers: {
             Authorization: `Token ${authToken}`,
           },
+        });
+        if (response.status === 200) {
+          setProfile(response.data);
+        } else {
+          console.error(
+            `Couldn't fetch authors. Status code: ${response.status}`
+          );
         }
-      );
-      if (users_response.status === 200) {
-        const foundUserData = users_response.data.items.find(
-          (item) => item.id === url
-        );
-        setProfile(foundUserData);
-      } else {
-        console.error(
-          `Couldn't fetch authors. Status code: ${users_response.status}`
-        );
+      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+        const creds = "segfault:django100";
+        const base64Credentials = btoa(creds);
+
+        const response = await axios.get(`${authorId}`, {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setProfile(response.data);
+        } else {
+          console.error("Could not fetch team 2 author");
+        }
       }
     };
 
     fetchProfileData(baseUrl);
     fetchFollowers();
     fetchPosts();
-  }, [userId, authToken]);
+  }, [userId, authToken, authorId]);
 
   const updateProfile = async ({ username, github, image }) => {
     // Updates the profile.

@@ -23,7 +23,7 @@ function SidebarLayout() {
   if (token) {
     return (
       <div className="sidebar">
-        <Sidebar userId = {extractIdFromUrl(state.user.id)} />
+        <Sidebar userId={extractIdFromUrl(state.user.id)} />
       </div>
     );
   }
