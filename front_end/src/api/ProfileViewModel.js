@@ -23,7 +23,12 @@ const useProfileViewModel = () => {
     const baseUrl = createUrlFromId(userId);
 
     const fetchPosts = async () => {
-      if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
+      var url = authorId;
+      if (url == null) {
+        url = baseUrl;
+      }
+
+      if (url.startsWith(process.env.REACT_APP_API_URL)) {
         try {
           const response = await axios.get(`${baseUrl}/posts/`, {
             headers: {
@@ -40,11 +45,11 @@ const useProfileViewModel = () => {
         } catch {
           console.log("cant fetch posts");
         }
-      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+      } else if (url.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
         const creds = "segfault:django100";
         const base64Credentials = btoa(creds);
 
-        const response = await axios.get(`${authorId}/posts/`, {
+        const response = await axios.get(`${url}/posts/`, {
           headers: {
             Authorization: `Basic ${base64Credentials}`,
           },
@@ -80,11 +85,15 @@ const useProfileViewModel = () => {
       }
     };
 
-    const fetchProfileData = async (url) => {
+    const fetchProfileData = async () => {
       // Helper method to fetch all authors (including yourself)
+      var url = authorId;
+      if (url == null) {
+        url = baseUrl;
+      }
 
-      if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
-        const response = await axios.get(`${authorId}`, {
+      if (url.startsWith(process.env.REACT_APP_API_URL)) {
+        const response = await axios.get(`${baseUrl}`, {
           headers: {
             Authorization: `Token ${authToken}`,
           },
@@ -96,11 +105,11 @@ const useProfileViewModel = () => {
             `Couldn't fetch authors. Status code: ${response.status}`
           );
         }
-      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+      } else if (url.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
         const creds = "segfault:django100";
         const base64Credentials = btoa(creds);
 
-        const response = await axios.get(`${authorId}`, {
+        const response = await axios.get(`${url}`, {
           headers: {
             Authorization: `Basic ${base64Credentials}`,
           },

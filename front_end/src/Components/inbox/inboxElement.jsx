@@ -12,7 +12,6 @@ import "./inboxElement.css";
 import useFriendsViewModel from "../../Pages/FriendsViewModel";
 
 function InboxElement(props) {
-
   const { followAuthor, areFriends } = useFriendsViewModel();
 
   const visibilityColors = {
@@ -32,8 +31,8 @@ function InboxElement(props) {
   const visibilityColor = visibilityColors[props.visibility] || "#000";
 
   const handleAccept = () => {
-    if(areFriends(props.inboxData.actor)) return;
-    
+    if (areFriends(props.inboxData.actor)) return;
+
     followAuthor(props.inboxData.actor.id);
   };
 
@@ -43,27 +42,19 @@ function InboxElement(props) {
         <div className="actionButtons">
           <ButtonBase onClick={handleAccept}>
             <Chip
-              label={ areFriends(props.inboxData.actor) ? "Accepted" : "Accept"}
+              label={areFriends(props.inboxData.actor) ? "Accepted" : "Accept"}
               size="small"
               sx={{ paddingRight: 2, marginTop: 1.5 }}
               style={{ backgroundColor: "#8ac926", color: "#fff" }}
             />
           </ButtonBase>
-          {/* <ButtonBase onClick={handleDecline}>
-            <Chip
-              label="Decline"
-              size="small"
-              sx={{ paddingRight: 2, marginTop: 1.5 }}
-              style={{ backgroundColor: "#ff595e", color: "#fff" }}
-            />
-          </ButtonBase> */}
         </div>
       );
     }
   };
 
   return (
-    <Card className="card">
+    <Card className="card" style={{ width: "60vw" }}>
       <CardHeader
         avatar={
           <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />
