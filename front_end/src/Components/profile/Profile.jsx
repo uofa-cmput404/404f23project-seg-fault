@@ -4,39 +4,39 @@ import Post from "../post/Post";
 import { Fab } from "@mui/material";
 import { Box, Grid, Typography } from "@mui/material"; // Import Typography
 import useProfileViewModel from "../../api/ProfileViewModel";
-import { StoreContext } from './../../store';
+import { StoreContext } from "./../../store";
 import CreatePost from "../createpost/CreatePost";
 import { extractIdFromUrl } from "../../api/helper";
-import  { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 import useEventsViewModel from "./EventsViewModel";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 
 import EventTile from "./EventTile";
 
-function ProfilePage({userId}) {
-    const { state } = useContext(StoreContext);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    const {posts, followers, profileData} = useProfileViewModel();
-    const { events } = useEventsViewModel();
-    
-    // Verifies if the owner's id is same as that in the url.
-    const isOwner = extractIdFromUrl(state.user.id) === userId;
+function ProfilePage({ userId }) {
+  const { state } = useContext(StoreContext);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const { posts, followers, profileData } = useProfileViewModel(userId);
+  const { events } = useEventsViewModel();
 
-    const openCreateModal = () => {
-        setIsCreateModalOpen(true);
-    };
+  // Verifies if the owner's id is same as that in the url.
+  const isOwner = extractIdFromUrl(state.user.id) === userId;
 
-    const closeCreateModal = () => {
-      setIsCreateModalOpen(false);
-    };
+  const openCreateModal = () => {
+    setIsCreateModalOpen(true);
+  };
 
-    let likes = 0;
-    posts.forEach((post) => (likes += post.count));
+  const closeCreateModal = () => {
+    setIsCreateModalOpen(false);
+  };
 
-    // Redirect to home page if profile does not exist.
-    if (!profileData) {
-        return <Navigate to='/home'  />
-    }
+  let likes = 0;
+  posts.forEach((post) => (likes += post.count));
+
+  // Redirect to home page if profile does not exist.
+  if (!profileData) {
+    return <Navigate to="/home" />;
+  }
 
   return (
     <Box>
@@ -73,35 +73,44 @@ function ProfilePage({userId}) {
               overflow: "auto",
             }}
           >
-          {posts.map((post, index) => {
-            return <Post 
-              post={post}
-              content={post.content}
-              profileImage={post.author.profileImage}
-              userId={post.author.id}
-              displayName={post.author.displayName}
-              title={post.title}
-              contentType={post.contentType}
-              visibility={post.visibility}
-              id={post.id}
-              width={600} 
-              padding={1} 
-              margin={1} 
-              key={index}
-              type={"local"}/>;
-          })}
+            {posts.map((post, index) => {
+              return (
+                <Post
+                  post={post}
+                  content={post.content}
+                  profileImage={post.author.profileImage}
+                  userId={post.author.id}
+                  displayName={post.author.displayName}
+                  title={post.title}
+                  contentType={post.contentType}
+                  visibility={post.visibility}
+                  id={post.id}
+                  width={600}
+                  padding={1}
+                  margin={1}
+                  key={index}
+                  type={"local"}
+                />
+              );
+            })}
           </Box>
           {isOwner ? (
-                <Fab
-                    color="primary"
-                    aria-label="add"
-                    style={{ position: 'fixed', top: '20rem', right: '5rem' }}
-                    onClick={openCreateModal}
-                >
-                    <AddIcon />
-                </Fab>
-            ) : null}
-            {isCreateModalOpen && <CreatePost open={isCreateModalOpen} onClose={closeCreateModal} action='CREATE' />}
+            <Fab
+              color="primary"
+              aria-label="add"
+              style={{ position: "fixed", top: "20rem", right: "5rem" }}
+              onClick={openCreateModal}
+            >
+              <AddIcon />
+            </Fab>
+          ) : null}
+          {isCreateModalOpen && (
+            <CreatePost
+              open={isCreateModalOpen}
+              onClose={closeCreateModal}
+              action="CREATE"
+            />
+          )}
         </Grid>
         <Grid item xs={12} md={5}>
           <Typography

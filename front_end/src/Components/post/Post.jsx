@@ -23,7 +23,7 @@ import Share from "../share/Share";
 import usePostViewModel from "./PostViewModel";
 import { StoreContext } from "../../store";
 import { extractIdFromUrl } from "../../api/helper";
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown from "react-markdown";
 
 function isImageUrl(url) {
   return /\.(jpeg|jpg|gif|png|bmp)$/.test(url);
@@ -43,7 +43,13 @@ function PostDisplay({ content, contentType }) {
   } else if (contentType && contentType.startsWith("image")) {
     // possibly need to decode images when we connect with other teams add the content type before the image
     if (content && !content.startsWith("data:image")) {
-      return <CardMedia component="img" image={`data:${contentType},`+content} alt="postImage" />;
+      return (
+        <CardMedia
+          component="img"
+          image={`data:${contentType},` + content}
+          alt="postImage"
+        />
+      );
     }
     return <CardMedia component="img" image={content} alt="postImage" />;
   } else if (contentType === "text/markdown") {
@@ -103,20 +109,27 @@ export default function Post(props) {
             userId === props.post.author.id ? (
               <PostMenu post={props.post} />
             ) : (
-              (props.post.author.id && !props.post.author.id.startsWith(process.env.REACT_APP_API_URL)) &&(
-              <Chip
-              label="remote"
-              size="small"
-              color="warning"
-              className="postVisibility"
-              sx={{ paddingRight: 2, width: '6rem' }}
-            />
+              props.post.author.id &&
+              !props.post.author.id.startsWith(
+                process.env.REACT_APP_API_URL
+              ) && (
+                <Chip
+                  label="remote"
+                  size="small"
+                  color="warning"
+                  className="postVisibility"
+                  sx={{ paddingRight: 2, width: "6rem" }}
+                />
               )
             )
           }
           // Wraps the title to a profile link.
           title={
-            <Link to={`/profile/${extractIdFromUrl(props.post.id)}`} style={{ textDecoration: 'none' }}>
+            <Link
+              to={`/profile/${extractIdFromUrl(props.post.author.id)}?authorId=${
+                props.post.author.id
+              }`}
+            >
               {props.post.author.displayName}
             </Link>
           }
@@ -126,9 +139,7 @@ export default function Post(props) {
             {props.post.title}
           </Typography>
           <PostDisplay
-            content={
-              props.post.content
-            }
+            content={props.post.content}
             contentType={props.post.contentType}
           />
         </Stack>
@@ -149,13 +160,13 @@ export default function Post(props) {
               <SendIcon onClick={handleShare} />
             </IconButton>
           </div>
-            <Chip
-              label={props.post.visibility.toLowerCase()}
-              size="small"
-              color={visibilityColors[props.post.visibility.toLowerCase()]}
-              className="postVisibility"
-              sx={{ paddingRight: 2 }}
-            />
+          <Chip
+            label={props.post.visibility.toLowerCase()}
+            size="small"
+            color={visibilityColors[props.post.visibility.toLowerCase()]}
+            className="postVisibility"
+            sx={{ paddingRight: 2 }}
+          />
         </CardActions>
         <CardActions>
           <Button
@@ -163,9 +174,7 @@ export default function Post(props) {
             className="openCommentsButton"
             size="small"
           >
-            {expandComments
-              ? "Hide Comments"
-              : `View Comments`}
+            {expandComments ? "Hide Comments" : `View Comments`}
           </Button>
         </CardActions>
         <Collapse in={expandComments} timeout="auto" unmountOnExit>
@@ -182,4 +191,3 @@ export default function Post(props) {
     </>
   );
 }
-
