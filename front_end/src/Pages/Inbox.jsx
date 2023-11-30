@@ -1,10 +1,5 @@
 import * as React from "react";
-import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import * as bootIcons from "react-icons/bs";
 import InboxElement from "../Components/inbox/inboxElement";
 import useInboxViewModel from "./InboxViewModel";
 import Post from "../Components/post/Post";
@@ -15,37 +10,6 @@ function Inbox() {
 
   return (
     <Box px={{ md: 22 }} sx={{ paddingTop: "10px" }}>
-      <AppBar position="static" sx={{ backgroundColor: "#3a86ff" }}>
-        <Container maxWidth="md">
-          <Toolbar disableGutters>
-            <bootIcons.BsEnvelopePaperFill style={{ fontSize: "1.5rem" }} />
-            <Typography
-              variant="h6"
-              noWrap
-              component="a"
-              href="#app-bar-with-responsive-menu"
-              sx={{
-                mr: 2,
-                ml: 2,
-                display: { xs: "none", md: "flex" },
-                fontSize: "20px",
-                fontWeight: 700,
-                color: "inherit",
-                textDecoration: "none",
-              }}
-            >
-              Your Inbox
-            </Typography>
-            <Button
-              variant="contained"
-              onClick={clearInbox}
-              style={{ marginLeft: "30rem" }}
-            >
-              Clear
-            </Button>
-          </Toolbar>
-        </Container>
-      </AppBar>
       <Box
         sx={{
           display: "flex",
@@ -54,6 +18,19 @@ function Inbox() {
           alignItems: "center",
         }}
       >
+        <Button
+          variant="contained"
+          onClick={clearInbox}
+          style={{
+            fontSize: "1.8rem",
+            color: "#adb5bd",
+            textTransform: "none",
+            backgroundColor: "transparent",
+            boxShadow: "none",
+          }}
+        >
+          Clear X
+        </Button>
         {inbox.map((element, index) => {
           if (element.type === "post") {
             return <Post post={element} width={600} padding={1} margin={1} />;
@@ -69,7 +46,7 @@ function Inbox() {
               />
             );
           }
-          if (element.type === "Like") {  
+          if (element.type === "Like") {
             return (
               <InboxElement
                 key={index}
@@ -81,7 +58,7 @@ function Inbox() {
               />
             );
           }
-          if (element.type === "Follow") {  
+          if (element.type === "Follow") {
             return (
               <InboxElement
                 key={index}
