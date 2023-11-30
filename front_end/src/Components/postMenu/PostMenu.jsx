@@ -31,8 +31,8 @@ export default function PostMenu(props) {
   };
 
   const handleDelete = () => {
+    console.log('delete')
     deletePost(props.post.id);
-    window.location.reload();
   }
 
   const handleClose = (event) => {
