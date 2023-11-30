@@ -53,31 +53,31 @@ const usePostsViewModel = () => {
           return [];
         }
       } else if (author.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
-        // get team one posts
-        const creds = 'vibely:string';
-        const base64Credentials = btoa(creds);
-        const posts_response = await axios.get(`${author.url}/posts/`,
-            {
-                headers: {
-                    'Authorization': `Basic ${base64Credentials}`,
-                },
-            }
-          );
-        if (posts_response.status === 200) {
-            const team1_posts = posts_response.data.results;
-            const posts = []
+        // // get team one posts
+        // const creds = 'vibely:string';
+        // const base64Credentials = btoa(creds);
+        // const posts_response = await axios.get(`${author.url}/posts/`,
+        //     {
+        //         headers: {
+        //             'Authorization': `Basic ${base64Credentials}`,
+        //         },
+        //     }
+        //   );
+        // if (posts_response.status === 200) {
+        //     const team1_posts = posts_response.data.results;
+        //     const posts = []
 
-            for (const team1_post of team1_posts){
-                posts.push(convertTeamOnePostToVibelyPost(team1_post));
-            }
+        //     for (const team1_post of team1_posts){
+        //         posts.push(convertTeamOnePostToVibelyPost(team1_post));
+        //     }
 
-            return posts;
-        } else {
-            console.error(
-                `Couldn't fetch posts. Status code: ${posts_response.status}`
-            );
-            return [];
-        }
+        //     return posts;
+        // } else {
+        //     console.error(
+        //         `Couldn't fetch posts. Status code: ${posts_response.status}`
+        //     );
+        //     return [];
+        // }
     } else if (author.id.startsWith(process.env.REACT_APP_TEAM_TWO_URL)){
       // get team two posts
       const creds = 'segfault:django100';
@@ -170,45 +170,60 @@ const usePostsViewModel = () => {
       categories: "none",
       recipient,
     };
-
+    
+    // create the post 
     const response = await axios.post(`${userId}/posts/`, body, {
       headers: {
         Authorization: `Token ${authToken}`,
       },
     });
 
-    const author_response = await fetchProfileData(state.user.id, authToken);
-    console.log("Post created");
-    if (visibility === "private") {
-      // send to the recipient's inbox
-      const inbox_payload = {
-        ...response.data.data,
-        id: response.data.id,
-        type: "post",
-        author: author_response,
-        source: author_response.displayName,
-        origin: recipient.displayName,
-      };
-      delete inbox_payload["url"];
+    // send the post to inboxes
+    window.location.reload();
+    if (response.status === 201) {
 
-      await axios.post(`${recipient.id}/inbox/`, inbox_payload, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
-      console.log("Sent to recipient's inbox.");
-    }
+      const author_response = await fetchProfileData(state.user.id, authToken);
+      console.log("Post created");
+      if (visibility === "private") {
+        // send to the recipient's inbox
+        const inbox_payload = {
+          ...response.data.data,
+          id: response.data.id,
+          type: "post",
+          author: author_response,
+          source: author_response.displayName,
+          origin: recipient.displayName,
+        };
+        delete inbox_payload["url"];
 
-    const followers = await fetchFollowers();
-    for (let follower of followers) {
-      const followerUrl = follower.follower.url;
-      const postUrl = response.data.data.url;
-      const post_res = await axios.get(postUrl);
-      await axios.post(`${followerUrl}/inbox/`, post_res.data, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
+        await axios.post(`${recipient.id}/inbox/`, inbox_payload, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        });
+        console.log("Sent to recipient's inbox.");
+      } else {
+          console.log("Post created");
+          const followers = await fetchFollowers();
+          for (let follower of followers) {
+            const followerUrl = follower.follower.url;
+            const postUrl = response.data.data.url;
+            const post_res = await axios.get(postUrl,
+              {
+                headers: {
+                  Authorization: `Token ${authToken}`,
+                },
+              }
+            );
+            await axios.post(`${followerUrl}/inbox/`, post_res.data, {
+              headers: {
+                Authorization: `Token ${authToken}`,
+              },
+            });
+          }
+      }
+    } else {
+      console.log(`not working ${response.status}`);
     }
   };
 
@@ -221,6 +236,7 @@ const usePostsViewModel = () => {
 
     if (response.status === 204) {
       console.log("Deleted");
+      window.location.reload();
     } else {
       console.log(response.status);
       console.error("Error deleting post");
