@@ -18,8 +18,7 @@ def transform_author_data(author):
     # Transform the author data
     author_id = author.get('id')
     author_host = "https://cmput-average-21-b54788720538.herokuapp.com/api"
-    author_url = f"{author_host}/authors/{author_id}"
-    author_id = author_url
+    author_url = author_id
     author_displayName = author.get('username', '')
     author_github = author.get('github', '')
     author_profileImage = author.get('image', '')
