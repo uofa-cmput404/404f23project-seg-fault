@@ -31,7 +31,7 @@ class UserRegistrationView(generics.CreateAPIView):
             username = serializer.validated_data['username']
             password = serializer.validated_data['password']
             # Create a new user instance and set the password
-            user = User.objects.create(username=username)
+            user = User.objects.create(username=username, is_active=False)
             user.set_password(password)
             user.save()
             
@@ -69,6 +69,8 @@ class UserLoginView(generics.CreateAPIView):
         user = User.objects.filter(username=username).first()
 
         if user and user.check_password(password):
+            if not user.is_active:
+                return Response({'error': 'Account not activated by admin yet'}, status=status.HTTP_403_FORBIDDEN)
             # If the user exists and the password is correct, create or retrieve a token
             token, created = Token.objects.get_or_create(user=user)
             author = Author.objects.get(user=user)
@@ -78,28 +80,11 @@ class UserLoginView(generics.CreateAPIView):
             return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-class CustomPagination(pagination.PageNumberPagination):
+class AuthorPagination(pagination.PageNumberPagination):
     page_size = 5  # Number of items per page
     page_size_query_param = 'size'  # Allow clients to set the page size using a query parameter
-    max_page_size = 100  # Set a maximum page size
-    
-    def paginate_queryset(self, queryset, request, view=None):
-        # Check if pagination query parameters are provided
-        page_param = request.query_params.get('page', None)
-        size_param = request.query_params.get('size', None)
-        # If pagination parameters are not provided, disable pagination
-        if not page_param and not size_param:
-            return None
-        
-        return super().paginate_queryset(queryset, request, view)
-    
-    def get_paginated_response(self, data):
-        return Response({
-            'type': 'authors',
-            'items': data,
-            'page': int(self.request.query_params.get('page', 1)),
-            'size': int(self.request.query_params.get('size', self.page_size)),
-        })
+    max_page_size = 5  # Set a maximum page size
+
 
 from . import RemoteAuthors
 # api/authors
@@ -109,20 +94,27 @@ class AuthorListView(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
-    pagination_class = CustomPagination  # Use the custom pagination class
+    pagination_class = AuthorPagination
+
     def list(self, request, *args, **kwargs):
-        page = self.paginate_queryset(self.get_queryset())
-        if page is not None:
-            author_serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(author_serializer.data)
-        
         # determine if token or basic
         auth_type = 'token' if isinstance(request.successful_authenticator, TokenAuthentication) else 'basic'
+        
         authors = self.get_queryset()
         author_serializer = self.get_serializer(authors, many=True)
+        remote_authors = RemoteAuthors.get_external_authors(request, auth_type)
+        combined_authors =  author_serializer.data + remote_authors
+
+        # Paginate combined authors
+        if 'page' in request.query_params:
+            print('paginate')
+            page = self.paginate_queryset(combined_authors)
+            if page is not None:
+                return self.get_paginated_response({"type": "authors", "items": page})
+
         return Response({
             "type": "authors",
-            "items": author_serializer.data + RemoteAuthors.get_external_authors(request, auth_type)
+            "items": combined_authors
         }, status=status.HTTP_200_OK) 
 
 # api/authors{author_id}
