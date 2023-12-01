@@ -1,6 +1,5 @@
 from django.contrib import admin
-from .models import Author, Post, Comment, Like, Inbox, AuthorFollower, FollowRequest
-
+from .models import Author, Post, Comment, Like, Inbox, AuthorFollower
 class AuthorAdmin(admin.ModelAdmin):
     list_display = ('displayName', 'type', 'url', 'user', 'id', 'host', 'github', 'profileImage')
 
