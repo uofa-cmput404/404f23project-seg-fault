@@ -1,6 +1,6 @@
 ### models and serializers
-from .models import Author, AuthorFollower, Comment, Post, FollowRequest, Inbox
-from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer, FriendRequestSerializer
+from .models import Author, AuthorFollower, Comment, Post, Inbox
+from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer
 from django.contrib.auth.models import User
 ### user auth
 from rest_framework.authtoken.models import Token
@@ -25,33 +25,42 @@ from core.settings import ROOT_URL
 root_url = ROOT_URL
 
 
-class FollowerView(views.APIView):
+class FollowerView(APIView):
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
 
-    def get(self, request, author_id, foreign_author_id):
+    def get(self, request, author_id, follower_id):
         try:
-            relationship = AuthorFollower.objects.get(user__id=author_id, follower__id=foreign_author_id)
-            return Response({"message": f"{foreign_author_id} is a follower of {author_id}."}, status=status.HTTP_200_OK)
+            author_follower = AuthorFollower.objects.get(author=author_id)
+            is_follower = any(follower_id == item.get('id') for item in author_follower.items)
+            if is_follower:
+                return Response({"message": f"{follower_id} is a follower of {author_id}."}, status=status.HTTP_200_OK)
+            else:
+                return Response({"message": f"{follower_id} is not a follower of {author_id}."}, status=status.HTTP_404_NOT_FOUND)
         except AuthorFollower.DoesNotExist:
-            return Response({"message": f"{foreign_author_id} is not a follower of {author_id}."}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Author not found or no inbox available."}, status=status.HTTP_404_NOT_FOUND)
+    
+    def put(self, request, author_id, follower_id=None):
+            try:
+                author_follower, created = AuthorFollower.objects.get_or_create(author=author_id)
+                
+                if request.data:
+                    author_follower.add_item(request.data['object'])
+                    return Response({'message': 'Item added to follower items.'}, status=status.HTTP_200_OK)
+                else:
+                    return Response({'error': 'No item data provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    def put(self, request, author_id, foreign_author_id):
-        author = get_object_or_404(Author, id=author_id)
-        follower = get_object_or_404(Author, id=foreign_author_id)
-        
-        if author != follower:
-            AuthorFollower.objects.get_or_create(user=author, follower=follower)
-            return Response({'message': f'{foreign_author_id} is now following {author_id}.'}, status=status.HTTP_200_OK)
-        return Response({'error': 'An author cannot follow themselves.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, author_id, foreign_author_id):
+            except Author.DoesNotExist:
+                return Response({"error": "Author not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self, request, author_id, follower_id):
         try:
-            relationship = AuthorFollower.objects.get(user__id=author_id, follower__id=foreign_author_id)
-            relationship.delete()
-            return Response({'message': f'{foreign_author_id} has been removed from the followers of {author_id}.'}, status=status.HTTP_200_OK)
+            author_follower = AuthorFollower.objects.get(author=author_id)
+            author_follower.items = [item for item in author_follower.items if item.get('id') != follower_id]
+            author_follower.save()
+            return Response({'message': f'{follower_id} has been removed from the followers of {author_id}.'}, status=status.HTTP_200_OK)
         except AuthorFollower.DoesNotExist:
-            return Response({'error': 'Relationship does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({"error": "Author not found or no inbox available."}, status=status.HTTP_404_NOT_FOUND)
 
 
 class FollowAuthorView(views.APIView):
@@ -119,14 +128,8 @@ class FollowersListView(generics.ListAPIView):
     
     def get_queryset(self):
         author_id = self.kwargs['author_id']
-        return AuthorFollower.objects.filter(user__id=author_id)
+        return AuthorFollower.objects.filter(author=author_id)
 
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, *args, **kwargs)
-        return Response({
-            "type": "followers",
-            "items": response.data
-        })
 
 class CustomPageNumberPagination(pagination.PageNumberPagination):
     page_size = 5  # Or whatever number you want for this specific view

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import Author, AuthorFollower, Comment, FollowRequest
+from .models import Author, AuthorFollower, Comment
 
 ## from authors directory
 from .authors.serializers import AuthorSerializer, UserSerializer
@@ -9,11 +9,10 @@ root_url = ROOT_URL
 
 
 class FollowerListSerializer(serializers.ModelSerializer):
-    follower = AuthorSerializer()
     
     class Meta:
         model = AuthorFollower
-        fields = ('follower',)
+        fields = ('author','items')
 
 class FollowingListSerializer(serializers.ModelSerializer):
     user = AuthorSerializer()
@@ -37,16 +36,3 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def get_id(self, obj):
         return f"{root_url}/authors/{obj.author.id.hex}/posts/{obj.post.id.hex}/comments/{obj.id.hex}"
-
-class FriendRequestSerializer(serializers.ModelSerializer):
-    
-    actor = AuthorSerializer(read_only=True)
-    object = AuthorSerializer(read_only=True)
-    type = serializers.SerializerMethodField()
-    
-    class Meta:
-        model = FollowRequest
-        fields = ('type', 'actor', 'object', 'summary')
-
-    def get_type(self, obj):
-        return "Follow"

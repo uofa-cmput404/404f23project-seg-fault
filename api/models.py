@@ -23,10 +23,15 @@ class Author(models.Model):
     def __str__(self):
         return self.user.username
 
+
 class AuthorFollower(models.Model):
-    user = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="followed_by")
-    follower = models.ForeignKey(Author, on_delete=models.CASCADE, related_name="following")
-    created_at = models.DateTimeField(auto_now_add=True)
+    author = models.URLField(null=True)
+    items = models.JSONField(default=list)
+    type = models.CharField(max_length=100, default="follower")
+
+    def add_item(self, item_data):
+        self.items.insert(0, item_data)
+        self.save()
     
 
 class Post(models.Model):
@@ -68,8 +73,6 @@ class Like(models.Model):
     object = models.URLField()
 
 
-
-
 class Inbox(models.Model):
     author = models.OneToOneField(Author, on_delete=models.CASCADE, related_name='author_inbox')
     items = models.JSONField(default=list)
@@ -84,15 +87,6 @@ class Inbox(models.Model):
         self.save()
 
 
-class FollowRequest(models.Model):
-    
-    type = models.CharField(max_length=10, default='Follow')
-    summary = models.TextField()
-    actor = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='follow_requests_made')
-    object = models.ForeignKey(Author, on_delete=models.CASCADE, related_name='follow_requests_received')
-
-    def __str__(self):
-        return f"{self.actor.displayName} wants to follow {self.object.displayName}"
 
 # class Node(models.Model):
 #     url = models.URLField(null=True)
