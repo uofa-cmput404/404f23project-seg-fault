@@ -111,35 +111,6 @@ class PostListView(generics.ListCreateAPIView):
 
 
             instance.save()
-
-            # send public posts to all inboxed
-            if (instance.visibility.lower() == 'public'):
-                # Iterate over all local authors
-                for author in Author.objects.all():
-                    # Check if the author already has an inbox if not create it
-                    try:
-                        inbox = author.author_inbox
-                    except ObjectDoesNotExist:
-                        # If not, create one
-                        inbox = Inbox.objects.create(author=author)
-
-                    item_data = PostSerializer(instance).data
-                    # Now add the item to the inbox
-                    inbox.add_item(item_data)
-
-                # do it for external authors
-                # i think the function isn't using request paramter so remove it
-                # put auth=token to bypass the check. so it doesn't return empty
-                # call get_external_authors(request, 'token')
-                # convert it to json. for each author send a post request to the inbox url
-            
-            # if == 'friends'
-            # get this author, get the people who follow this author
-            # go through the authors and create the inbox if not already and put it in theri inbox
-            # there might be people who follow you that are remote (send post request)
-
-            
-
             return Response({"data": serializer.data, "id": serializer.get_id(instance)}, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
