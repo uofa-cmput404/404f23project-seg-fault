@@ -12,10 +12,27 @@ const useFriendsViewModel = () => {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const nextPage = () => {
+    setCurrentPage((page) => Math.min(page + 1, 10));
+    fetchAuthors();
+  };
+  const previousPage = () => {
+    setCurrentPage((page) => Math.max(page - 1, 1));
+    fetchAuthors();
+  };
+
   const fetchAuthors = useCallback(async () => {
     const response = await axios.get(
       `${process.env.REACT_APP_API_URL}/authors/`,
       {
+        /*
+        params: {
+          page: currentPage,
+          size: 10,
+        },
+        */
         headers: {
           Authorization: `Token ${authToken}`,
         },
@@ -85,12 +102,16 @@ const useFriendsViewModel = () => {
           },
         }
       );
-  
+
       // if they are not friends, send to inbox
-      if(!areFriends(authorId)){
+      if (!areFriends(authorId)) {
         const response_request = await axios.post(
           `${process.env.REACT_APP_API_URL}/follow-request/`,
-          { actor:{"id": getIdFromUrl(userId) }, object:{"id": getIdFromUrl(authorId)}, "summary": "baba" },
+          {
+            actor: { id: getIdFromUrl(userId) },
+            object: { id: getIdFromUrl(authorId) },
+            summary: "baba",
+          },
           {
             headers: {
               Authorization: `Token ${authToken}`,
@@ -103,20 +124,19 @@ const useFriendsViewModel = () => {
       if (response.status === 200) {
         window.location.reload();
       }
-    }
-    catch(e) {
+    } catch (e) {
       console.error("Error following author");
     }
-  }
+  };
 
   function getIdFromUrl(url) {
     // Split the URL by '/'
-    const urlParts = url.split('/');
+    const urlParts = url.split("/");
 
     // Get the last part of the URL
     return urlParts[urlParts.length - 1];
   }
-    
+
   const unfollowAuthor = async (authorId) => {
     const response = await axios.post(
       `${process.env.REACT_APP_API_URL}/authors/unfollow/`,
@@ -155,7 +175,7 @@ const useFriendsViewModel = () => {
     );
 
     return isFollower && isFollowing;
-  }
+  };
 
   const filteredAuthors = authors.filter((author) => {
     const isFollowing = following.find(
@@ -168,6 +188,9 @@ const useFriendsViewModel = () => {
   return {
     selectedView,
     changeView,
+    currentPage,
+    nextPage,
+    previousPage,
     authors,
     followers,
     following,
@@ -175,7 +198,7 @@ const useFriendsViewModel = () => {
     filteredAuthors,
     followAuthor,
     unfollowAuthor,
-    areFriends
+    areFriends,
   };
 };
 
