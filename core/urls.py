@@ -15,11 +15,14 @@ Including another URLconf
 """
 from django.urls import path, re_path, include
 from django.views.generic import TemplateView
+from django.shortcuts import redirect
 from django.contrib import admin
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     # Serve React App
-    re_path(r'^$', TemplateView.as_view(template_name='index.html')),
+    # re_path(r'^$', TemplateView.as_view(template_name='index.html')),
+      # Redirect all other URLs to Swagger documentation
+    re_path(r'^(?!api|admin).*$', lambda request: redirect('/api/swagger/', permanent=False)),
 ]
