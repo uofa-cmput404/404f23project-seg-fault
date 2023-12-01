@@ -1,6 +1,6 @@
 ### models and serializers
-from .models import Author, AuthorFollower, Comment, Post, FollowRequest, Inbox
-from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer, FriendRequestSerializer
+from .models import Author, AuthorFollower, Comment, Post, Inbox
+from .serializers import UserSerializer, AuthorSerializer, FollowingListSerializer, FollowerListSerializer, CommentSerializer
 from django.contrib.auth.models import User
 ### user auth
 from rest_framework.authtoken.models import Token
