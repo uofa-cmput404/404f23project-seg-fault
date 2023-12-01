@@ -13,6 +13,9 @@ function Friends() {
   const {
     selectedView,
     changeView,
+    currentPage,
+    nextPage,
+    previousPage,
     followers,
     following,
     filteredFriends,
@@ -23,10 +26,16 @@ function Friends() {
 
   return (
     <Box px={{ md: 22 }} sx={{ paddingTop: "10px" }}>
-      <AppBar position="static" sx={{ backgroundColor: "#3a86ff" }}>
+      <AppBar
+        position="static"
+        elevation={0}
+        sx={{ backgroundColor: "#ffffff" }}
+      >
         <Container maxWidth="md">
           <Toolbar disableGutters>
-            <bootIcons.BsPeopleFill style={{ fontSize: "1.5rem" }} />
+            <bootIcons.BsPeopleFill
+              style={{ fontSize: "1.5rem", color: "#adb5bd" }}
+            />
             <Typography
               variant="h6"
               noWrap
@@ -38,8 +47,9 @@ function Friends() {
                 display: { xs: "none", md: "flex" },
                 fontSize: "20px",
                 fontWeight: 700,
-                color: "inherit",
+                color: "#adb5bd",
                 textDecoration: "none",
+                justifyContent: "space-between",
               }}
             >
               Social Hub
@@ -50,7 +60,7 @@ function Friends() {
               sx={{
                 paddingRight: 2,
                 marginRight: 2,
-                color: "#ffffff",
+                color: "#adb5bd",
                 textTransform: "capitalize",
               }}
             >
@@ -61,7 +71,7 @@ function Friends() {
               color="primary"
               sx={{
                 marginRight: 2,
-                color: "#ffffff",
+                color: "#adb5bd",
                 textTransform: "capitalize",
               }}
             >
@@ -72,7 +82,7 @@ function Friends() {
               color="primary"
               sx={{
                 marginRight: 2,
-                color: "#ffffff",
+                color: "#adb5bd",
                 textTransform: "capitalize",
               }}
             >
@@ -83,7 +93,7 @@ function Friends() {
               color="primary"
               sx={{
                 marginRight: 2,
-                color: "#ffffff",
+                color: "#adb5bd",
                 textTransform: "capitalize",
               }}
             >
@@ -145,6 +155,22 @@ function Friends() {
               authorAction={unfollowAuthor}
             />
           ))}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginY: 2,
+          }}
+        >
+          <Button onClick={previousPage} disabled={currentPage === 1}>
+            <bootIcons.BsArrowLeft />
+          </Button>
+          <Typography sx={{ marginX: 2 }}>{currentPage}</Typography>
+          <Button onClick={nextPage}>
+            <bootIcons.BsArrowRight />
+          </Button>
+        </Box>
       </Box>
     </Box>
   );
