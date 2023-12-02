@@ -40,28 +40,29 @@ const useFriendsViewModel = () => {
       }
     );
     if (response.status === 200) {
-      setFollowers(response.data.items);
+      setFollowers(response.data);
     } else {
       console.error("Error fetching followers");
     }
   }, [userId, authToken]);
 
   const fetchFollowing = useCallback(async () => {
-    const parts = userId.split("/");
-    const userGuid = parts[parts.length - 1];
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`,
-      {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      }
-    );
-    if (response.status === 200) {
-      setFollowing(response.data.items);
-    } else {
-      console.error("Error fetching following");
-    }
+    // const parts = userId.split("/");
+    // const userGuid = parts[parts.length - 1];
+    // const response = await axios.get(
+    //   `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`,
+    //   {
+    //     headers: {
+    //       Authorization: `Token ${authToken}`,
+    //     },
+    //   }
+    // );
+    // if (response.status === 200) {
+    //   setFollowing(response.data.items);
+    // } else {
+    //   console.error("Error fetching following");
+    // }
+    setFollowing([]);
   }, [userId, authToken]);
 
   useEffect(() => {
@@ -74,23 +75,57 @@ const useFriendsViewModel = () => {
     setSelectedView(view);
   };
 
+  const acceptFollowRequest = async (inboxItem) => {
+    console.log(inboxItem);
+    const payload = {
+        "object": inboxItem.object
+    }
+    const segments = inboxItem.object.id.split('/');
+    const id = segments[segments.length - 1];
+
+    const response = await axios.put(
+      `${userId}/followers/${id}/`,
+      payload,
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      }
+    );
+    if (response.status === 200) {
+      console.log("accepted follow request");
+    } else {
+      console.error("Error accepting follow request");
+    }
+  }
+
   const followAuthor = async (authorId) => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/authors/follow/`,
-        { user_id: userId, author_id_to_follow: authorId },
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-          },
-        }
-      );
-  
-      // if they are not friends, send to inbox
-      if(!areFriends(authorId)){
+        const actor = await axios.get(
+          authorId,
+          {
+            headers: {
+              Authorization: `Token ${authToken}`,
+            },
+          }
+        );
+        const object = await axios.get(
+          userId,
+          {
+            headers: {
+              Authorization: `Token ${authToken}`,
+            },
+          }
+        );
+        const payload = {
+          "type": "Follow",      
+          "summary":"Greg wants to follow Lara",
+          "actor":actor.data,
+          "object": object.data
+      }
         const response_request = await axios.post(
-          `${process.env.REACT_APP_API_URL}/follow-request/`,
-          { actor:{"id": getIdFromUrl(userId) }, object:{"id": getIdFromUrl(authorId)}, "summary": "baba" },
+          `${authorId}/inbox/`,
+          payload,
           {
             headers: {
               Authorization: `Token ${authToken}`,
@@ -98,10 +133,10 @@ const useFriendsViewModel = () => {
           }
         );
         console.log(response_request);
-      }
 
-      if (response.status === 200) {
-        window.location.reload();
+      if (response_request.status === 201) {
+        console.log("sent to inbox")
+        //window.location.reload();
       }
     }
     catch(e) {
@@ -116,7 +151,7 @@ const useFriendsViewModel = () => {
     // Get the last part of the URL
     return urlParts[urlParts.length - 1];
   }
-    
+
   const unfollowAuthor = async (authorId) => {
     const response = await axios.post(
       `${process.env.REACT_APP_API_URL}/authors/unfollow/`,
@@ -136,25 +171,24 @@ const useFriendsViewModel = () => {
   };
 
   const filteredFriends = authors.filter((author) => {
-    const isFollower = followers.find(
-      (follower) => follower.follower.id === author.id
-    );
-    const isFollowing = following.find(
-      (follow) => follow.user.id === author.id
-    );
+    // const isFollower = followers.find(
+    //   (follower) => follower.follower.id === author.id
+    // );
+    // const isFollowing = following.find(
+    //   (follow) => follow.user.id === author.id
 
-    return isFollower && isFollowing;
+    // return isFollower && isFollowing;
   });
 
   const areFriends = (author) => {
-    const isFollower = followers.find(
-      (follower) => follower.follower.id === author.id
-    );
-    const isFollowing = following.find(
-      (follow) => follow.user.id === author.id
-    );
+    // const isFollower = followers.find(
+    //   (follower) => follower.follower.id === author.id
+    // );
+    // const isFollowing = following.find(
+    //   (follow) => follow.user.id === author.id
+    // );
 
-    return isFollower && isFollowing;
+    // return isFollower && isFollowing;
   }
 
   const filteredAuthors = authors.filter((author) => {
@@ -175,7 +209,8 @@ const useFriendsViewModel = () => {
     filteredAuthors,
     followAuthor,
     unfollowAuthor,
-    areFriends
+    areFriends,
+    acceptFollowRequest
   };
 };
 

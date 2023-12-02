@@ -8,7 +8,7 @@ import useShareViewModel from "./ShareViewModel";
 
 export default function Share(props) {
   const {
-    friends,
+    followers,
     sharePost
   } = useShareViewModel();
 
@@ -38,7 +38,7 @@ export default function Share(props) {
                 justifyContent: 'center', 
                 alignItems: 'center'}}
             >
-            {friends.map((author, index) => (
+            {followers.map((author, index) => (
               <AuthorTile
                 key={index}
                 id={author.id}

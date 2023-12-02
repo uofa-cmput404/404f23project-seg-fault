@@ -75,7 +75,7 @@ const useProfileViewModel = () => {
         });
 
         if (response.status === 200) {
-          const data = response.data.items;
+          const data = response.data;
           setFollowers(data);
         } else {
           console.error("Error fetching authors");

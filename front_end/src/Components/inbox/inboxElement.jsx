@@ -12,7 +12,7 @@ import "./inboxElement.css";
 import useFriendsViewModel from "../../Pages/FriendsViewModel";
 
 function InboxElement(props) {
-  const { followAuthor, areFriends } = useFriendsViewModel();
+  const { acceptFollowRequest, areFriends } = useFriendsViewModel();
 
   const visibilityColors = {
     post: "#8338ec",
@@ -31,9 +31,9 @@ function InboxElement(props) {
   const visibilityColor = visibilityColors[props.visibility] || "#000";
 
   const handleAccept = () => {
-    if (areFriends(props.inboxData.actor)) return;
+    // if (areFriends(props.inboxData.actor)) return;
 
-    followAuthor(props.inboxData.actor.id);
+    acceptFollowRequest(props.inboxData);
   };
 
   const renderActions = () => {
