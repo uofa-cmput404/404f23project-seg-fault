@@ -33,7 +33,7 @@ function Inbox() {
         </Button>
         {inbox.map((element, index) => {
           if (element.type === "post") {
-            return <Post post={element} width={600} padding={1} margin={1} />;
+            return <Post post={element} width="60vw" padding={1} margin={1} />;
           }
           if (element.type === "comment") {
             return (
@@ -62,8 +62,8 @@ function Inbox() {
             return (
               <InboxElement
                 key={index}
-                username={element.actor.displayName}
-                profilePic={element.actor.profileImage}
+                username={element.object.displayName}
+                profilePic={element.object.profileImage}
                 text="Hey let's be friends!"
                 visibility={element.type}
                 author={element.object}

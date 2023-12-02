@@ -10,7 +10,10 @@ const useFriendsViewModel = () => {
 
   const [authors, setAuthors] = useState([]);
   const [followers, setFollowers] = useState([]);
-  const [following, setFollowing] = useState([]);
+
+  const [authorStatus, setAuthorStatus] = useState([
+    { status: "follow", id: userId },
+  ]);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -27,13 +30,10 @@ const useFriendsViewModel = () => {
     const response = await axios.get(
       `${process.env.REACT_APP_API_URL}/authors/`,
       {
-        /*
-        params: {
-          page: currentPage,
-          size: 10,
-        },
-        */
         headers: {
+          params: {
+            page: currentPage,
+          },
           Authorization: `Token ${authToken}`,
         },
       }
@@ -43,7 +43,7 @@ const useFriendsViewModel = () => {
     } else {
       console.error("Error fetching authors");
     }
-  }, [authToken]);
+  }, [authToken, currentPage]);
 
   const fetchFollowers = useCallback(async () => {
     const parts = userId.split("/");
@@ -56,88 +56,80 @@ const useFriendsViewModel = () => {
         },
       }
     );
+    console.log(response.data);
     if (response.status === 200) {
-      setFollowers(response.data.items);
+      setFollowers(response.data);
     } else {
       console.error("Error fetching followers");
-    }
-  }, [userId, authToken]);
-
-  const fetchFollowing = useCallback(async () => {
-    const parts = userId.split("/");
-    const userGuid = parts[parts.length - 1];
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`,
-      {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      }
-    );
-    if (response.status === 200) {
-      setFollowing(response.data.items);
-    } else {
-      console.error("Error fetching following");
     }
   }, [userId, authToken]);
 
   useEffect(() => {
     fetchAuthors();
     fetchFollowers();
-    fetchFollowing();
-  }, [fetchAuthors, fetchFollowers, fetchFollowing]);
+  }, [fetchAuthors, fetchFollowers]);
 
   const changeView = (view) => {
     setSelectedView(view);
   };
 
+  const acceptFollowRequest = async (inboxItem) => {
+    console.log(inboxItem);
+    const payload = {
+      object: inboxItem.object,
+    };
+    const segments = inboxItem.object.id.split("/");
+    const id = segments[segments.length - 1];
+    try {
+      await axios.put(`${userId}/followers/${id}/`, payload, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      followAuthor(inboxItem.object.id);
+    }
+    catch{
+      console.error("Error accepting follow request");
+    }
+  };
+
   const followAuthor = async (authorId) => {
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/authors/follow/`,
-        { user_id: userId, author_id_to_follow: authorId },
-        {
-          headers: {
-            Authorization: `Token ${authToken}`,
-          },
-        }
-      );
+      const actor = await axios.get(authorId, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      const object = await axios.get(userId, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      const payload = {
+        type: "Follow",
+        summary: "Greg wants to follow Lara",
+        actor: actor.data,
+        object: object.data,
+      };
+      const response_request = await axios.post(`${authorId}/inbox/`, payload, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      console.log(response_request);
 
-      // if they are not friends, send to inbox
-      if (!areFriends(authorId)) {
-        const response_request = await axios.post(
-          `${process.env.REACT_APP_API_URL}/follow-request/`,
-          {
-            actor: { id: getIdFromUrl(userId) },
-            object: { id: getIdFromUrl(authorId) },
-            summary: "baba",
-          },
-          {
-            headers: {
-              Authorization: `Token ${authToken}`,
-            },
-          }
-        );
-        console.log(response_request);
-      }
-
-      if (response.status === 200) {
-        window.location.reload();
+      if (response_request.status === 201) {
+        console.log("Sent to inbox");
+        setAuthorStatus({ status: "friend", id: authorId });
       }
     } catch (e) {
       console.error("Error following author");
     }
   };
 
-  function getIdFromUrl(url) {
-    // Split the URL by '/'
-    const urlParts = url.split("/");
-
-    // Get the last part of the URL
-    return urlParts[urlParts.length - 1];
-  }
-
   const unfollowAuthor = async (authorId) => {
+    // Are we supposed to remove this?
+
     const response = await axios.post(
       `${process.env.REACT_APP_API_URL}/authors/unfollow/`,
       { user_id: userId, author_id_to_unfollow: authorId },
@@ -155,50 +147,26 @@ const useFriendsViewModel = () => {
     }
   };
 
-  const filteredFriends = authors.filter((author) => {
-    const isFollower = followers.find(
-      (follower) => follower.follower.id === author.id
-    );
-    const isFollowing = following.find(
-      (follow) => follow.user.id === author.id
-    );
-
-    return isFollower && isFollowing;
-  });
-
-  const areFriends = (author) => {
-    const isFollower = followers.find(
-      (follower) => follower.follower.id === author.id
-    );
-    const isFollowing = following.find(
-      (follow) => follow.user.id === author.id
-    );
-
-    return isFollower && isFollowing;
-  };
-
   const filteredAuthors = authors.filter((author) => {
-    const isFollowing = following.find(
-      (follow) => follow.user.id === author.id
+    const isFriend = followers.find(
+      (follow) => follow.items[0].id === author.id
     );
 
-    return !isFollowing;
+    return !isFriend;
   });
 
   return {
     selectedView,
     changeView,
+    followers,
     currentPage,
     nextPage,
     previousPage,
-    authors,
-    followers,
-    following,
-    filteredFriends,
-    filteredAuthors,
     followAuthor,
     unfollowAuthor,
-    areFriends,
+    acceptFollowRequest,
+    authorStatus,
+    filteredAuthors,
   };
 };
 

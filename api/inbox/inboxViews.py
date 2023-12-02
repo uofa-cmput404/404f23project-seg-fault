@@ -56,7 +56,7 @@ def inbox_view(request, author_id):
 
         # For "like" we need to store the like object and the authors on our database
         # for "follow" we also need to store the like object and the authors on our database
-        if object_type not in ['post', 'comment', 'like', 'comment']:
+        if object_type not in ['post', 'comment', 'like', 'comment', 'follow']:
             return Response({"message": "Type not supported"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -81,7 +81,21 @@ def inbox_view(request, author_id):
                 return Response({"message": "already liked"}, status=status.HTTP_200_OK)
         
         if object_type == 'follow':
-            return Response({"message": "Type not supported"}, status=status.HTTP_400_BAD_REQUEST)
+            user_id, follower_id = data['object']['id'], data['actor']['id']
+            existing_follow = None
+            
+            author_follower = AuthorFollower.objects.filter(author=user_id)
+            if author_follower:
+                existing_follow = any(follower_id == item.get('id') for item in author_follower.items)
+           
+            if not existing_follow:
+
+                author_inbox, created = Inbox.objects.get_or_create(author=author)
+                author_inbox.add_item(data)  
+
+                return Response({"message": "Follow request added successfully"}, status=status.HTTP_201_CREATED)
+            else:
+                return Response({"message": "Follow request already sent"}, status=status.HTTP_200_OK)
         
         # For "post" or "comment" just add the json to the inbox
         if object_type in ['post', 'comment']:

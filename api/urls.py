@@ -34,10 +34,10 @@ urlpatterns = [
     path('authors/', AuthorListView.as_view(), name="author-list"),
     path('authors/follow/', FollowAuthorView.as_view(), name='follow-author'),
     path('authors/unfollow/', UnfollowAuthorView.as_view(), name='unfollow-author'),
-    path('authors/<str:author_id>/followers/', FollowersListView.as_view(), name="author-followers-list"),
+    path('authors/<path:author_id>/followers/', FollowersListView.as_view(), name="author-followers-list"),
     path('authors/<str:author_id>/following/', FollowingListView.as_view(), name="author-following-list"),
     path('authors/<str:author_id>/', AuthorDetailView.as_view(), name='author-detail'),
-    path('authors/<str:author_id>/followers/<str:foreign_author_id>/', FollowerView.as_view(), name='specific-follower'),
+    path('authors/<path:author_id>/followers/<path:follower_id>/', FollowerView.as_view(), name='specific-follower'),
     ## urls for posts:
     path('authors/<str:author_id>/posts/', PostListView.as_view(), name='post-list'),
     path('authors/<str:author_id>/posts/<str:post_id>', PostDetailView.as_view(), name='post-detail'),
@@ -50,8 +50,6 @@ urlpatterns = [
     path('authors/<str:author_id>/posts/<str:post_id>/likes/', PostLikesListView.as_view(), name='post-likes'),
     path('authors/<str:author_id>/posts/<str:post_id>/comments/<str:comment_id>/likes/', CommentLikesListView.as_view(), name='post-likes'),
     path('authors/<str:author_id>/liked/', LikedListView.as_view(), name='post-likes'),
-    ## friend requests
-    path('follow-request/', CreateFollowRequestView.as_view(), name='create_follow_request'),
     ##docs
     re_path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),

@@ -17,6 +17,9 @@ class LikeSerializer(serializers.ModelSerializer):
     def get_type(self, obj):
         return "Like"
 
+    
+
+
 # class GetLikeSerializer(serializers.ModelSerializer):
 #     author = AuthorSerializer(read_only=True)
 #     class Meta:

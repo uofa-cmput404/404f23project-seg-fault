@@ -107,7 +107,7 @@ export default function CreatePost(props) {
       if (props.action === "EDIT"){
         await editPost(title, 'description', contentType, content, visibility, props.post.id)
       } else {
-        await createPost(title, 'description', contentType, content, visibility, props.recipient) // TODO: add description
+        await createPost(title, 'description', contentType, content, visibility, props.recipient) // TODO: add descriptions
       }
       reset()
       props.onClose()
