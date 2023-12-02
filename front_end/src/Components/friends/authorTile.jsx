@@ -24,7 +24,17 @@ function AuthorTile(props) {
     share: "#3a86ff",
   };
 
-  const chipColor = chipColors[props.status] || "#000";
+  var chipLabel = chipLabels[props.status];
+
+  if (props.authorStatus && props.authorStatus.id === props.id) {
+    chipLabel = chipLabels[props.authorStatus.status];
+  }
+
+  var chipColor = chipColors[props.status] || "#000";
+
+  if (props.authorStatus && props.authorStatus.id === props.id) {
+    chipColor = chipColors[props.authorStatus.status];
+  }
 
   const handleClick = () => {
     props.authorAction(props.id);
@@ -49,7 +59,7 @@ function AuthorTile(props) {
           <>
             <ButtonBase onClick={handleClick}>
               <Chip
-                label={chipLabels[props.status]}
+                label={chipLabel}
                 size="small"
                 sx={{ paddingRight: 2, marginTop: 1.5 }}
                 style={{ backgroundColor: chipColor, color: "#fff" }}

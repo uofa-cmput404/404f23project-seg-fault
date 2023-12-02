@@ -17,11 +17,10 @@ function Friends() {
     nextPage,
     previousPage,
     followers,
-    following,
-    filteredFriends,
-    filteredAuthors,
     followAuthor,
     unfollowAuthor,
+    authorStatus,
+    filteredAuthors,
   } = useFriendsViewModel();
 
   return (
@@ -67,17 +66,6 @@ function Friends() {
               Authors
             </Button>
             <Button
-              onClick={() => changeView("friends")}
-              color="primary"
-              sx={{
-                marginRight: 2,
-                color: "#adb5bd",
-                textTransform: "capitalize",
-              }}
-            >
-              Friends
-            </Button>
-            <Button
               onClick={() => changeView("followers")}
               color="primary"
               sx={{
@@ -86,18 +74,7 @@ function Friends() {
                 textTransform: "capitalize",
               }}
             >
-              You Followers
-            </Button>
-            <Button
-              onClick={() => changeView("following")}
-              color="primary"
-              sx={{
-                marginRight: 2,
-                color: "#adb5bd",
-                textTransform: "capitalize",
-              }}
-            >
-              People you Follow
+              Friends
             </Button>
           </Toolbar>
         </Container>
@@ -120,38 +97,18 @@ function Friends() {
               remoteAuthor={author.remote}
               status="follow"
               authorAction={followAuthor}
-            />
-          ))}
-        {selectedView === "friends" &&
-          filteredFriends.map((author, index) => (
-            <AuthorTile
-              key={index}
-              id={author.id}
-              username={author.displayName}
-              profilePic={author.profileImage}
-              status="friend"
-              authorAction={unfollowAuthor}
+              authorStatus={authorStatus}
             />
           ))}
         {selectedView === "followers" &&
           followers.map((author, index) => (
             <AuthorTile
               key={index}
-              id={author.follower.id}
-              username={author.follower.displayName}
-              profilePic={author.follower.profileImage}
-              status="follower"
-              authorAction={followAuthor}
-            />
-          ))}
-        {selectedView === "following" &&
-          following.map((author, index) => (
-            <AuthorTile
-              key={index}
-              id={author.user.id}
-              username={author.user.displayName}
-              profilePic={author.user.profileImage}
-              status="unfollow"
+              id={author.items[0].id}
+              username={author.items[0].displayName}
+              profilePic={author.items[0].profileImage}
+              remoteAuthor={author.remote}
+              status="friend"
               authorAction={unfollowAuthor}
             />
           ))}

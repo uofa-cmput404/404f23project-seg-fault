@@ -10,14 +10,11 @@ const useShareViewModel = () => {
   const [followers, setFollowers] = useState([]);
 
   const fetchFollowers = useCallback(async () => {
-    const response = await axios.get(
-      `${userId}/followers/`,
-      {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      }
-    );
+    const response = await axios.get(`${userId}/followers/`, {
+      headers: {
+        Authorization: `Token ${authToken}`,
+      },
+    });
     if (response.status === 200) {
       setFollowers(response.data);
     } else {
@@ -32,7 +29,7 @@ const useShareViewModel = () => {
   const sharePost = async (post, authorId) => {
     const response = await axios.post(authorId + "/inbox/", post);
     if (response.status === 201) {
-      console.log('post shared');
+      console.log("post shared");
     } else {
       console.log(response.data);
       console.error("Error while sharing a post");

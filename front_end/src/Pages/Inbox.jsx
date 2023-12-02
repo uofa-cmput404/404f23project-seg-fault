@@ -62,8 +62,8 @@ function Inbox() {
             return (
               <InboxElement
                 key={index}
-                username={element.actor.displayName}
-                profilePic={element.actor.profileImage}
+                username={element.object.displayName}
+                profilePic={element.object.profileImage}
                 text="Hey let's be friends!"
                 visibility={element.type}
                 author={element.object}
