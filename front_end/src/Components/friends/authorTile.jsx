@@ -40,8 +40,13 @@ function AuthorTile(props) {
     props.authorAction(props.id);
   };
 
+  const myStyle = {
+    width: props.status === "share" ? '30vw' : '60vw',
+    // Add other style properties as needed
+  };
+
   return (
-    <Card className="card" style={{ width: "60vw" }}>
+    <Card className="card" style={myStyle}>
       <CardHeader
         avatar={
           <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />

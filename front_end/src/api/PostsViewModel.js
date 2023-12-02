@@ -144,7 +144,7 @@ const usePostsViewModel = () => {
       }
     );
     if (response.status === 200) {
-      return response.data.items;
+      return response.data;
     } else {
       console.error("Error fetching followers");
     }
@@ -178,13 +178,10 @@ const usePostsViewModel = () => {
       },
     });
 
-    // send the post to inboxes
-    window.location.reload();
+    // send the post to inboxes;
     if (response.status === 201) {
-
-      const author_response = await fetchProfileData(state.user.id, authToken);
-      console.log("Post created");
       if (visibility === "private") {
+        const author_response = await fetchProfileData(state.user.id, authToken);
         // send to the recipient's inbox
         const inbox_payload = {
           ...response.data.data,
@@ -202,11 +199,11 @@ const usePostsViewModel = () => {
           },
         });
         console.log("Sent to recipient's inbox.");
-      } else {
+      } else if (visibility === "friends") {
           console.log("Post created");
           const followers = await fetchFollowers();
           for (let follower of followers) {
-            const followerUrl = follower.follower.url;
+            const followerUrl = follower.items[0].url;
             const postUrl = response.data.data.url;
             const post_res = await axios.get(postUrl,
               {

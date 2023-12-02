@@ -33,7 +33,7 @@ function Inbox() {
         </Button>
         {inbox.map((element, index) => {
           if (element.type === "post") {
-            return <Post post={element} width={600} padding={1} margin={1} />;
+            return <Post post={element} width="60vw" padding={1} margin={1} />;
           }
           if (element.type === "comment") {
             return (

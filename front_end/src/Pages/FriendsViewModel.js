@@ -80,15 +80,15 @@ const useFriendsViewModel = () => {
     };
     const segments = inboxItem.object.id.split("/");
     const id = segments[segments.length - 1];
-
-    const response = await axios.put(`${userId}/followers/${id}/`, payload, {
-      headers: {
-        Authorization: `Token ${authToken}`,
-      },
-    });
-    if (response.status === 200) {
-      console.log("accepted follow request");
-    } else {
+    try {
+      await axios.put(`${userId}/followers/${id}/`, payload, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      followAuthor(inboxItem.object.id);
+    }
+    catch{
       console.error("Error accepting follow request");
     }
   };

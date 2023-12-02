@@ -37,13 +37,17 @@ const useProfileViewModel = () => {
           });
 
           if (response.status === 200) {
-            const data = response.data.items.reverse();
+            var data = response.data.items.reverse();
+
+            if (baseUrl !== state.user.id){
+              data = data.filter((post) => post.visibility.toLowerCase() === "public");
+            }
             setPosts(data);
           } else {
             console.error("Error fetching posts");
           }
-        } catch {
-          console.log("cant fetch posts");
+        } catch (e){
+          console.log("cant fetch posts", e);
         }
       } else if (url.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
         const creds = "segfault:django100";
