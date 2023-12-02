@@ -12,10 +12,27 @@ const useFriendsViewModel = () => {
   const [followers, setFollowers] = useState([]);
   const [following, setFollowing] = useState([]);
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const nextPage = () => {
+    setCurrentPage((page) => Math.min(page + 1, 10));
+    fetchAuthors();
+  };
+  const previousPage = () => {
+    setCurrentPage((page) => Math.max(page - 1, 1));
+    fetchAuthors();
+  };
+
   const fetchAuthors = useCallback(async () => {
     const response = await axios.get(
       `${process.env.REACT_APP_API_URL}/authors/`,
       {
+        /*
+        params: {
+          page: currentPage,
+          size: 10,
+        },
+        */
         headers: {
           Authorization: `Token ${authToken}`,
         },
@@ -40,29 +57,28 @@ const useFriendsViewModel = () => {
       }
     );
     if (response.status === 200) {
-      setFollowers(response.data);
+      setFollowers(response.data.items);
     } else {
       console.error("Error fetching followers");
     }
   }, [userId, authToken]);
 
   const fetchFollowing = useCallback(async () => {
-    // const parts = userId.split("/");
-    // const userGuid = parts[parts.length - 1];
-    // const response = await axios.get(
-    //   `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`,
-    //   {
-    //     headers: {
-    //       Authorization: `Token ${authToken}`,
-    //     },
-    //   }
-    // );
-    // if (response.status === 200) {
-    //   setFollowing(response.data.items);
-    // } else {
-    //   console.error("Error fetching following");
-    // }
-    setFollowing([]);
+    const parts = userId.split("/");
+    const userGuid = parts[parts.length - 1];
+    const response = await axios.get(
+      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/following/`,
+      {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      }
+    );
+    if (response.status === 200) {
+      setFollowing(response.data.items);
+    } else {
+      console.error("Error fetching following");
+    }
   }, [userId, authToken]);
 
   useEffect(() => {
@@ -75,57 +91,27 @@ const useFriendsViewModel = () => {
     setSelectedView(view);
   };
 
-  const acceptFollowRequest = async (inboxItem) => {
-    console.log(inboxItem);
-    const payload = {
-        "object": inboxItem.object
-    }
-    const segments = inboxItem.object.id.split('/');
-    const id = segments[segments.length - 1];
-
-    const response = await axios.put(
-      `${userId}/followers/${id}/`,
-      payload,
-      {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      }
-    );
-    if (response.status === 200) {
-      console.log("accepted follow request");
-    } else {
-      console.error("Error accepting follow request");
-    }
-  }
-
   const followAuthor = async (authorId) => {
     try {
-        const actor = await axios.get(
-          authorId,
-          {
-            headers: {
-              Authorization: `Token ${authToken}`,
-            },
-          }
-        );
-        const object = await axios.get(
-          userId,
-          {
-            headers: {
-              Authorization: `Token ${authToken}`,
-            },
-          }
-        );
-        const payload = {
-          "type": "Follow",      
-          "summary":"Greg wants to follow Lara",
-          "actor":actor.data,
-          "object": object.data
-      }
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/authors/follow/`,
+        { user_id: userId, author_id_to_follow: authorId },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+
+      // if they are not friends, send to inbox
+      if (!areFriends(authorId)) {
         const response_request = await axios.post(
-          `${authorId}/inbox/`,
-          payload,
+          `${process.env.REACT_APP_API_URL}/follow-request/`,
+          {
+            actor: { id: getIdFromUrl(userId) },
+            object: { id: getIdFromUrl(authorId) },
+            summary: "baba",
+          },
           {
             headers: {
               Authorization: `Token ${authToken}`,
@@ -133,20 +119,19 @@ const useFriendsViewModel = () => {
           }
         );
         console.log(response_request);
-
-      if (response_request.status === 201) {
-        console.log("sent to inbox")
-        //window.location.reload();
       }
-    }
-    catch(e) {
+
+      if (response.status === 200) {
+        window.location.reload();
+      }
+    } catch (e) {
       console.error("Error following author");
     }
-  }
+  };
 
   function getIdFromUrl(url) {
     // Split the URL by '/'
-    const urlParts = url.split('/');
+    const urlParts = url.split("/");
 
     // Get the last part of the URL
     return urlParts[urlParts.length - 1];
@@ -171,25 +156,26 @@ const useFriendsViewModel = () => {
   };
 
   const filteredFriends = authors.filter((author) => {
-    // const isFollower = followers.find(
-    //   (follower) => follower.follower.id === author.id
-    // );
-    // const isFollowing = following.find(
-    //   (follow) => follow.user.id === author.id
+    const isFollower = followers.find(
+      (follower) => follower.follower.id === author.id
+    );
+    const isFollowing = following.find(
+      (follow) => follow.user.id === author.id
+    );
 
-    // return isFollower && isFollowing;
+    return isFollower && isFollowing;
   });
 
   const areFriends = (author) => {
-    // const isFollower = followers.find(
-    //   (follower) => follower.follower.id === author.id
-    // );
-    // const isFollowing = following.find(
-    //   (follow) => follow.user.id === author.id
-    // );
+    const isFollower = followers.find(
+      (follower) => follower.follower.id === author.id
+    );
+    const isFollowing = following.find(
+      (follow) => follow.user.id === author.id
+    );
 
-    // return isFollower && isFollowing;
-  }
+    return isFollower && isFollowing;
+  };
 
   const filteredAuthors = authors.filter((author) => {
     const isFollowing = following.find(
@@ -202,6 +188,9 @@ const useFriendsViewModel = () => {
   return {
     selectedView,
     changeView,
+    currentPage,
+    nextPage,
+    previousPage,
     authors,
     followers,
     following,
@@ -210,7 +199,6 @@ const useFriendsViewModel = () => {
     followAuthor,
     unfollowAuthor,
     areFriends,
-    acceptFollowRequest
   };
 };
 

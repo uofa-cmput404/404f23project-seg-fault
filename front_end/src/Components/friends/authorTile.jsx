@@ -31,7 +31,7 @@ function AuthorTile(props) {
   };
 
   return (
-    <Card className="card">
+    <Card className="card" style={{ width: "60vw" }}>
       <CardHeader
         avatar={
           <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />
