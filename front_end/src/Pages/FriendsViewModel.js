@@ -61,9 +61,9 @@ const useFriendsViewModel = () => {
           },
         }
       );
-      console.log(response.data);
+      console.log(response.data[0].items);
       if (response.status === 200) {
-        setFollowers(response.data);
+        setFollowers(response.data[0].items);
       } else {
         console.error("Error fetching followers");
       }
@@ -84,17 +84,18 @@ const useFriendsViewModel = () => {
   const acceptFollowRequest = async (inboxItem) => {
     console.log(inboxItem);
     const payload = {
-      object: inboxItem.object,
+      object: inboxItem.actor,
     };
-    const segments = inboxItem.object.id.split("/");
-    const id = segments[segments.length - 1];
+    const segments = inboxItem.actor.id.split("/");
+    let id = segments[segments.length - 1];
+    if(id === "") id = segments[segments.length - 2]
     try {
       await axios.put(`${userId}/followers/${id}/`, payload, {
         headers: {
           Authorization: `Token ${authToken}`,
         },
       });
-      followAuthor(inboxItem.object.id);
+      followAuthor(inboxItem.actor.id);
     }
     catch{
       console.error("Error accepting follow request");
@@ -102,14 +103,14 @@ const useFriendsViewModel = () => {
   };
 
   const followAuthor = async (authorId) => {
+    const actor = await axios.get(userId, {
+      headers: {
+        Authorization: `Token ${authToken}`,
+      },
+    });
     try {
-      const object = await axios.get(userId, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
       if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
-        const actor = await axios.get(authorId, {
+        const object = await axios.get(authorId, {
           headers: {
             Authorization: `Token ${authToken}`,
           },
@@ -135,7 +136,7 @@ const useFriendsViewModel = () => {
         const creds = 'sean:admin';
         const base64Credentials = btoa(creds);
         console.log(`${authorId}/inbox/`)
-        const actor = await axios.get(authorId, {
+        const object = await axios.get(authorId, {
           headers: {
             Authorization:  `Basic ${base64Credentials}`,
           },
@@ -186,13 +187,13 @@ const useFriendsViewModel = () => {
     }
   };
 
-  const filteredAuthors = authors.filter((author) => {
-    const isFriend = followers.find(
-      (follow) => follow.items[0].id === author.id
-    );
+  // const filteredAuthors = authors.filter((author) => {
+  //   const isFriend = followers.find(
+  //     (follow) => follow.items[0].id === author.id
+  //   );
 
-    return !isFriend;
-  });
+  //   return !isFriend;
+  // });
 
   return {
     selectedView,
@@ -205,7 +206,8 @@ const useFriendsViewModel = () => {
     unfollowAuthor,
     acceptFollowRequest,
     authorStatus,
-    filteredAuthors,
+    authors
+    // filteredAuthors,
   };
 };
 
