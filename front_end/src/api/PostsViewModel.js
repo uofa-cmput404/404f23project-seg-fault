@@ -27,7 +27,6 @@ const usePostsViewModel = () => {
 
       if (users_response.status === 200) {
         return users_response.data.items;
-
       } else {
         console.error(
           `Couldn't fetch authors. Status code: ${users_response.status}`
@@ -66,11 +65,9 @@ const usePostsViewModel = () => {
         // if (posts_response.status === 200) {
         //     const team1_posts = posts_response.data.results;
         //     const posts = []
-
         //     for (const team1_post of team1_posts){
         //         posts.push(convertTeamOnePostToVibelyPost(team1_post));
         //     }
-
         //     return posts;
         // } else {
         //     console.error(
@@ -78,28 +75,26 @@ const usePostsViewModel = () => {
         //     );
         //     return [];
         // }
-    } else if (author.id.startsWith(process.env.REACT_APP_TEAM_TWO_URL)){
-      // get team two posts
-      const creds = 'segfault:django100';
-      const base64Credentials = btoa(creds);
-      const posts_response = await axios.get(`${author.id}/posts/`,
-          {
-              headers: {
-                  'Authorization': `Basic ${base64Credentials}`,
-              },
-          }
-        );
-      if (posts_response.status === 200) {
+      } else if (author.id.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+        // get team two posts
+        const creds = "Segfault:Segfault1!";
+        const base64Credentials = btoa(creds);
+        const posts_response = await axios.get(`${author.id}/posts/`, {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        });
+        if (posts_response.status === 200) {
           return posts_response.data.data;
-      } else {
+        } else {
           console.error(
-              `Couldn't fetch posts. Status code: ${posts_response.status}`
+            `Couldn't fetch posts. Status code: ${posts_response.status}`
           );
           return [];
+        }
       }
-    }
-    return [];
-  };
+      return [];
+    };
 
     const filterPosts = (allPosts) => {
       // Helper method to filter posts based on visibility, friends posts or your own posts
@@ -170,8 +165,8 @@ const usePostsViewModel = () => {
       categories: "none",
       recipient,
     };
-    
-    // create the post 
+
+    // create the post
     const response = await axios.post(`${userId}/posts/`, body, {
       headers: {
         Authorization: `Token ${authToken}`,
@@ -181,7 +176,10 @@ const usePostsViewModel = () => {
     // send the post to inboxes;
     if (response.status === 201) {
       if (visibility === "private") {
-        const author_response = await fetchProfileData(state.user.id, authToken);
+        const author_response = await fetchProfileData(
+          state.user.id,
+          authToken
+        );
         // send to the recipient's inbox
         const inbox_payload = {
           ...response.data.data,
@@ -200,24 +198,22 @@ const usePostsViewModel = () => {
         });
         console.log("Sent to recipient's inbox.");
       } else if (visibility === "friends") {
-          console.log("Post created");
-          const followers = await fetchFollowers();
-          for (let follower of followers) {
-            const followerUrl = follower.items[0].url;
-            const postUrl = response.data.data.url;
-            const post_res = await axios.get(postUrl,
-              {
-                headers: {
-                  Authorization: `Token ${authToken}`,
-                },
-              }
-            );
-            await axios.post(`${followerUrl}/inbox/`, post_res.data, {
-              headers: {
-                Authorization: `Token ${authToken}`,
-              },
-            });
-          }
+        console.log("Post created");
+        const followers = await fetchFollowers();
+        for (let follower of followers) {
+          const followerUrl = follower.items[0].url;
+          const postUrl = response.data.data.url;
+          const post_res = await axios.get(postUrl, {
+            headers: {
+              Authorization: `Token ${authToken}`,
+            },
+          });
+          await axios.post(`${followerUrl}/inbox/`, post_res.data, {
+            headers: {
+              Authorization: `Token ${authToken}`,
+            },
+          });
+        }
       }
     } else {
       console.log(`not working ${response.status}`);

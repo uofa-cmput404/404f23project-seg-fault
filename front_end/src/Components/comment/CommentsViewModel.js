@@ -43,7 +43,7 @@ export function useCommentsViewModel(postId, userId, displayName) {
       }
     } else if (userId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
       // Get comments for team 2
-      const creds = "segfault:django100";
+      const creds = "Segfault:Segfault1!";
       const base64Credentials = btoa(creds);
 
       const response = await axios.get(`${postId}/comments`, {
@@ -139,7 +139,7 @@ export function useCommentsViewModel(postId, userId, displayName) {
       }
     } else if (userId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
       // New comment for team 2 post
-      const creds = "segfault:django100";
+      const creds = "Segfault:Segfault1!";
       const base64Credentials = btoa(creds);
 
       const response = await axios.post(
@@ -156,7 +156,7 @@ export function useCommentsViewModel(postId, userId, displayName) {
         }
       );
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         fetchComments();
         setNewComment("");
       } else {
