@@ -22,24 +22,28 @@ def transform_author_data(author):
     author_displayName = author.get('username', '')
     author_github = author.get('github', '')
     author_profileImage = author.get('image', '')
-    
+
     return {
         "type": "author",
         "id": author_id,
         "host": author_host,
         "displayName": author_displayName,
-        "url": author_url, 
+        "url": author_url,
         "github": author_github,
-        "profileImage": author_profileImage 
+        "profileImage": author_profileImage
     }
 # our app's default author serializer. we should first assume that authors objects we get follow the specs
+
+
 class DefaultAuthorSerializer(serializers.Serializer):
     id = serializers.CharField()  # ID should always be a non-null, non-blank string
     host = serializers.CharField(allow_blank=True)
     displayName = serializers.CharField(allow_blank=True)
     url = serializers.CharField(allow_blank=True)
-    github = serializers.CharField(allow_blank=True, allow_null=True)  # GitHub can be null
-    profileImage = serializers.CharField(allow_blank=True, allow_null=True)  # Profile image can be null
+    github = serializers.CharField(
+        allow_blank=True, allow_null=True)  # GitHub can be null
+    profileImage = serializers.CharField(
+        allow_blank=True, allow_null=True)  # Profile image can be null
 
 
 # given url, makes get request and returns the json
@@ -57,7 +61,9 @@ def fetch_data_from_url(url, creds):
 
 # first try using our serializer (proper specs, like if we were connecting with a clone of our app it should work)
 # if it doesn't work then use the custom transformation for team 1
-#TODO: eventually make it so so it tries default, then team 1, then team 2 ...
+# TODO: eventually make it so so it tries default, then team 1, then team 2 ...
+
+
 def process_author(item):
     try:
         serializer = DefaultAuthorSerializer(data=item)
@@ -67,11 +73,13 @@ def process_author(item):
         return transform_author_data(item)
     return None
 
-#TODO: should have a model for nodes we are connecting to. iterate over the nodes and do this for every url + /authors/
-#TODO: each node object should have url and credentials
+
+# TODO: should have a model for nodes we are connecting to. iterate over the nodes and do this for every url + /authors/
+# TODO: each node object should have url and credentials
 node_credentials = {
     "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/": ("vibely", "string"),
-    "https://silk-cmput404-project-21e5c91727a7.herokuapp.com/api/authors/": ("segfault", "django100")
+    "https://silk-cmput404-project-21e5c91727a7.herokuapp.com/api/authors/": ("Segfault", "Segfault1!"),
+    "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/authors/": ("sean", "admin")
 }
 
 
@@ -79,7 +87,7 @@ def get_external_authors(request, auth_type):
     # if request from remote then only get our authors (basic auth)
     if auth_type == "basic":
         return []
-    
+
     # if request is from frontend then return both (token auth)
 
     all_authors = []
@@ -95,7 +103,6 @@ def get_external_authors(request, auth_type):
                 items_key = 'results'
             elif 'data' in data:
                 items_key = 'data'
-
 
             for item in data.get(items_key, []):
                 author_data = process_author(item)
