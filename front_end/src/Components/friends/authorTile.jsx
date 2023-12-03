@@ -52,13 +52,25 @@ function AuthorTile(props) {
           <Avatar src={props.profilePic} alt="profile_pic" className="avatar" />
         }
         title={
-          <Link
-            component={RouterLink}
-            to={`/profile/${extractIdFromUrl(props.id)}`}
-            style={{ textDecoration: "none" }}
-          >
-            {props.username}
-          </Link>
+          <div style={{display: 'flex', gap: '10px'}}>
+            <Link
+              component={RouterLink}
+              to={`/profile/${extractIdFromUrl(props.id)}`}
+              style={{ textDecoration: "none" }}
+            >
+              {props.username}
+            </Link>
+            {!props.id.startsWith(process.env.REACT_APP_API_URL) &&
+                <Chip
+                      label="remote"
+                      size="small"
+                      color="warning"
+                      className="postVisibility"
+                      sx={{ paddingRight: 2, width: "6rem" }}
+                />
+            }
+          </div>
+          
         }
         action={
           <>
@@ -70,14 +82,6 @@ function AuthorTile(props) {
                 style={{ backgroundColor: chipColor, color: "#fff" }}
               />
             </ButtonBase>
-            {props.remoteAuthor && (
-              <Chip
-                label="Remote"
-                size="small"
-                sx={{ paddingRight: 2, marginTop: 1.5 }}
-                style={{ backgroundColor: "#ffad3d", color: "#fff" }}
-              />
-            )}
           </>
         }
       />
