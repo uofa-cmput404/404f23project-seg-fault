@@ -31,8 +31,9 @@ const useSignInViewModel = (navigate) => {
         username: "",
         password: "",
       });
-
-      navigate("/home");
+      const segments = response.data.author.id.split("/");
+      const id = segments[segments.length - 1];
+      navigate(`/profile/${id}`);
     } else {
       console.error("Login failed");
     }

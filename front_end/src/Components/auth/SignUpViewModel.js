@@ -33,7 +33,8 @@ const useSignUpViewModel = (navigate) => {
         password: "",
       });
 
-      navigate("/home");
+      dispatch({ type: "RESET_APPSTATE" });
+      navigate('/signin')
     } else {
       console.error("Registration failed");
     }

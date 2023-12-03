@@ -32,10 +32,10 @@ function Inbox() {
           Clear X
         </Button>
         {inbox.map((element, index) => {
-          if (element.type === "post") {
+          if (element.type.toLowerCase() === "post") {
             return <Post post={element} width="60vw" padding={1} margin={1} />;
           }
-          if (element.type === "comment") {
+          if (element.type.toLowerCase() === "comment") {
             return (
               <InboxElement
                 key={index}
@@ -46,7 +46,7 @@ function Inbox() {
               />
             );
           }
-          if (element.type === "Like") {
+          if (element.type.toLowerCase() === "like") {
             return (
               <InboxElement
                 key={index}
@@ -58,7 +58,7 @@ function Inbox() {
               />
             );
           }
-          if (element.type === "Follow") {
+          if (element.type.toLowerCase() === "Follow") {
             return (
               <InboxElement
                 key={index}

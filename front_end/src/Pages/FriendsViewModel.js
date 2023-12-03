@@ -27,39 +27,47 @@ const useFriendsViewModel = () => {
   };
 
   const fetchAuthors = useCallback(async () => {
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/authors/`,
-      {
-        headers: {
-          params: {
-            page: currentPage,
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/authors/`,
+        {
+          headers: {
+            params: {
+              page: currentPage,
+            },
+            Authorization: `Token ${authToken}`,
           },
-          Authorization: `Token ${authToken}`,
-        },
+        }
+      );
+      if (response.status === 200) {
+        setAuthors(response.data.items);
+      } else {
+        console.error("Error fetching authors");
       }
-    );
-    if (response.status === 200) {
-      setAuthors(response.data.items);
-    } else {
+    } catch (e) {
       console.error("Error fetching authors");
     }
   }, [authToken, currentPage]);
 
   const fetchFollowers = useCallback(async () => {
-    const parts = userId.split("/");
-    const userGuid = parts[parts.length - 1];
-    const response = await axios.get(
-      `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`,
-      {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
+    try{
+      const parts = userId.split("/");
+      const userGuid = parts[parts.length - 1];
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/authors/${userGuid}/followers/`,
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.status === 200) {
+        setFollowers(response.data);
+      } else {
+        console.error("Error fetching followers");
       }
-    );
-    console.log(response.data);
-    if (response.status === 200) {
-      setFollowers(response.data);
-    } else {
+    } catch(e){
       console.error("Error fetching followers");
     }
   }, [userId, authToken]);
@@ -129,20 +137,23 @@ const useFriendsViewModel = () => {
 
   const unfollowAuthor = async (authorId) => {
     // Are we supposed to remove this?
-
-    const response = await axios.post(
-      `${process.env.REACT_APP_API_URL}/authors/unfollow/`,
-      { user_id: userId, author_id_to_unfollow: authorId },
-      {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/authors/unfollow/`,
+        { user_id: userId, author_id_to_unfollow: authorId },
+        {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        window.location.reload();
+      } else {
+        console.error("Error unfollowing author");
       }
-    );
-
-    if (response.status === 200) {
-      window.location.reload();
-    } else {
+    } catch (e) {
       console.error("Error unfollowing author");
     }
   };

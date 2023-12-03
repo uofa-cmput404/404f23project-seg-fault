@@ -53,31 +53,47 @@ const usePostsViewModel = () => {
         }
       } else if (author.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
         // // get team one posts
-        // const creds = 'vibely:string';
-        // const base64Credentials = btoa(creds);
-        // const posts_response = await axios.get(`${author.url}/posts/`,
-        //     {
-        //         headers: {
-        //             'Authorization': `Basic ${base64Credentials}`,
-        //         },
-        //     }
-        //   );
-        // if (posts_response.status === 200) {
-        //     const team1_posts = posts_response.data.results;
-        //     const posts = []
-        //     for (const team1_post of team1_posts){
-        //         posts.push(convertTeamOnePostToVibelyPost(team1_post));
-        //     }
-        //     return posts;
-        // } else {
-        //     console.error(
-        //         `Couldn't fetch posts. Status code: ${posts_response.status}`
-        //     );
-        //     return [];
-        // }
+        const creds = 'vibely:string';
+        const base64Credentials = btoa(creds);
+        const posts_response = await axios.get(`${author.url}posts/`,
+            {
+                headers: {
+                    'Authorization': `Basic ${base64Credentials}`,
+                },
+            }
+          );
+        if (posts_response.status === 200) {
+            const team1_posts = posts_response.data.items;
+            const posts = []
+            for (const team1_post of team1_posts){
+                posts.push(convertTeamOnePostToVibelyPost(team1_post));
+            }
+            return posts;
+        } else {
+            console.error(
+                `Couldn't fetch posts. Status code: ${posts_response.status}`
+            );
+            return [];
+        }
       } else if (author.id.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
         // get team two posts
         const creds = "Segfault:Segfault1!";
+        const base64Credentials = btoa(creds);
+        const posts_response = await axios.get(`${author.id}/posts/`, {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        });
+        if (posts_response.status === 200) {
+          return posts_response.data.data;
+        } else {
+          console.error(
+            `Couldn't fetch posts. Status code: ${posts_response.status}`
+          );
+          return [];
+        }
+      } else if (author.id.startsWith(process.env.REACT_APP_TEAM_THREE_URL)) {
+        const creds = "sean:admin";
         const base64Credentials = btoa(creds);
         const posts_response = await axios.get(`${author.id}/posts/`, {
           headers: {
@@ -117,6 +133,8 @@ const usePostsViewModel = () => {
       const allPosts = (
         await Promise.all(authors.map((author) => fetchPostsByAuthor(author)))
       ).flat();
+
+      console.log(allPosts)
 
       const filteredPosts = filterPosts(allPosts);
 
