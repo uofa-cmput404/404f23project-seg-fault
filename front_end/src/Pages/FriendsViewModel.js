@@ -103,35 +103,63 @@ const useFriendsViewModel = () => {
 
   const followAuthor = async (authorId) => {
     try {
-      const actor = await axios.get(authorId, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
       const object = await axios.get(userId, {
         headers: {
           Authorization: `Token ${authToken}`,
         },
       });
-      const payload = {
-        type: "Follow",
-        summary: "Greg wants to follow Lara",
-        actor: actor.data,
-        object: object.data,
-      };
-      const response_request = await axios.post(`${authorId}/inbox/`, payload, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
-      console.log(response_request);
-
-      if (response_request.status === 201) {
-        console.log("Sent to inbox");
-        setAuthorStatus({ status: "friend", id: authorId });
+      if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
+        const actor = await axios.get(authorId, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        });
+        const payload = {
+          type: "Follow",
+          summary: "Greg wants to follow Lara",
+          actor: actor.data,
+          object: object.data,
+        };
+        const response_request = await axios.post(`${authorId}/inbox/`, payload, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        });
+        console.log(response_request);
+  
+        if (response_request.status === 201) {
+          console.log("Sent to inbox");
+          setAuthorStatus({ status: "friend", id: authorId });
+        }
+      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_THREE_URL)) {
+        const creds = 'sean:admin';
+        const base64Credentials = btoa(creds);
+        console.log(`${authorId}/inbox/`)
+        const actor = await axios.get(authorId, {
+          headers: {
+            Authorization:  `Basic ${base64Credentials}`,
+          },
+        });
+        const payload = {
+          type: "Follow",
+          summary: "Greg wants to follow Lara",
+          actor: actor.data,
+          object: object.data,
+        };
+        const response_request = await axios.post(`${authorId}/inbox/`, payload,
+            {
+                headers: {
+                    'Authorization': `Basic ${base64Credentials}`,
+                },
+            }
+          );
+        if (response_request.status === 201) {
+          console.log("Sent to inbox");
+          setAuthorStatus({ status: "friend", id: authorId });
+        }
       }
     } catch (e) {
-      console.error("Error following author");
+      console.error("Error following author", e);
     }
   };
 
