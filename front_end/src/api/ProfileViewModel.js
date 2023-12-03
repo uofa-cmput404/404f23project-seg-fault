@@ -37,7 +37,7 @@ const useProfileViewModel = () => {
           });
 
           if (response.status === 200) {
-            var data = response.data.items.reverse();
+            var data = response.data.items;
 
             if (baseUrl !== state.user.id) {
               data = data.filter(

@@ -58,7 +58,7 @@ function Inbox() {
               />
             );
           }
-          if (element.type.toLowerCase() === "Follow") {
+          if (element.type.toLowerCase() === "follow") {
             return (
               <InboxElement
                 key={index}

@@ -27,16 +27,18 @@ const useShareViewModel = () => {
   }, [fetchFollowers]);
 
   const sharePost = async (post, authorId) => {
-    const response = await axios.post(authorId + "/inbox/", post, {
-      headers: {
-        Authorization: `Token ${authToken}`,
-      },
-    });
-    if (response.status === 201) {
-      console.log("post shared");
-    } else {
-      console.log(response.data);
-      console.error("Error while sharing a post");
+    if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
+      const response = await axios.post(authorId + "/inbox/", post, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
+      if (response.status === 201) {
+        console.log("post shared");
+      } else {
+        console.log(response.data);
+        console.error("Error while sharing a post");
+      }
     }
   };
 
