@@ -26,36 +26,47 @@ export function useCommentsViewModel(postId, userId, displayName) {
         console.error("Error fetching comments");
       }
     } else if (userId.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
-      // Get comments for team 1
-      const creds = "vibely:string";
-      const base64Credentials = btoa(creds);
+      try {
+        // Get comments for team 1
+        const creds = "vibely:string";
+        const base64Credentials = btoa(creds);
 
-      const response = await axios.get(`${postId}/comments/`, {
-        headers: {
-          Authorization: `Basic ${base64Credentials}`,
-        },
-      });
+        const urls = postId.split("https://");
+        const actualURL = urls[urls.length - 1];
 
-      if (response.status === 200) {
-        setComments(response.data.results);
-      } else {
-        console.error("Error fetching comments");
+        const response = await axios.get(`https://${actualURL}comments/`, {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        });
+
+        if (response.status === 200) {
+          setComments(response.data.items);
+        } else {
+          console.error("Error fetching comments");
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
       }
     } else if (userId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
-      // Get comments for team 2
-      const creds = "Segfault:Segfault1!";
-      const base64Credentials = btoa(creds);
+      try {
+        // Get comments for team 2
+        const creds = "Segfault:Segfault1!";
+        const base64Credentials = btoa(creds);
 
-      const response = await axios.get(`${postId}/comments`, {
-        headers: {
-          Authorization: `Basic ${base64Credentials}`,
-        },
-      });
+        const response = await axios.get(`${postId}/comments`, {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        });
 
-      if (response.status === 200) {
-        setComments(response.data.comments);
-      } else {
-        console.error("Error fetching comments");
+        if (response.status === 200) {
+          setComments(response.data.comments);
+        } else {
+          console.error("Error fetching comments");
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
       }
     }
   }, [postId, userId, authToken]);
@@ -114,53 +125,35 @@ export function useCommentsViewModel(postId, userId, displayName) {
         console.log("Error dispatching comment notification");
       }
     } else if (userId.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
-      // New commnet for team 1 post
-      // TODO: Group one is still working on inbox and comments
-      const creds = "vibely:string";
-      const base64Credentials = btoa(creds);
+      try {
+        // New comment for team 1 post
+        const creds = "vibely:string";
+        const base64Credentials = btoa(creds);
 
-      const response = await axios.post(
-        `${userId}/inbox/`,
-        {
-          type: "comment",
-          comment: newComment,
-        },
-        {
-          headers: {
-            Authorization: `Basic ${base64Credentials}`,
+        const urls = postId.split("https://");
+        const actualURL = urls[urls.length - 1];
+
+        const response = await axios.post(
+          `https://${actualURL}comments/`,
+          {
+            contentType: "comment",
+            comment: newComment,
           },
-        }
-      );
-      if (response.status === 201) {
-        fetchComments();
-        setNewComment("");
-      } else {
-        console.log("Error dispatching comment notification");
-      }
-    } else if (userId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
-      // New comment for team 2 post
-      const creds = "Segfault:Segfault1!";
-      const base64Credentials = btoa(creds);
+          {
+            headers: {
+              Authorization: `Basic ${base64Credentials}`,
+            },
+          }
+        );
 
-      const response = await axios.post(
-        `${postId}/comments`,
-        {
-          comment: newComment,
-          postId: postId,
-          authorId: userId,
-        },
-        {
-          headers: {
-            Authorization: `Basic ${base64Credentials}`,
-          },
+        if (response.status === 201) {
+          fetchComments();
+          setNewComment("");
+        } else {
+          console.log("Error dispatching comment notification");
         }
-      );
-
-      if (response.status === 200) {
-        fetchComments();
-        setNewComment("");
-      } else {
-        console.log("Error dispatching comment notification");
+      } catch (error) {
+        console.error("An error occurred while posting the comment:", error);
       }
     }
   }, [userId, postId, newComment, authToken, fetchComments, inboxComment]);

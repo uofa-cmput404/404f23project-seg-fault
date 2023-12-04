@@ -21,17 +21,38 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
       });
 
       if (response.status === 200) {
-        const liked = response.data.items.some(
-          (like) => like.author.id === userId
-        );
-        setLiked(liked);
         setLikes(response.data.items);
       } else {
         console.error("Error fetching likes");
       }
-    }
+    } else if (props.post.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+      try {
+        // Get likes for team 1
+        const creds = "vibely:string";
+        const base64Credentials = btoa(creds);
 
-    // TODO: team 1, team 2 and team 3 connection
+        const urls = props.post.id.split("https://");
+        const actualURL = urls[urls.length - 1];
+
+        const response = await axios.get(`https://${actualURL}likes/`, {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        });
+
+        if (response.status === 200) {
+          const liked = response.data.items.some(
+            (like) => like.author.id === userId
+          );
+          setLiked(liked);
+          setLikes(response.data.items);
+        } else {
+          console.error("Error fetching likes");
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      }
+    }
   }, [props.post.id, userId, authToken]);
 
   const likePost = useCallback(async () => {
@@ -62,12 +83,56 @@ function usePostViewModel(props, userId, markdownContent, setMarkdownContent) {
 
       if (response.status === 201) {
         fetchLikes();
+        setLiked(true);
       } else {
         console.error("Error liking post");
       }
+    } else if (props.post.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+      try {
+        // Get likes for team 1
+        const creds = "vibely:string";
+        const base64Credentials = btoa(creds);
+
+        const urls = props.post.author.id.split("https://");
+        const actualURL = urls[urls.length - 1];
+
+        const user = await axios.get(userId + "/", {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        });
+
+        const payload = {
+          context: "https://www.w3.org/ns/activitystreams",
+          summary: `${user.data.displayName} Likes your post`,
+          type: "Like",
+          author: user.data,
+          object: props.post.id,
+        };
+
+        const response = await axios.post(
+          `https://${actualURL}inbox/`,
+          {
+            items: payload,
+          },
+          {
+            headers: {
+              Authorization: `Basic ${base64Credentials}`,
+            },
+          }
+        );
+
+        if (response.status === 201) {
+          setLiked(liked);
+          fetchLikes();
+        } else {
+          console.error("Error fetching likes");
+        }
+      } catch (error) {
+        console.error("An error occurred:", error);
+      }
     }
 
-    // TODO: team 1, team 2 and team 3 connection
   }, [props.post.id, props.post.author.id, userId, fetchLikes, authToken]);
 
   useEffect(() => {
