@@ -94,7 +94,6 @@ const useFriendsViewModel = () => {
           Authorization: `Token ${authToken}`,
         },
       });
-      followAuthor(inboxItem.object.id);
     } catch {
       console.error("Error accepting follow request");
     }
