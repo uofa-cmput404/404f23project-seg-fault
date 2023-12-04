@@ -78,20 +78,25 @@ const usePostsViewModel = () => {
           return [];
         }
       } else if (author.id.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
-        // get team two posts
-        const creds = "Segfault:Segfault1!";
-        const base64Credentials = btoa(creds);
-        const posts_response = await axios.get(`${author.id}/posts/`, {
-          headers: {
-            Authorization: `Basic ${base64Credentials}`,
-          },
-        });
-        if (posts_response.status === 200) {
-          return posts_response.data.data;
-        } else {
-          console.error(
-            `Couldn't fetch posts. Status code: ${posts_response.status}`
-          );
+        try {
+          // get team two posts
+          const creds = "Segfault:Segfault1!";
+          const base64Credentials = btoa(creds);
+          const posts_response = await axios.get(`${author.id}/posts/`, {
+            headers: {
+              Authorization: `Basic ${base64Credentials}`,
+            },
+          });
+          if (posts_response.status === 200) {
+            return posts_response.data.data;
+          } else {
+            console.error(
+              `Couldn't fetch posts. Status code: ${posts_response.status}`
+            );
+            return [];
+          }
+        } catch (error) {
+          console.error("An error occurred:", error);
           return [];
         }
       }
