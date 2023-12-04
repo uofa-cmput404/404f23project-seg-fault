@@ -15,8 +15,9 @@ const useShareViewModel = () => {
         Authorization: `Token ${authToken}`,
       },
     });
+
     if (response.status === 200) {
-      setFollowers(response.data);
+      setFollowers(response.data[0].items);
     } else {
       console.error("Error fetching followers");
     }
@@ -27,18 +28,81 @@ const useShareViewModel = () => {
   }, [fetchFollowers]);
 
   const sharePost = async (post, authorId) => {
-    if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
-      const response = await axios.post(authorId + "/inbox/", post, {
-        headers: {
-          Authorization: `Token ${authToken}`,
-        },
-      });
-      if (response.status === 201) {
-        console.log("post shared");
-      } else {
-        console.log(response.data);
-        console.error("Error while sharing a post");
+    try {
+      if (authorId.startsWith(process.env.REACT_APP_API_URL)) {
+        const response = await axios.post(authorId + "/inbox/", post, {
+          headers: {
+            Authorization: `Token ${authToken}`,
+          },
+        });
+        if (response.status === 201) {
+          console.log("post shared");
+        } else {
+          console.log(response.data);
+          console.error("Error while sharing a post");
+        }
+      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_THREE_URL)) {
+        const creds = 'sean:admin';
+        const base64Credentials = btoa(creds);
+        post.visibility = post.visibility.toUpperCase();
+
+        const response = await axios.post(`${authorId}/inbox/`, post,
+              {
+                  headers: {
+                      'Authorization': `Basic ${base64Credentials}`,
+                  },
+              }
+        );
+        if (response.status === 201) {
+          console.log("post shared");
+        } else {
+          console.log(response.data);
+          console.error("Error while sharing a post");
+        }
+      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+        const creds = "vibely:string";
+        const base64Credentials = btoa(creds);
+        post.visibility = post.visibility.toUpperCase();
+        console.log(authorId)
+        const response = await axios.post(`${authorId}inbox/`,
+              {
+                "items": post
+              }
+              ,
+              {
+                  headers: {
+                      'Authorization': `Basic ${base64Credentials}`,
+                  },
+              }
+        );
+        if (response.status === 201) {
+          console.log("post shared");
+        } else {
+          console.log(response.data);
+          console.error("Error while sharing a post");
+        }
+      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+        const creds = "Segfault:Segfault1!";
+        const base64Credentials = btoa(creds);
+        post.visibility = post.visibility.toUpperCase();
+        console.log(authorId)
+        const response = await axios.post(`${authorId}/inbox/`, post,
+              {
+                  headers: {
+                      'Authorization': `Basic ${base64Credentials}`,
+                  },
+              }
+        );
+        if (response.status === 201) {
+          console.log("post shared");
+        } else {
+          console.log(response.data);
+          console.error("Error while sharing a post");
+        }
       }
+
+    } catch (e) {
+      console.log("Error sharing post", e);
     }
   };
 
