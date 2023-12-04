@@ -41,10 +41,9 @@ export default function Share(props) {
             {followers.map((author, index) => (
               <AuthorTile
               key={index}
-              id={author.items[0].id}
-              username={author.items[0].displayName}
-              profilePic={author.items[0].profileImage}
-              remoteAuthor={author.remote}
+              id={author.id}
+              username={author.displayName}
+              profilePic={author.profileImage}
               status="share"
               authorAction={handleShare}
             />
