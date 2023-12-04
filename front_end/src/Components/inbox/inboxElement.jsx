@@ -17,14 +17,14 @@ function InboxElement(props) {
 
   const visibilityColors = {
     post: "#8338ec",
-    Follow: "#06d6a0",
+    follow: "#06d6a0",
     Like: "#ff006e",
     comment: "#3a86ff",
   };
 
   const visibilityLabels = {
     post: "Shared a post to you!",
-    Follow: "Wants to be your friend!",
+    follow: "Wants to be your friend!",
     Like: "Liked your post!",
     comment: "Commented on your post!",
   };
@@ -37,7 +37,7 @@ function InboxElement(props) {
   };
 
   const renderActions = () => {
-    if (props.visibility === "Follow") {
+    if (props.visibility === "follow") {
       return (
         <div className="actionButtons">
           <ButtonBase onClick={handleAccept}>
@@ -56,8 +56,9 @@ function InboxElement(props) {
   if (!isVisible) {
     return null;
   }
-
+  console.log(props);
   return (
+
     <Card className="card" style={{ width: "60vw" }}>
       <CardHeader
         avatar={

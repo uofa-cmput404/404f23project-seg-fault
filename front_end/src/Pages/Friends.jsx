@@ -20,7 +20,7 @@ function Friends() {
     followAuthor,
     unfollowAuthor,
     authorStatus,
-    filteredAuthors,
+    authors
   } = useFriendsViewModel();
 
   return (
@@ -88,7 +88,7 @@ function Friends() {
         }}
       >
         {selectedView === "authors" &&
-          filteredAuthors.map((author, index) => (
+          authors.map((author, index) => (
             <AuthorTile
               key={index}
               id={author.id}
@@ -104,9 +104,9 @@ function Friends() {
           followers.map((author, index) => (
             <AuthorTile
               key={index}
-              id={author.items[0].id}
-              username={author.items[0].displayName}
-              profilePic={author.items[0].profileImage}
+              id={author.id}
+              username={author.displayName}
+              profilePic={author.profileImage}
               remoteAuthor={author.remote}
               status="friend"
               authorAction={unfollowAuthor}
