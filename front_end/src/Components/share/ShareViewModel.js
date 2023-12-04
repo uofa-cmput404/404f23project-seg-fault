@@ -10,16 +10,20 @@ const useShareViewModel = () => {
   const [followers, setFollowers] = useState([]);
 
   const fetchFollowers = useCallback(async () => {
-    const response = await axios.get(`${userId}/followers/`, {
-      headers: {
-        Authorization: `Token ${authToken}`,
-      },
-    });
+    try {
+      const response = await axios.get(`${userId}/followers/`, {
+        headers: {
+          Authorization: `Token ${authToken}`,
+        },
+      });
 
-    if (response.status === 200) {
-      setFollowers(response.data[0].items);
-    } else {
-      console.error("Error fetching followers");
+      if (response.status === 200) {
+        setFollowers(response.data[0].items);
+      } else {
+        console.error("Error fetching followers: Status code is not 200");
+      }
+    } catch (error) {
+      console.error("Error fetching followers:", error.message);
     }
   }, [userId, authToken]);
 
@@ -42,17 +46,15 @@ const useShareViewModel = () => {
           console.error("Error while sharing a post");
         }
       } else if (authorId.startsWith(process.env.REACT_APP_TEAM_THREE_URL)) {
-        const creds = 'sean:admin';
+        const creds = "sean:admin";
         const base64Credentials = btoa(creds);
         post.visibility = post.visibility.toUpperCase();
 
-        const response = await axios.post(`${authorId}/inbox/`, post,
-              {
-                  headers: {
-                      'Authorization': `Basic ${base64Credentials}`,
-                  },
-              }
-        );
+        const response = await axios.post(`${authorId}/inbox/`, post, {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        });
         if (response.status === 201) {
           console.log("post shared");
         } else {
@@ -63,17 +65,17 @@ const useShareViewModel = () => {
         const creds = "vibely:string";
         const base64Credentials = btoa(creds);
         post.visibility = post.visibility.toUpperCase();
-        console.log(authorId)
-        const response = await axios.post(`${authorId}inbox/`,
-              {
-                "items": post
-              }
-              ,
-              {
-                  headers: {
-                      'Authorization': `Basic ${base64Credentials}`,
-                  },
-              }
+        console.log(authorId);
+        const response = await axios.post(
+          `${authorId}inbox/`,
+          {
+            items: post,
+          },
+          {
+            headers: {
+              Authorization: `Basic ${base64Credentials}`,
+            },
+          }
         );
         if (response.status === 201) {
           console.log("post shared");
@@ -85,14 +87,12 @@ const useShareViewModel = () => {
         const creds = "Segfault:Segfault1!";
         const base64Credentials = btoa(creds);
         post.visibility = post.visibility.toUpperCase();
-        console.log(authorId)
-        const response = await axios.post(`${authorId}/inbox/`, post,
-              {
-                  headers: {
-                      'Authorization': `Basic ${base64Credentials}`,
-                  },
-              }
-        );
+        console.log(authorId);
+        const response = await axios.post(`${authorId}/inbox/`, post, {
+          headers: {
+            Authorization: `Basic ${base64Credentials}`,
+          },
+        });
         if (response.status === 201) {
           console.log("post shared");
         } else {
@@ -100,7 +100,6 @@ const useShareViewModel = () => {
           console.error("Error while sharing a post");
         }
       }
-
     } catch (e) {
       console.log("Error sharing post", e);
     }

@@ -8,10 +8,7 @@ const usePostsViewModel = () => {
   const { state } = useContext(StoreContext);
   const userId = state.user.id;
   const authToken = state.token;
-  const {
-    followers,
-    sharePost
-  } = useShareViewModel();
+  const { followers, sharePost } = useShareViewModel();
 
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,19 +39,21 @@ const usePostsViewModel = () => {
 
     const fetchPostsByAuthor = async (author) => {
       if (author.id.startsWith(process.env.REACT_APP_API_URL)) {
-        // get local posts
-        const posts_response = await axios.get(`${author.url}/posts/`, {
-          headers: {
-            Authorization: `Token ${authToken}`,
-          },
-        });
-        if (posts_response.status === 200) {
-          return posts_response.data.items;
-        } else {
-          console.error(
-            `Couldn't fetch posts. Status code: ${posts_response.status}`
-          );
-          return [];
+        if (author.displayName !== "tom") {
+          // get local posts
+          const posts_response = await axios.get(`${author.url}/posts/`, {
+            headers: {
+              Authorization: `Token ${authToken}`,
+            },
+          });
+          if (posts_response.status === 200) {
+            return posts_response.data.items;
+          } else {
+            console.error(
+              `Couldn't fetch posts. Status code: ${posts_response.status}`
+            );
+            return [];
+          }
         }
       } else if (author.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
         // // get team one posts
@@ -209,7 +208,6 @@ const usePostsViewModel = () => {
           },
         });
         sendFriendPosts(post_res.data);
-        
       }
     } else {
       console.log(`not working ${response.status}`);
@@ -217,11 +215,11 @@ const usePostsViewModel = () => {
   };
 
   const sendFriendPosts = async (post) => {
-      for (let follower of followers) {
-        const followerUrl = follower.url;
-        sharePost(post, followerUrl);
-      }
-  }
+    for (let follower of followers) {
+      const followerUrl = follower.url;
+      sharePost(post, followerUrl);
+    }
+  };
 
   const deletePost = async (postId) => {
     const response = await axios.delete(postId, {
