@@ -50,7 +50,7 @@ const useFriendsViewModel = () => {
   }, [authToken, currentPage]);
 
   const fetchFollowers = useCallback(async () => {
-    try{
+    try {
       const parts = userId.split("/");
       const userGuid = parts[parts.length - 1];
       const response = await axios.get(
@@ -61,13 +61,12 @@ const useFriendsViewModel = () => {
           },
         }
       );
-      console.log(response.data);
       if (response.status === 200) {
         setFollowers(response.data);
       } else {
         console.error("Error fetching followers");
       }
-    } catch(e){
+    } catch (e) {
       console.error("Error fetching followers");
     }
   }, [userId, authToken]);
@@ -95,8 +94,7 @@ const useFriendsViewModel = () => {
         },
       });
       followAuthor(inboxItem.object.id);
-    }
-    catch{
+    } catch {
       console.error("Error accepting follow request");
     }
   };
@@ -147,7 +145,7 @@ const useFriendsViewModel = () => {
           },
         }
       );
-  
+
       if (response.status === 200) {
         window.location.reload();
       } else {
