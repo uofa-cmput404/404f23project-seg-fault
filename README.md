@@ -32,8 +32,9 @@ CMPUT404-project-socialdistribution
 
 CMPUT 404 Project: Social Distribution
 
-[Project requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
-[Swagger API Docs](https://vibely-23b7dc4c736d.herokuapp.com/api/swagger/)
+- [Project requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
+- [Swagger API Docs](https://vibely-23b7dc4c736d.herokuapp.com/api/swagger/)
+- Front end: https://656d553b4cdb7d01cfeec51c--chic-mochi-59bc3d.netlify.app/signin I would like to note that we were having CORS issues even tho we enabled CORS in our back end. To get full functionallity you will need to get the firefox extention CORS Everywhere to allow this to work. Other wise there will be issues with getting authors, we did not have time to fix this issue.
 
 Contributions made by team members
 ========================
