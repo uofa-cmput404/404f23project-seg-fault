@@ -123,16 +123,24 @@ Connecting to other teams
 #### url: 
 #### team name: 
 #### connections made:
+- Authors (we can get all authors)
+- Friend Requests (can send and recieve)
+- Posts (can send and recieve)
 
 ### Team 2: 
 #### url: 
 #### team name:
 #### connections made:
+- Authors (we can get all authors)
+- Posts (can recieve all posts)
 
-### Team 3: 
-#### url: 
+### Team 3: team === good
+#### url: https://cmput404-social-network-401e4cab2cc0.herokuapp.com/
 #### team name:
 #### connections made:
+- Authors (we can get all authors)
+- Friend Requests (can send and recieve)
+- Posts (can send and recieve)
 
 Contributors / Licensing
 ========================
