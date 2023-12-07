@@ -33,6 +33,7 @@ CMPUT404-project-socialdistribution
 CMPUT 404 Project: Social Distribution
 
 [Project requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
+[Swagger API Docs](https://vibely-23b7dc4c736d.herokuapp.com/api/swagger/)
 
 Contributions made by team members
 ========================
@@ -108,14 +109,45 @@ AJAX Docs
 The following is the documentation for the ajax and api calls used on each page of our application
 
 ### Home Page:
+/posts
+- get all public posts
+- create a new post
+- edit your own post
+- delete your own post
+- comments, likes and share to inbox
 
 ### Inbox Page:
-
+api/author/inbox
+- get everything in the inbox
+- delete everything in the inbox
+  
 ### Social Hub:
+/api/authors
+- get all authors
 
 ### Profile:
+/api/author endpoint
+- get author info
 
-### Login and logout:
+/github
+- get github activity
+
+/posts
+- get authors posts
+- create a new post
+- edit a post
+- delete a post
+- comments, likes and share to inbox
+
+### Login and Signup:
+
+/login endpoint 
+- login the user
+  
+/signup endpoint
+- signup a new user
+
+Error handling:
 
 Connecting to other teams
 ========================
@@ -126,6 +158,9 @@ Connecting to other teams
 - Authors (we can get all authors)
 - Friend Requests (can send and recieve)
 - Posts (can send and recieve)
+#### credentials to login to the apps:
+username: 
+password: 
 
 ### Team 2: 
 #### url: 
@@ -133,14 +168,20 @@ Connecting to other teams
 #### connections made:
 - Authors (we can get all authors)
 - Posts (can recieve all posts)
+####
+username: 
+password: 
 
-### Team 3: team === good
-#### url: https://cmput404-social-network-401e4cab2cc0.herokuapp.com/
-#### team name:
+### Team 3:
+#### url: [https://cmput404-social-network-401e4cab2cc0.herokuapp.com/](https://cmput404-social-network-401e4cab2cc0.herokuapp.com/)
+#### team name: team === good
 #### connections made:
 - Authors (we can get all authors)
 - Friend Requests (can send and recieve)
 - Posts (can send and recieve)
+####
+username: 
+password: 
 
 Contributors / Licensing
 ========================
