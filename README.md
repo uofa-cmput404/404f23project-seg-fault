@@ -58,6 +58,16 @@ Contributions made by team members
 * Kourosh Kehtari (kehtari@ualberta.ca)
 * Prabh Kooner
 * Julian Gallego Franco (gallegof@ualberta.ca)
+   - Front end work
+   - Set up Homepage and navbar
+   - Set up store and state management
+   - Set up Social Hub UI and connected it to back end
+   - Inbox UI
+   - Friend requests UI
+   - Connected likes, comments, authors, profile, signin, sing up and logout to back end
+   - Github events section
+   - Worked on Homepage UI
+   - Promotional video
 
 User Stories (checked means we have completed that user story, there are notes by the ones that are partially complete)
 ========================
@@ -159,6 +169,7 @@ Connecting to other teams
 - Authors (we can get all authors)
 - Friend Requests (can send and recieve)
 - Posts (can send and recieve)
+- comments and likes (can be made and received)
 #### credentials to login to the apps:
 username: 
 password: 
