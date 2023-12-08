@@ -50,6 +50,7 @@ Contributions made by team members
   - Connecting likes to inbox
   - Connecting friend requests to other teams
   - Connecting sending posts to inbox with other teams
+  - Ajax docs
 * Kingsley Okeke (nkokeke@ualberta.ca)
   - Worked mainly on the front end
   - Profile page UI and funtionality
@@ -120,45 +121,79 @@ AJAX Docs
 The following is the documentation for the ajax and api calls used on each page of our application
 
 ### Home Page:
-/posts
-- get all public posts
-- create a new post
-- edit your own post
-- delete your own post
-- comments, likes and share to inbox
+path: `authors/<str:author_id>/posts/` methods: `GET`
+- get all local public posts
+- get remote public posts
 
 ### Inbox Page:
-api/author/inbox
+path: `authors/<str:author_id>/inbox/` methods: `PUT`, `GET`, `DELETE`
 - get everything in the inbox
 - delete everything in the inbox
+- put likes, comments and share posts to other users inboxes
   
+path: `authors/<str:author_id>/posts/<str:post_id>/likes/` methods: `GET`
+- get likes for posts
+  
+path: `authors/<str:author_id>/posts/<str:post_id>/comments/` methods: `GET`
+- get comments for posts
+
 ### Social Hub:
-/api/authors
-- get all authors
+path: `authors/` methods: `GET`
+- get all authors, including remote authors
+
+path: `authors/<path:author_id>/followers/` methods: `GET`
+- get followers
+
+path: `authors/follow/` methods: `POST`
+- follow
+  
+path:`authors/unfollow/` methods: `POST`
+- unfollow users
+
+path: `authors/<str:author_id>/inbox/` methods: `PUT`
+- send follow request
 
 ### Profile:
-/api/author endpoint
+path: `authors/<str:author_id>` methods: `GET`
 - get author info
 
 /github
 - get github activity
 
-/posts
-- get authors posts
+path: `authors/<str:author_id>/posts/` methods: `GET`, `POST`
+- get all local public posts
+- get remote public posts
 - create a new post
-- edit a post
-- delete a post
-- comments, likes and share to inbox
 
+### Posts
+path: `authors/<str:author_id>/inbox/` methods: `PUT`
+- comments, likes and share to inbox
+  
+path: `authors/<str:author_id>/posts/<str:post_id>/likes/` methods: `GET`
+- get likes for posts
+path: `authors/<str:author_id>/posts/<str:post_id>/comments/` methods: `GET`
+- get comments for posts
+  
+path: `authors/<str:author_id>/posts/<str:post_id>` methods: `PUT`, `DELETE`
+- edit your own post
+- delete your own post
+
+### Create a Post
+path: `authors/<str:author_id>/posts/` methods: `POST`
+- create a new post
+  
+path: `authors/<str:author_id>/inbox/` methods: `PUT`
+- send posts to friends inboxes
+  
 ### Login and Signup:
 
-/login endpoint 
-- login the user
-  
-/signup endpoint
+path: `register/` 
 - signup a new user
 
-Error handling:
+path: `login/`
+- login the user
+
+Error handling: we have most of our ajax in try catch in case something happens
 
 Connecting to other teams
 ========================
