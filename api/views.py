@@ -30,6 +30,9 @@ class FollowerView(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request, author_id, follower_id):
+        """
+        Checks if a specified user is a follower of a given author.
+        """
         try:
             author_follower = AuthorFollower.objects.get(author=author_id)
             is_follower = any(follower_id == item.get('id') for item in author_follower.items)
@@ -41,19 +44,25 @@ class FollowerView(APIView):
             return Response({"error": "Author not found or no inbox available."}, status=status.HTTP_404_NOT_FOUND)
     
     def put(self, request, author_id, follower_id=None):
-            try:
-                author_follower, created = AuthorFollower.objects.get_or_create(author=author_id)
-                
-                if request.data:
-                    author_follower.add_item(request.data['object'])
-                    return Response({'message': 'Item added to follower items.'}, status=status.HTTP_200_OK)
-                else:
-                    return Response({'error': 'No item data provided.'}, status=status.HTTP_400_BAD_REQUEST)
+        """
+        Adds an item to a follower's items list for a specified author.
+        """
+        try:
+            author_follower, created = AuthorFollower.objects.get_or_create(author=author_id)
+            
+            if request.data:
+                author_follower.add_item(request.data['object'])
+                return Response({'message': 'Item added to follower items.'}, status=status.HTTP_200_OK)
+            else:
+                return Response({'error': 'No item data provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
-            except Author.DoesNotExist:
-                return Response({"error": "Author not found."}, status=status.HTTP_404_NOT_FOUND)
+        except Author.DoesNotExist:
+            return Response({"error": "Author not found."}, status=status.HTTP_404_NOT_FOUND)
     
     def delete(self, request, author_id, follower_id):
+        """
+        Removes a specified user from an author's followers list.
+        """
         try:
             author_follower = AuthorFollower.objects.get(author=author_id)
             author_follower.items = [item for item in author_follower.items if item.get('id') != follower_id]
@@ -68,6 +77,10 @@ class FollowAuthorView(views.APIView):
     # permission_classes = [IsAuthenticated]
     
     def post(self, request):
+        """
+        POST: Allows a user to follow an author by specifying their respective IDs.
+        Prevents a user from following themselves.
+        """
         user_id = request.data.get('user_id')
         author_id_to_follow = request.data.get('author_id_to_follow')
 
@@ -89,6 +102,10 @@ class UnfollowAuthorView(views.APIView):
     # permission_classes = [IsAuthenticated]
     
     def post(self, request):
+        """
+        POST: Allows a user to unfollow an author. The user and the author to unfollow
+        are identified by their respective IDs.
+        """
         user_id = request.data.get('user_id')
         author_id_to_unfollow = request.data.get('author_id_to_unfollow')
 
@@ -106,6 +123,10 @@ class UnfollowAuthorView(views.APIView):
 
 
 class FollowingListView(generics.ListAPIView):
+    """
+    List view for showing all authors a specific user is following.
+    GET: Returns a list of authors that a specified user is following.
+    """
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
     serializer_class = FollowingListSerializer
@@ -122,6 +143,10 @@ class FollowingListView(generics.ListAPIView):
         })
 
 class FollowersListView(generics.ListAPIView):
+    """
+    List view for showing all followers of a specific author.
+    GET: Returns a list of followers for a specified author.
+    """
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
     serializer_class = FollowerListSerializer
@@ -144,6 +169,11 @@ class CustomPageNumberPagination(pagination.PageNumberPagination):
         })
 
 class CommentListView(generics.ListCreateAPIView):
+    """
+    View for listing and creating comments on a post.
+    GET: Returns a paginated list of comments for a specified post.
+    POST: Allows creating a new comment on a specified post.
+    """
     # authentication_classes = [TokenAuthentication]
     # permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
@@ -170,27 +200,3 @@ class CommentListView(generics.ListCreateAPIView):
         comment = serializer.save(post=post, author=author)
         comment.url = serializer.get_id(comment)
         comment.save()
-
-class CreateFollowRequestView(views.APIView):
-
-    def post(self, request):
-        actor_id = request.data.get('actor', {}).get('id')
-        object_id = request.data.get('object', {}).get('id')
-
-        actor = get_object_or_404(Author, id=actor_id)
-        object = get_object_or_404(Author, id=object_id)
-
-        follow_request = FollowRequest.objects.create(
-            summary=request.data.get('summary'),
-            actor=actor,
-            object=object
-        )
-
-        serializer = FriendRequestSerializer(follow_request)
-        serialized_data = serializer.data
-
-
-        inbox, created = Inbox.objects.get_or_create(author=object)
-        inbox.add_item(serialized_data)
-
-        return Response({'message': 'Follow request sent.'}, status=status.HTTP_201_CREATED)

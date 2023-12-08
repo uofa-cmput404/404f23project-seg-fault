@@ -7,7 +7,7 @@ from .posts.PostsViews import PostListView, PostDetailView, get_image_post
 # fron inbox sub directory
 from .inbox.inboxViews import inbox_view, PostLikesListView, CommentLikesListView, LikedListView
 
-from .views import FollowAuthorView, UnfollowAuthorView, FollowersListView, FollowingListView, FollowerView, CommentListView, CreateFollowRequestView
+from .views import FollowAuthorView, UnfollowAuthorView, FollowersListView, FollowingListView, FollowerView, CommentListView
 
 from django.urls import path, re_path
 from rest_framework import permissions

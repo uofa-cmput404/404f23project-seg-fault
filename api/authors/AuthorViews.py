@@ -21,6 +21,10 @@ root_url = ROOT_URL
 #TODO: when post request to change author, 
 
 class UserRegistrationView(generics.CreateAPIView):
+    """
+    View for user registration.
+    Allows new users to register by providing a username and password.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
@@ -59,6 +63,10 @@ class UserRegistrationView(generics.CreateAPIView):
 
 
 class UserLoginView(generics.CreateAPIView):
+    """
+    View for user login.
+    Authenticates a user with a username and password.
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
@@ -90,6 +98,12 @@ from . import RemoteAuthors
 # api/authors
 #TODO: fix pagination and do the detail view
 class AuthorListView(generics.ListAPIView):
+    """
+    View for listing all authors, including remote authors.
+
+    Retrieves a list of local authors from the database and combines them with 
+    remote authors fetched from external sources.
+    """
     authentication_classes = [BasicAuthentication, TokenAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Author.objects.all()
@@ -119,6 +133,12 @@ class AuthorListView(generics.ListAPIView):
 
 # api/authors{author_id}
 class AuthorDetailView(generics.ListCreateAPIView):
+    """
+    View for retrieving and updating an individual author's details.
+
+    GET: Retrieves the details of a specific author
+    POST: Updates the details of the specific author
+    """
     queryset = Author.objects.all()
     serializer_class = AuthorSerializer
     lookup_field = 'author_id'  # Use 'author_id' as the lookup field
