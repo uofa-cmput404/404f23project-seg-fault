@@ -57,6 +57,13 @@ Contributions made by team members
   - Sending private posts to other users
   - Local and remote friend requests
 * Kourosh Kehtari (kehtari@ualberta.ca)
+    - worked on backend
+    - follower and following endpoints
+    - friend request endpoint
+    - comment endpoint
+    - test for backend
+    - api documentation
+    - connecting swagger
 * Prabh Kooner
     - Worked on backend
     - login and signup endpoints
