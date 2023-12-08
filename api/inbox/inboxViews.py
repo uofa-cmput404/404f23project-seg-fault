@@ -27,6 +27,13 @@ from django.urls import resolve
 #TODO: handle all types
 @api_view(['POST', 'GET', 'DELETE'])
 def inbox_view(request, author_id):
+    """
+    API view for managing an author's inbox.
+
+    POST: Adds a specified item (like, follow request, post, or comment) to the author's inbox.
+    GET: Retrieves all items in the author's inbox.
+    DELETE: Clears all items from the author's inbox.
+    """
     # get the the author whose inbox this is
     author = Author.objects.get(id=author_id)
     if request.method == 'GET':
@@ -113,6 +120,13 @@ def inbox_view(request, author_id):
             return Response({"message": "Item added"}, status=status.HTTP_201_CREATED)
 
 class PostLikesListView(generics.ListAPIView):
+    """
+    API view for listing all likes on a specific post.
+
+    GET: Returns a list of all likes associated with a specified post.
+    The likes are identified by the post's unique URL.
+    """
+
     serializer_class = LikeSerializer
 
     def get_queryset(self):
@@ -129,6 +143,11 @@ class PostLikesListView(generics.ListAPIView):
         return Response(response_data)
 
 class CommentLikesListView(generics.ListAPIView):
+    """
+    API view for listing all likes on a specific comment.
+
+    GET: Returns a list of all likes associated with a specified comment.
+    """
     serializer_class = LikeSerializer
 
     def get_queryset(self):
@@ -145,6 +164,11 @@ class CommentLikesListView(generics.ListAPIView):
         return Response(response_data)
 
 class LikedListView(generics.ListAPIView):
+    """
+    API view for listing all likes made by a specific author.
+
+    GET: Returns a list of all likes made by a specified author.
+    """
     serializer_class = LikeSerializer
 
     def get_queryset(self):

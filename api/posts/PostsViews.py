@@ -48,6 +48,12 @@ class CustomPagination(pagination.PageNumberPagination):
 #  ://service/authors/{AUTHOR_ID}/posts/
 # retrieve and creation url
 class PostListView(generics.ListCreateAPIView):
+    """
+    API view for listing and creating posts.
+
+    GET: Returns a paginated list of posts. Supports custom pagination via query parameters.
+    POST: Allows creating a new post. The post data should be provided in the request body.
+    """
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
@@ -156,6 +162,15 @@ class PostListView(generics.ListCreateAPIView):
 #URL: ://service/authors/{AUTHOR_ID}/posts/{POST_ID}
 # get, post, put, delete
 class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """
+    API view for retrieving, updating, and deleting a specific post.
+
+    GET: Retrieve a specific post by its ID.
+    POST: Update an existing post with partial data.
+    PUT: Replace an existing post with new data.
+    DELETE: Delete a specific post.
+    """
+
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     lookup_field = 'post_id'
@@ -216,6 +231,12 @@ class PostDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 def get_image_post(request, author_id, post_id):
+    """
+    Function to retrieve an image post.
+
+    Given the author and post IDs, it fetches the post if it's an image, decodes the base64 image data,
+    and returns the image data as an HTTP response with the appropriate content type.
+    """
     try:
         # Convert the post_id string to a UUID
         post_id = uuid.UUID(post_id)
