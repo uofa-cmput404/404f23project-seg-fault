@@ -59,7 +59,7 @@ Contributions made by team members
 * Kourosh Kehtari (kehtari@ualberta.ca)
 * Prabh Kooner
     - Worked on backend
-    - login and singup endpoints
+    - login and signup endpoints
     - http basic and token authentication
     - author endpoints
     - post endpoints
