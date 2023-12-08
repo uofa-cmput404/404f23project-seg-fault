@@ -198,26 +198,28 @@ Error handling: we have most of our ajax in try catch in case something happens
 Connecting to other teams
 ========================
 ### Team 1: 
-#### url: 
-#### team name: 
+#### url: [https://frontend-21-average-f45e3b82895c.herokuapp.com/loginPage](https://frontend-21-average-f45e3b82895c.herokuapp.com/loginPage)
+#### team name: 21-average
 #### connections made:
-- Authors (we can get all authors)
+- Authors (we can get all authors but we get CORS errors when getting authors)
 - Friend Requests (can send and recieve)
 - Posts (can send and recieve)
 - comments and likes (can be made and received)
 #### credentials to login to the apps:
-username: 
-password: 
+username: string
+password: string
 
 ### Team 2: 
-#### url: 
-#### team name:
+#### url: [ https://incandescent-croissant-3ddf57.netlify.app/login](https://incandescent-croissant-3ddf57.netlify.app/login)
+#### team name: RESTless Clients
 #### connections made:
 - Authors (we can get all authors)
 - Posts (can recieve all posts)
+- Friend Requests (can send and recieve)
+- Likes (gets CORS errors when liking a post)
 ####
-username: 
-password: 
+- username: Segfault
+- password: Segfault1!
 
 ### Team 3:
 #### url: [https://cmput404-social-network-401e4cab2cc0.herokuapp.com/](https://cmput404-social-network-401e4cab2cc0.herokuapp.com/)
@@ -226,9 +228,10 @@ password:
 - Authors (we can get all authors)
 - Friend Requests (can send and recieve)
 - Posts (can send and recieve)
+- for likes and comments this team did not implement them until the last minute so we did not have a chance to test
 ####
-username: 
-password: 
+- username: local2 
+- password: CMPUT404  
 
 Contributors / Licensing
 ========================
