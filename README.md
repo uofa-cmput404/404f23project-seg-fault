@@ -127,7 +127,7 @@ User Stories (checked means we have completed that user story, there are notes b
 - [ ] As a server admin, I can disable the node to node interfaces for connections that are not authenticated!
 - [ ] As an author, I want to be able to make posts that are unlisted, that are publicly shareable by URI alone (or for embedding images)
 
-Additional User Story Notes:
+Additional User Story Notes:  
 The node interfaces are hardcoded. They can still be added or deleted quite easily. We had to write additional code for connecting to nodes that followed a different data format. We also had to continuosly update this when changes were made to their data format. All connections to our api must be token authenticated or http basic authenticated. We can't disable not authenticated connections; they are just simply not allowed. We can add valid http basic auth credentials as an admin. Only listed posts can be made but image posts can be embedded using a URI and the /image endpoint. 
 
 
