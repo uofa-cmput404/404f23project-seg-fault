@@ -58,6 +58,17 @@ Contributions made by team members
   - Local and remote friend requests
 * Kourosh Kehtari (kehtari@ualberta.ca)
 * Prabh Kooner
+    - Worked on backend
+    - login and singup endpoints
+    - http basic and token authentication
+    - author endpoints
+    - post endpoints
+    - comment endpoints
+    - like endpoints
+    - inbox endpoint, specifically post, like and comment
+    - designing a solution for remote follower connectivity
+    - fetching remote authors
+    - deploying the django api to heroku
 * Julian Gallego Franco (gallegof@ualberta.ca)
    - Front end work
    - Set up Homepage and navbar
@@ -111,10 +122,15 @@ User Stories (checked means we have completed that user story, there are notes b
 - [x] As an author I should be able to browse the public posts of everyone
 - [ ] As a server admin, I want to be able to add nodes to share with
 - [ ] As a server admin, I want to be able to remove nodes and stop sharing with them.
-- [ ] As a server admin, I can limit nodes connecting to me via authentication.
-- [ ] As a server admin, node to node connections can be authenticated with HTTP Basic Auth
+- [x] As a server admin, I can limit nodes connecting to me via authentication.
+- [x] As a server admin, node to node connections can be authenticated with HTTP Basic Auth
 - [ ] As a server admin, I can disable the node to node interfaces for connections that are not authenticated!
 - [ ] As an author, I want to be able to make posts that are unlisted, that are publicly shareable by URI alone (or for embedding images)
+
+Additional User Story Notes:
+The node interfaces are hardcoded. They can still be added or deleted quite easily. We had to write additional code for connecting to nodes that followed a different data format. We also had to continuosly update this when changes were made to their data format. All connections to our api must be token authenticated or http basic authenticated. We can't disable not authenticated connections; they are just simply not allowed. We can add valid http basic auth credentials as an admin. Only listed posts can be made but image posts can be embedded using a URI and the /image endpoint. 
+
+
 
 AJAX Docs
 ========================
@@ -241,7 +257,7 @@ Authors:
 * Dennea MacCallum (dennea@ualberta.ca)
 * Kingsley Okeke (nkokeke@ualberta.ca)
 * Kourosh Kehtari (kehtari@ualberta.ca)
-* Prabh Kooner
+* Prabh Kooner (prabhnoo@ualberta.ca)
 * Julian Gallego Franco (gallegof@ualberta.ca)
 
 Generally everything is LICENSE'D under the MIT License.
