@@ -40,6 +40,11 @@ function Home() {
         >
           New post +
         </Button>
+        {posts.length === 0 && (
+          <div>
+            posts are loading this might take a while...
+          </div>
+        )}
         {posts.map((post, index) => {
           return <Post post={post} width="60vw" padding={1} margin={1} />;
         })}

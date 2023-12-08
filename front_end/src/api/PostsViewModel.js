@@ -56,7 +56,7 @@ const usePostsViewModel = () => {
           }
         }
       } else if (author.id.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
-        // // get team one posts
+        // // // get team one posts
         const creds = "vibely:string";
         const base64Credentials = btoa(creds);
         const posts_response = await axios.get(`${author.url}posts/`, {
@@ -96,29 +96,35 @@ const usePostsViewModel = () => {
             return [];
           }
         } catch (error) {
+          console.error("Couldn't fetch team 2 posts: ", error);
+          return [];
+        }
+      } else if (author.id.startsWith(process.env.REACT_APP_TEAM_THREE_URL)) {
+        try {
+          const creds = "sean:admin";
+          const base64Credentials = btoa(creds);
+          const posts_response = await axios.get(`${author.id}/posts/`, {
+            headers: {
+              Authorization: `Basic ${base64Credentials}`,
+            },
+          });
+          if (posts_response.status === 200) {
+            if (posts_response.data.items !== undefined){
+              return posts_response.data.items;
+            } else {
+              return [];
+            }
+          } else {
+            console.error(
+              `Couldn't fetch team 3 posts. Status code: ${posts_response.status}`
+            );
+            return [];
+          }
+        } catch (error) {
           console.error("An error occurred:", error);
           return [];
         }
       }
-      /*
-      else if (author.id.startsWith(process.env.REACT_APP_TEAM_THREE_URL)) {
-        const creds = "sean:admin";
-        const base64Credentials = btoa(creds);
-        const posts_response = await axios.get(`${author.id}/posts/`, {
-          headers: {
-            Authorization: `Basic ${base64Credentials}`,
-          },
-        });
-        if (posts_response.status === 200) {
-          return posts_response.data.data;
-        } else {
-          console.error(
-            `Couldn't fetch posts. Status code: ${posts_response.status}`
-          );
-          return [];
-        }
-      }
-      */
       return [];
     };
 

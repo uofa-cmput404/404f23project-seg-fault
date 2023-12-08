@@ -155,6 +155,58 @@ const useFriendsViewModel = () => {
           console.log("Sent to inbox");
           setAuthorStatus({ status: "friend", id: authorId });
         }
+      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_TWO_URL)) {
+        const creds = "Segfault:Segfault1!";
+        const base64Credentials = btoa(creds);
+        console.log(`${authorId}/inbox/`)
+        const object = await axios.get(authorId, {
+          headers: {
+            Authorization:  `Basic ${base64Credentials}`,
+          },
+        });
+        const payload = {
+          type: "Follow",
+          summary: "Greg wants to follow Lara",
+          actor: actor.data,
+          object: object.data,
+        };
+        const response_request = await axios.post(`${authorId}/inbox`, payload,
+            {
+                headers: {
+                    'Authorization': `Basic ${base64Credentials}`,
+                },
+            }
+          );
+        if (response_request.status === 201) {
+          console.log("Sent to inbox");
+          setAuthorStatus({ status: "friend", id: authorId });
+        }
+      } else if (authorId.startsWith(process.env.REACT_APP_TEAM_ONE_URL)) {
+        const creds = "vibely:string";
+        const base64Credentials = btoa(creds);
+        console.log(`${authorId}inbox/`)
+        const object = await axios.get(authorId, {
+          headers: {
+            Authorization:  `Basic ${base64Credentials}`,
+          },
+        });
+        const payload = {
+          type: "Follow",
+          summary: "Greg wants to follow Lara",
+          actor: actor.data,
+          object: object.data,
+        };
+        const response_request = await axios.post(`${authorId}inbox`, payload,
+            {
+                headers: {
+                    'Authorization': `Basic ${base64Credentials}`,
+                },
+            }
+          );
+        if (response_request.status === 201) {
+          console.log("Sent to inbox");
+          setAuthorStatus({ status: "friend", id: authorId });
+        }
       }
     } catch (e) {
       console.error("Error following author", e);
