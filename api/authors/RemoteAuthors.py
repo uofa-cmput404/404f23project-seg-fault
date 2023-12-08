@@ -76,11 +76,11 @@ def process_author(item):
 
 
 
-# node_credentials = {
-#     "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/": ("string", "string"),
-#     "https://silk-cmput404-project-21e5c91727a7.herokuapp.com/api/authors/": ("Segfault", "Segfault1!"),
-#     "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/authors/": ("local2", "cmput404")
-# }
+node_credentials = {
+    "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/": ("string", "string"),
+    "https://silk-cmput404-project-21e5c91727a7.herokuapp.com/api/authors/": ("Segfault", "Segfault1!"),
+    "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/authors/": ("local2", "cmput404")
+}
 
 from ..models import Node
 def get_external_authors(request, auth_type):
@@ -90,10 +90,10 @@ def get_external_authors(request, auth_type):
 
     # if request is from frontend then return both (token auth)
     # only fetch authors from the listed nodes
-    node_credentials = {}
-    nodes = Node.objects.all()
-    for node in nodes:
-        node_credentials[node.url+"authors/"] = (node.username, node.password)
+    # node_credentials = {}
+    # nodes = Node.objects.all()
+    # for node in nodes:
+    #     node_credentials[node.url+"authors/"] = (node.username, node.password)
 
 
 
