@@ -14,6 +14,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.request import Request
 
 
+
 def transform_author_data(author):
     # Transform the author data
     author_id = author.get('id')
@@ -74,21 +75,27 @@ def process_author(item):
     return None
 
 
-# TODO: should have a model for nodes we are connecting to. iterate over the nodes and do this for every url + /authors/
-# TODO: each node object should have url and credentials
-node_credentials = {
-    "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/": ("vibely", "string"),
-    "https://silk-cmput404-project-21e5c91727a7.herokuapp.com/api/authors/": ("Segfault", "Segfault1!"),
-    "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/authors/": ("sean", "admin")
-}
 
+# node_credentials = {
+#     "https://cmput-average-21-b54788720538.herokuapp.com/api/authors/": ("string", "string"),
+#     "https://silk-cmput404-project-21e5c91727a7.herokuapp.com/api/authors/": ("Segfault", "Segfault1!"),
+#     "https://cmput404-social-network-401e4cab2cc0.herokuapp.com/authors/": ("local2", "cmput404")
+# }
 
+from ..models import Node
 def get_external_authors(request, auth_type):
     # if request from remote then only get our authors (basic auth)
-    if auth_type == "basic":
-        return []
+    # if auth_type == "basic":
+    #     return []
 
     # if request is from frontend then return both (token auth)
+    # only fetch authors from the listed nodes
+    node_credentials = {}
+    nodes = Node.objects.all()
+    for node in nodes:
+        node_credentials[node.url+"authors/"] = (node.username, node.password)
+
+
 
     all_authors = []
     for external_node_url, creds in node_credentials.items():

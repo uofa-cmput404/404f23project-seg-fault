@@ -88,5 +88,8 @@ class Inbox(models.Model):
 
 
 
-# class Node(models.Model):
-#     url = models.URLField(null=True)
+class Node(models.Model):
+    url = models.URLField()
+    username = models.TextField()
+    password = models.TextField()
+

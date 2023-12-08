@@ -57,7 +57,18 @@ Contributions made by team members
   - Sending private posts to other users
   - Local and remote friend requests
 * Kourosh Kehtari (kehtari@ualberta.ca)
-* Prabh Kooner
+* Prabh Kooner (prabhnoo@ualberta.ca)
+  - Worked on backend
+  - login and signup endpoints
+  - http basic and token authentication
+  - author endpoints
+  - post endpoints
+  - comment endpoints
+  - like endpoints
+  - inbox endpoint specifically post, like and comment
+  - designing a solution for remote follower connectivity
+  - fetching remote authors
+  - deploying the django api to heroku
 * Julian Gallego Franco (gallegof@ualberta.ca)
    - Front end work
    - Set up Homepage and navbar
@@ -241,7 +252,7 @@ Authors:
 * Dennea MacCallum (dennea@ualberta.ca)
 * Kingsley Okeke (nkokeke@ualberta.ca)
 * Kourosh Kehtari (kehtari@ualberta.ca)
-* Prabh Kooner
+* Prabh Kooner (prabhnoo@ualberta.ca)
 * Julian Gallego Franco (gallegof@ualberta.ca)
 
 Generally everything is LICENSE'D under the MIT License.
