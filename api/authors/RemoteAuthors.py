@@ -85,8 +85,8 @@ def process_author(item):
 from ..models import Node
 def get_external_authors(request, auth_type):
     # if request from remote then only get our authors (basic auth)
-    # if auth_type == "basic":
-    #     return []
+    if auth_type == "basic":
+        return []
 
     # if request is from frontend then return both (token auth)
     # only fetch authors from the listed nodes
