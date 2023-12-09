@@ -34,7 +34,7 @@ CMPUT 404 Project: Social Distribution
 
 - [Project requirements](https://github.com/uofa-cmput404/project-socialdistribution/blob/master/project.org) 
 - [Swagger API Docs](https://vibely-23b7dc4c736d.herokuapp.com/api/swagger/)
-- Front end: https://656d553b4cdb7d01cfeec51c--chic-mochi-59bc3d.netlify.app/signin I would like to note that we were having CORS issues even tho we enabled CORS in our back end. To get full functionallity you will need to get the firefox extention CORS Everywhere to allow this to work. Other wise there will be issues with getting authors, we did not have time to fix this issue.
+- Front end: [https://6573bd9060878804ff0f0ffb--chic-mochi-59bc3d.netlify.app/signin](https://6573bd9060878804ff0f0ffb--chic-mochi-59bc3d.netlify.app/signin)
 
 Contributions made by team members
 ========================
@@ -51,6 +51,7 @@ Contributions made by team members
   - Connecting friend requests to other teams
   - Connecting sending posts to inbox with other teams
   - Ajax docs
+  - Deployed the front end 
 * Kingsley Okeke (nkokeke@ualberta.ca)
   - Worked mainly on the front end
   - Profile page UI and funtionality
