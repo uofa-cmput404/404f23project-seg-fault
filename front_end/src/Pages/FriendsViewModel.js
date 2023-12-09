@@ -32,9 +32,6 @@ const useFriendsViewModel = () => {
         `${process.env.REACT_APP_API_URL}/authors/`,
         {
           headers: {
-            params: {
-              page: currentPage,
-            },
             Authorization: `Token ${authToken}`,
           },
         }
